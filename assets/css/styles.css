@@ -974,3 +974,36 @@ h1, h2, h3, h4 {
     transform: translateX(-50%);
   }
 }
+
+/* WhatsApp floating button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 56px;
+  height: 56px;
+  background-color: #25D366;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35), 0 1px 3px rgba(0, 0, 0, 0.08);
+  z-index: 999;
+  transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+.whatsapp-float img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+.whatsapp-float:hover {
+  transform: scale(1.08);
+  background-color: #20ba5a;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.55), 0 2px 5px rgba(0, 0, 0, 0.12);
+}
+
+/* Fix social hover icon color hiding issue */
+.socials a:hover img {
+  filter: brightness(0) invert(1);
+}
+
