@@ -94,6 +94,15 @@
     window.location.assign(`/login.html?next=${encodeURIComponent("/admin.html")}`);
   }
 
+  function apiBase() {
+    return String(window.COMELEAPI_API_BASE || "").trim().replace(/\/+$/, "");
+  }
+
+  function apiUrl(path) {
+    const base = apiBase();
+    return base ? `${base}${path}` : path;
+  }
+
   async function api(path, options = {}) {
     const method = options.method || "GET";
     const headers = {
@@ -106,9 +115,9 @@
       headers["X-CSRF-Token"] = state.csrfToken;
     }
 
-    const response = await fetch(path, {
+    const response = await fetch(apiUrl(path), {
       method,
-      credentials: "same-origin",
+      credentials: apiBase() ? "include" : "same-origin",
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body)
     });
@@ -141,9 +150,9 @@
     imageFileInput.disabled = true;
 
     try {
-      const response = await fetch("/api/admin/uploads", {
+      const response = await fetch(apiUrl("/api/admin/uploads"), {
         method: "POST",
-        credentials: "same-origin",
+        credentials: apiBase() ? "include" : "same-origin",
         headers: {
           "Accept": "application/json",
           "X-CSRF-Token": state.csrfToken

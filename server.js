@@ -196,7 +196,7 @@ function parseCookies(req) {
 function setCookie(res, name, value, options = {}) {
   const pieces = [`${name}=${encodeURIComponent(value)}`];
   pieces.push(`Path=${options.path || "/"}`);
-  pieces.push(`SameSite=${options.sameSite || "Strict"}`);
+  pieces.push(`SameSite=${options.sameSite || (IS_PROD ? "None" : "Strict")}`);
   if (options.httpOnly !== false) pieces.push("HttpOnly");
   if (options.secure || IS_PROD) pieces.push("Secure");
   if (options.maxAge !== undefined) pieces.push(`Max-Age=${options.maxAge}`);

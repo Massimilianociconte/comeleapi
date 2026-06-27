@@ -12,6 +12,15 @@
     return value;
   }
 
+  function apiBase() {
+    return String(window.COMELEAPI_API_BASE || "").trim().replace(/\/+$/, "");
+  }
+
+  function apiUrl(path) {
+    const base = apiBase();
+    return base ? `${base}${path}` : path;
+  }
+
   function setError(message) {
     errorEl.textContent = message || "";
   }
@@ -36,9 +45,9 @@
 
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(apiUrl("/api/auth/login"), {
         method: "POST",
-        credentials: "same-origin",
+        credentials: apiBase() ? "include" : "same-origin",
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
