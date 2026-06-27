@@ -1,0 +1,28 @@
+# ============================================================
+# COME LE API — Configurazione Netlify (sito pubblico)
+# ============================================================
+
+[build]
+  publish = "."
+  command = "echo 'Sito statico, nessun build necessario'"
+
+# Headers di sicurezza
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+
+# Cache lunga per gli asset statici
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Nessuna cache per HTML (possono cambiare)
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

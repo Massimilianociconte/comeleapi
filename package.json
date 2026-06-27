@@ -1,0 +1,17 @@
+{
+  "name": "comeleapi-sara",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sito Come le Api con gestionale protetto.",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node supabase/seed.js",
+    "check": "node --check server.js && node --check assets/js/config.js && node --check assets/js/data.js && node --check assets/js/app.js && node --check assets/js/admin.js && node --check assets/js/login.js && node --check assets/js/pwa.js && node --check sw.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0"
+  }
+}

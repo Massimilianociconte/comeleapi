@@ -1,0 +1,49 @@
+{
+  "name": "Come le Api — Gestionale",
+  "short_name": "Come le Api",
+  "description": "Area amministrativa protetta per prodotti e richieste consulenza.",
+  "id": "/admin.html",
+  "start_url": "/admin.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FEEEEF",
+  "theme_color": "#FEEEEF",
+  "categories": ["business", "productivity", "health"],
+  "icons": [
+    {
+      "src": "/assets/img/logo-comeleapi-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/logo-comeleapi-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/logo-comeleapi-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Richieste",
+      "short_name": "Richieste",
+      "description": "Apri le richieste consulenza ricevute dal form.",
+      "url": "/admin.html#richieste",
+      "icons": [{ "src": "/assets/img/logo-comeleapi-256.png", "sizes": "256x256" }]
+    },
+    {
+      "name": "Vetrina prodotti",
+      "short_name": "Prodotti",
+      "description": "Gestisci oli essenziali e prodotti consigliati.",
+      "url": "/admin.html#prodotti",
+      "icons": [{ "src": "/assets/img/logo-comeleapi-256.png", "sizes": "256x256" }]
+    }
+  ]
+}

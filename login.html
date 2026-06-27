@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Come le Api — Accesso gestionale</title>
+  <meta name="description" content="Accesso riservato al gestionale Come le Api." />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="theme-color" content="#FEEEEF" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Come le Api" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Mulish:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="admin.webmanifest" />
+  <link rel="stylesheet" href="assets/css/admin.css?v=20260624-pwa-leads" />
+  <link rel="stylesheet" href="assets/css/login.css?v=20260624-pwa-leads" />
+
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo-comeleapi.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo-comeleapi-256.png" />
+</head>
+<body class="auth-page">
+  <main class="auth-shell" aria-labelledby="loginTitle">
+    <section class="auth-card">
+      <a class="auth-brand" href="index.html" aria-label="Torna al sito Come le Api">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="assets/img/logo-comeleapi.png" srcset="assets/img/logo-comeleapi-256.png 256w, assets/img/logo-comeleapi-512.png 512w, assets/img/logo-comeleapi-1024.png 1024w" sizes="56px" width="56" height="56" alt="" />
+        </span>
+        <span>Come le Api<small>Area riservata</small></span>
+      </a>
+
+      <div class="auth-copy">
+        <p class="auth-kicker">Gestionale protetto</p>
+        <h1 id="loginTitle">Accesso amministratore</h1>
+        <p>Inserisci le credenziali autorizzate per gestire la vetrina prodotti e i contenuti amministrativi.</p>
+      </div>
+
+      <form class="auth-form" id="loginForm" novalidate>
+        <div class="field">
+          <label for="username">Utente</label>
+          <input id="username" name="username" type="text" autocomplete="username" required maxlength="80" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+        </div>
+        <p class="auth-error" id="loginError" role="alert" aria-live="polite"></p>
+        <button class="btn btn--primary btn--block" id="loginButton" type="submit">Entra nel gestionale</button>
+      </form>
+
+      <p class="auth-note">Sessione protetta con cookie HttpOnly, CSRF e limite sui tentativi di accesso.</p>
+    </section>
+  </main>
+
+  <script src="assets/js/pwa.js?v=20260624-pwa-leads"></script>
+  <script src="assets/js/login.js?v=20260624-pwa-leads"></script>
+</body>
+</html>

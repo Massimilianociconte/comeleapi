@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Local database and upload storage (hybrid mode fallbacks)
+data/
+uploads/
+tmp/
+
+# OS files
+.DS_Store
+Thumbs.db

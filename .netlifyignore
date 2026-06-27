@@ -1,0 +1,22 @@
+# File del backend — non serviti da Netlify
+server.js
+package.json
+package-lock.json
+node_modules/
+data/
+uploads/
+supabase/
+.env
+.env.*
+!.env.example
+render.yaml
+README.md
+strategia-seo-geo-sara.md
+admin.html
+admin.webmanifest
+login.html
+assets/js/admin.js
+assets/js/login.js
+assets/js/pwa.js
+assets/css/admin.css
+assets/css/login.css

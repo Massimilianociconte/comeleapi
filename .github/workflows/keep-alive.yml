@@ -1,0 +1,19 @@
+name: Keep Alive Supabase & Render
+
+on:
+  schedule:
+    # Esegue ogni 12 ore alle 00:00 e alle 12:00 UTC
+    - cron: '0 */12 * * *'
+  workflow_dispatch: # Permette l'avvio manuale dalla scheda Actions di GitHub
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend & Wake up DB
+        run: |
+          echo "Inizio ping al backend per svegliare database e server..."
+          # Esegui una richiesta all'endpoint pubblico dei prodotti.
+          # Nota: Se su Render hai usato un nome servizio diverso da 'comeleapi-backend', 
+          # sostituisci questo URL con quello corretto.
+          curl -s -f -I "https://comeleapi-backend.onrender.com/api/products" || echo "Backend in stand-by o non raggiungibile, ma il ping è stato inviato."
