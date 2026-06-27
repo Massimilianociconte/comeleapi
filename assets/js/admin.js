@@ -769,7 +769,24 @@
   $("#drawerSave").addEventListener("click", save);
   $("#f-image").addEventListener("input", updatePreview);
   imageFileInput.addEventListener("change", () => uploadImage(imageFileInput.files?.[0]));
-  leadSearch.addEventListener("input", debounce(() => loadLeads().catch((error) => toast(error.message, "err"))));
+  const debouncedSearch = debounce(async () => {
+    try {
+      await loadLeads();
+    } catch (error) {
+      toast(error.message, "err");
+    } finally {
+      leadSearch.parentElement.classList.remove("is-loading");
+      const list = $("#leadList");
+      if (list) list.classList.remove("is-updating");
+    }
+  });
+
+  leadSearch.addEventListener("input", () => {
+    leadSearch.parentElement.classList.add("is-loading");
+    const list = $("#leadList");
+    if (list) list.classList.add("is-updating");
+    debouncedSearch();
+  });
   leadFilter.addEventListener("change", () => loadLeads().catch((error) => toast(error.message, "err")));
   overlay.addEventListener("click", closeDrawer);
   form.addEventListener("submit", (e) => { e.preventDefault(); save(); });

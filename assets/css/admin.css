@@ -830,3 +830,36 @@ table.products { width:100%; border-collapse: collapse; min-width: 820px; }
     margin-bottom: -.1rem;
   }
 }
+
+/* LIVE SEARCH EFFECTS */
+.lead-search {
+  position: relative;
+}
+.lead-search::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border: 2px solid var(--clr-brand);
+  border-top-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.lead-search.is-loading::after {
+  opacity: 1;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.leads-list.is-updating {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
