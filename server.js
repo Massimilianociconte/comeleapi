@@ -231,11 +231,11 @@ function securityHeaders(res) {
   );
 }
 
-function isPublicApiPath(pathname) {
-  return pathname === "/api/contact" || pathname === "/api/products";
+function isApiPath(pathname) {
+  return pathname && pathname.startsWith("/api/");
 }
 
-function isAllowedPublicOrigin(origin) {
+function isAllowedOrigin(origin) {
   if (!origin) return false;
   let parsed;
   try {
@@ -248,13 +248,15 @@ function isAllowedPublicOrigin(origin) {
   return parsed.protocol === "https:" && parsed.hostname.endsWith(".github.io");
 }
 
-function applyPublicCors(req, res, url) {
-  if (!isPublicApiPath(url.pathname)) return false;
+function applyCors(req, res, url) {
+  if (!isApiPath(url.pathname)) return false;
   const origin = req.headers.origin;
-  if (!isAllowedPublicOrigin(origin)) return false;
+  if (!origin) return true;
+  if (!isAllowedOrigin(origin)) return false;
   res.setHeader("Access-Control-Allow-Origin", origin);
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-CSRF-Token");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Max-Age", "86400");
   res.setHeader("Vary", "Origin");
   return true;
@@ -1096,9 +1098,11 @@ async function handleContact(req, res) {
 // ── API router ──────────────────────────────────────────────────────
 
 async function handleApi(req, res, url) {
-  applyPublicCors(req, res, url);
-  if (req.method === "OPTIONS" && isPublicApiPath(url.pathname)) {
-    if (!isAllowedPublicOrigin(req.headers.origin)) return sendJson(res, 403, { error: "Origine non consentita." });
+  applyCors(req, res, url);
+  if (req.method === "OPTIONS" && isApiPath(url.pathname)) {
+    if (req.headers.origin && !isAllowedOrigin(req.headers.origin)) {
+      return sendJson(res, 403, { error: "Origine non consentita." });
+    }
     return send(res, 204, "", { "Content-Type": MIME[".txt"] });
   }
 
