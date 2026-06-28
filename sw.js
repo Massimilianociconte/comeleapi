@@ -61,8 +61,23 @@ function notificationOptions() {
 }
 
 self.addEventListener("push", (event) => {
+  let payload = {};
+  if (event.data) {
+    try {
+      payload = event.data.json();
+    } catch (err) {
+      payload = { body: event.data.text() };
+    }
+  }
+  
+  const options = notificationOptions();
+  if (payload.body) options.body = payload.body;
+  if (payload.url) options.data.url = payload.url;
+
+  const title = payload.title || "Nuova richiesta Come le Api";
+  
   event.waitUntil(
-    self.registration.showNotification("Nuova richiesta Come le Api", notificationOptions())
+    self.registration.showNotification(title, options)
   );
 });
 

@@ -143,11 +143,45 @@
     });
     return { ok: true };
   }
+  async function disablePush(options = {}) {
+    const registration = await registrationPromise;
+    if (!registration) return { ok: false, message: "Service worker non disponibile." };
+
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription) return { ok: true, message: "Nessuna sottoscrizione attiva." };
+
+    const endpoint = subscription.endpoint;
+    await subscription.unsubscribe();
+
+    const saveResponse = await fetch("/api/admin/notifications/unsubscribe", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRF-Token": options.csrfToken || ""
+      },
+      body: JSON.stringify({ endpoint })
+    });
+    
+    return { ok: true, message: "Notifiche disattivate per questo dispositivo." };
+  }
+
+  async function getPushStatus() {
+    if (!canUseNotifications()) return false;
+    if (window.Notification.permission !== "granted") return false;
+    const registration = await registrationPromise;
+    if (!registration) return false;
+    const subscription = await registration.pushManager.getSubscription();
+    return !!subscription;
+  }
 
   window.ComeLeApiPWA = {
     ready: registrationPromise,
     canUseNotifications,
     enablePush,
+    disablePush,
+    getPushStatus,
     installApp,
     isStandalone,
     showLeadNotification

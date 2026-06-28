@@ -400,6 +400,15 @@
     }
   }
 
+  async function updatePushUI() {
+    if (!window.ComeLeApiPWA?.getPushStatus) return;
+    const isEnabled = await window.ComeLeApiPWA.getPushStatus();
+    const btnEnable = $("#btnEnableNotifications");
+    const btnDisable = $("#btnDisableNotifications");
+    if (btnEnable) btnEnable.style.display = isEnabled ? "none" : "";
+    if (btnDisable) btnDisable.style.display = isEnabled ? "" : "none";
+  }
+
   async function enableNotifications() {
     if (!window.ComeLeApiPWA?.enablePush) {
       toast("Funzioni PWA non disponibili in questo browser.", "err");
@@ -408,8 +417,20 @@
     try {
       const result = await window.ComeLeApiPWA.enablePush({ csrfToken: state.csrfToken });
       toast(result.message || "Notifiche aggiornate", result.ok ? "ok" : "err");
+      if (result.ok) await updatePushUI();
     } catch (error) {
       toast(error.message || "Notifiche non attivate", "err");
+    }
+  }
+
+  async function disableNotifications() {
+    if (!window.ComeLeApiPWA?.disablePush) return;
+    try {
+      const result = await window.ComeLeApiPWA.disablePush({ csrfToken: state.csrfToken });
+      toast(result.message || "Notifiche disattivate", result.ok ? "ok" : "err");
+      if (result.ok) await updatePushUI();
+    } catch (error) {
+      toast(error.message || "Errore disattivazione notifiche", "err");
     }
   }
 
@@ -784,6 +805,7 @@
   $("#btnReset").addEventListener("click", askReset);
   $("#btnNew").addEventListener("click", () => openDrawer(null));
   $("#btnRefreshLeads").addEventListener("click", () => loadLeads().then(() => toast("Richieste aggiornate", "ok")).catch((error) => toast(error.message, "err")));
+  $("#btnDisableNotifications")?.addEventListener("click", disableNotifications);
   $("#btnEnableNotifications").addEventListener("click", enableNotifications);
   $("#btnTestNotifications").addEventListener("click", testNotifications);
   $("#btnInstallPwa").addEventListener("click", installPwa);
@@ -846,6 +868,7 @@
       await loadProducts("Gestionale pronto. Dati sincronizzati.");
       await loadLeads();
       startLeadPolling();
+      updatePushUI().catch(() => undefined);
     } catch (error) {
       setStatus(error.message, "warn");
       toast(error.message, "err");

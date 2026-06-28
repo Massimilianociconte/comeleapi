@@ -8,6 +8,7 @@ const { promisify } = require("node:util");
 const { createClient } = require("@supabase/supabase-js");
 const fs = require("node:fs");
 const fsp = require("node:fs/promises");
+const webpush = require("web-push");
 
 const scryptAsync = promisify(crypto.scrypt);
 
@@ -852,145 +853,44 @@ async function handleUpload(req, res) {
 
 // ── Push notifications ──────────────────────────────────────────────
 
-function createVapidPrivateKey(vapid) {
-  const publicKey = Buffer.from(vapid.publicKey, "base64url");
-  if (publicKey.length !== 65 || publicKey[0] !== 4) throw new Error("Chiave VAPID pubblica non valida.");
-  return crypto.createPrivateKey({
-    format: "jwk",
-    key: {
-      kty: "EC",
-      crv: "P-256",
-      x: publicKey.subarray(1, 33).toString("base64url"),
-      y: publicKey.subarray(33, 65).toString("base64url"),
-      d: vapid.privateKey
-    }
-  });
-}
-
-function createVapidJwt(audience, vapid) {
-  const header = Buffer.from(JSON.stringify({ typ: "JWT", alg: "ES256" })).toString("base64url");
-  const payload = Buffer.from(JSON.stringify({
-    aud: audience,
-    exp: Math.floor(Date.now() / 1000) + 12 * 60 * 60,
-    sub: VAPID_SUBJECT
-  })).toString("base64url");
-  const body = `${header}.${payload}`;
-  const signature = crypto.sign("sha256", Buffer.from(body), {
-    key: createVapidPrivateKey(vapid),
-    dsaEncoding: "ieee-p1363"
-  }).toString("base64url");
-  return `${body}.${signature}`;
-}
-
-function normalizePushSubscription(input, session) {
-  const endpoint = cleanUrl(input.endpoint, "Endpoint notifiche");
-  if (!input.keys || typeof input.keys !== "object") throw new Error("Sottoscrizione notifiche non valida.");
-  const p256dh = cleanText(input.keys.p256dh, 512);
-  const auth = cleanText(input.keys.auth, 180);
-  return {
-    endpoint,
-    keys: { p256dh, auth },
-    user: session.username,
-    createdAt: nowIso(),
-    updatedAt: nowIso()
-  };
-}
-
-async function loadPushSubscriptions() {
-  if (USE_SUPABASE) {
-    const db = getSupabase();
-    const { data, error } = await db.from("push_subscriptions").select("*");
-    if (error) {
-      console.error("[db] errore caricamento push subscriptions:", error.message);
-      return [];
-    }
-    return (data || []).filter((sub) => sub.endpoint && sub.p256dh && sub.auth).map((sub) => ({
-      endpoint: sub.endpoint,
-      keys: { p256dh: sub.p256dh, auth: sub.auth },
-      user: sub.user_name,
-      createdAt: sub.created_at,
-      updatedAt: sub.updated_at
-    }));
-  } else {
-    return await readJson(PUSH_SUBSCRIPTIONS_FILE, []);
-  }
-}
-
-async function savePushSubscriptions(list) {
-  if (USE_SUPABASE) {
-    const db = getSupabase();
-    await db.from("push_subscriptions").delete().neq("endpoint", "");
-    if (list.length > 0) {
-      const rows = list.map((sub) => ({
-        endpoint: sub.endpoint,
-        p256dh: sub.keys.p256dh,
-        auth: sub.keys.auth,
-        user_name: sub.user,
-        created_at: sub.createdAt || nowIso(),
-        updated_at: sub.updatedAt || nowIso()
-      }));
-      await db.from("push_subscriptions").insert(rows);
-    }
-  } else {
-    await writeJson(PUSH_SUBSCRIPTIONS_FILE, list);
-  }
-  return list;
-}
-
-function sendEmptyPush(subscription, vapid) {
-  return new Promise((resolve) => {
-    let endpoint;
-    try {
-      endpoint = new URL(subscription.endpoint);
-    } catch {
-      return resolve({ ok: false, statusCode: 0, remove: true, error: "Endpoint non valido." });
-    }
-
-    const jwt = createVapidJwt(endpoint.origin, vapid);
-    const request = https.request(endpoint, {
-      method: "POST",
-      timeout: 10000,
-      headers: {
-        "TTL": "86400",
-        "Urgency": "normal",
-        "Content-Length": "0",
-        "Authorization": `vapid t=${jwt}, k=${vapid.publicKey}`
-      }
-    }, (response) => {
-      response.resume();
-      response.on("end", () => {
-        const ok = response.statusCode >= 200 && response.statusCode < 300;
-        resolve({
-          ok,
-          statusCode: response.statusCode,
-          remove: response.statusCode === 404 || response.statusCode === 410
-        });
-      });
+function sendPushNotification(subscription, payload, vapid) {
+  webpush.setVapidDetails(VAPID_SUBJECT, vapid.publicKey, vapid.privateKey);
+  return webpush.sendNotification(subscription, JSON.stringify(payload))
+    .then(() => ({ ok: true, remove: false }))
+    .catch((error) => {
+      const statusCode = error.statusCode;
+      return {
+        ok: false,
+        statusCode,
+        remove: statusCode === 404 || statusCode === 410,
+        error: error.message
+      };
     });
-
-    request.on("timeout", () => request.destroy(new Error("Timeout invio push.")));
-    request.on("error", (err) => resolve({ ok: false, statusCode: 0, remove: false, error: err.message }));
-    request.end();
-  });
 }
 
-async function sendPushToAll() {
+async function sendPushToAll(payload) {
   const subscriptions = await loadPushSubscriptions();
   if (!subscriptions.length) return { sent: 0, failed: 0, registered: 0 };
   const vapid = getVapidKeys();
-  const results = await Promise.all(subscriptions.map((subscription) => sendEmptyPush(subscription, vapid)));
+  const results = await Promise.all(subscriptions.map((sub) => sendPushNotification(sub, payload, vapid)));
   const activeSubscriptions = subscriptions.filter((_, index) => !results[index].remove);
   if (activeSubscriptions.length !== subscriptions.length) await savePushSubscriptions(activeSubscriptions);
   return {
-    sent: results.filter((result) => result.ok).length,
-    failed: results.filter((result) => !result.ok).length,
+    sent: results.filter((r) => r.ok).length,
+    failed: results.filter((r) => !r.ok).length,
     registered: activeSubscriptions.length
   };
 }
 
-async function notifyNewLead() {
+async function notifyNewLead(lead) {
   try {
-    await sendPushToAll();
+    const payload = {
+      type: "NEW_LEAD",
+      title: "Nuova richiesta da " + (lead.name || "Utente"),
+      body: lead.message ? (lead.message.length > 50 ? lead.message.slice(0, 50) + "..." : lead.message) : "Controlla le nuove richieste nel gestionale.",
+      url: "/admin.html#richieste"
+    };
+    await sendPushToAll(payload);
   } catch (err) {
     console.warn("[push]", err.message);
   }
@@ -1084,7 +984,7 @@ async function handleContact(req, res) {
       leads.unshift(lead);
       await writeJson(LEADS_FILE, leads);
     }
-    notifyNewLead();
+    notifyNewLead(lead);
     return sendJson(res, 201, {
       ok: true,
       message: "Richiesta ricevuta. Ti ricontatteremo al più presto.",
@@ -1171,8 +1071,30 @@ async function handleApi(req, res, url) {
       }
     }
 
+    if (url.pathname === "/api/admin/notifications/unsubscribe" && req.method === "POST") {
+      const body = await readBody(req);
+      const endpoint = body.endpoint;
+      if (!endpoint) return sendJson(res, 400, { error: "Endpoint mancante." });
+      if (USE_SUPABASE) {
+        const db = getSupabase();
+        await db.from("push_subscriptions").delete().eq("endpoint", endpoint);
+        const { count } = await db.from("push_subscriptions").select("*", { count: "exact", head: true });
+        return sendJson(res, 200, { ok: true, registered: count || 0 });
+      } else {
+        const list = await loadPushSubscriptions();
+        const active = list.filter((sub) => sub.endpoint !== endpoint);
+        await savePushSubscriptions(active);
+        return sendJson(res, 200, { ok: true, registered: active.length });
+      }
+    }
+
     if (url.pathname === "/api/admin/notifications/test" && req.method === "POST") {
-      const result = await sendPushToAll();
+      const result = await sendPushToAll({
+        type: "TEST",
+        title: "Test Notifiche PWA",
+        body: "Le notifiche in background funzionano correttamente!",
+        url: "/admin.html"
+      });
       return sendJson(res, 200, { ok: true, ...result });
     }
 
