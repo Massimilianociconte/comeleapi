@@ -2,8 +2,8 @@ name: Keep Alive Supabase & Render
 
 on:
   schedule:
-    # Esegue ogni 12 ore alle 00:00 e alle 12:00 UTC
-    - cron: '0 */12 * * *'
+    # Esegue ogni 10 minuti per mantenere sveglio Render
+    - cron: '*/10 * * * *'
   workflow_dispatch: # Permette l'avvio manuale dalla scheda Actions di GitHub
 
 jobs:
