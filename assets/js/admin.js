@@ -68,7 +68,9 @@
   const confirmModal = $("#confirmModal");
   const leadsList = $("#leadsList");
   const leadsStatsEl = $("#leadsStats");
+  const confirmOk = $("#confirmOk");
   const leadSearch = $("#leadSearch");
+  const productSearch = $("#productSearch");
   const leadFilter = $("#leadFilter");
 
   function setStatus(message, type = "") {
@@ -464,7 +466,17 @@
   }
 
   function render() {
-    const list = state.products.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    let list = state.products.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const pq = productSearch?.value.trim().toLowerCase() || "";
+    if (pq) {
+      list = list.filter(p => 
+        (p.name || "").toLowerCase().includes(pq) ||
+        (p.shortDesc || "").toLowerCase().includes(pq) ||
+        (p.benefits || "").toLowerCase().includes(pq) ||
+        (p.price || "").toLowerCase().includes(pq)
+      );
+    }
+    
     renderStats(list);
 
     if (!list.length) {
@@ -788,16 +800,30 @@
       toast(error.message, "err");
     } finally {
       leadSearch.parentElement.classList.remove("is-loading");
-      const list = $("#leadList");
+      const list = $("#leadsList");
       if (list) list.classList.remove("is-updating");
     }
   });
 
   leadSearch.addEventListener("input", () => {
     leadSearch.parentElement.classList.add("is-loading");
-    const list = $("#leadList");
+    const list = $("#leadsList");
     if (list) list.classList.add("is-updating");
     debouncedSearch();
+  });
+
+  const debouncedProductSearch = debounce(() => {
+    render();
+    productSearch.parentElement.classList.remove("is-loading");
+    const pTable = $("#productsTable");
+    if (pTable) pTable.classList.remove("is-updating");
+  }, 250);
+
+  productSearch?.addEventListener("input", () => {
+    productSearch.parentElement.classList.add("is-loading");
+    const pTable = $("#productsTable");
+    if (pTable) pTable.classList.add("is-updating");
+    debouncedProductSearch();
   });
   leadFilter.addEventListener("change", () => loadLeads().catch((error) => toast(error.message, "err")));
   overlay.addEventListener("click", closeDrawer);
