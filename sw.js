@@ -1,10 +1,10 @@
 "use strict";
 
-const CACHE_NAME = "comeleapi-admin-assets-v3";
+const CACHE_NAME = "comeleapi-admin-assets-v4";
 const ASSET_CACHE = [
-  "/assets/css/admin.css?v=20260628-backend-v2",
-  "/assets/css/login.css?v=20260628-backend-v2",
-  "/assets/js/pwa.js?v=20260628-backend-v2",
+  "/assets/css/admin.css?v=20260628-backend-v3",
+  "/assets/css/login.css?v=20260628-backend-v3",
+  "/assets/js/pwa.js?v=20260628-backend-v3",
   "/assets/img/logo-comeleapi-256.png",
   "/assets/img/logo-comeleapi-512.png",
   "/assets/img/icons/icon-chat.png",

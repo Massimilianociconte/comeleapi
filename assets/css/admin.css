@@ -839,7 +839,7 @@ table.products { width:100%; border-collapse: collapse; min-width: 820px; }
   content: "";
   position: absolute;
   right: 12px;
-  top: 50%;
+  top: calc(100% - 21px);
   width: 16px;
   height: 16px;
   margin-top: -8px;

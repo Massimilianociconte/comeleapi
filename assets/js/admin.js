@@ -237,7 +237,7 @@
   }
 
   function leadLabel(status) {
-    if (status === "reviewed") return "Rivista";
+    if (status === "reviewed") return "Gestita";
     if (status === "archived") return "Archiviata";
     return "Nuova";
   }
@@ -314,7 +314,7 @@
             </a>
             ${status !== "reviewed" ? `
               <button class="btn btn--ghost btn--sm" data-lead-act="reviewed" data-id="${escapeHtml(lead.id)}">
-                ${icon("seal")} Segna rivista
+                ${icon("seal")} Segna come gestita
               </button>` : `
               <button class="btn btn--ghost btn--sm" data-lead-act="new" data-id="${escapeHtml(lead.id)}">
                 ${icon("spark")} Riapri
@@ -373,14 +373,26 @@
   }
 
   async function updateLead(id, status) {
+    const previousLeads = [...state.leads];
+    const leadIndex = state.leads.findIndex(l => l.id === id);
+    if (leadIndex >= 0) {
+      state.leads[leadIndex] = { ...state.leads[leadIndex], status };
+      if (leadFilter.value !== "all" && leadFilter.value !== status && (leadFilter.value !== "active" || status === "archived")) {
+         state.leads.splice(leadIndex, 1);
+      }
+      renderLeads();
+    }
+
     try {
       await api(`/api/admin/leads/${encodeURIComponent(id)}`, {
         method: "PATCH",
         body: { status }
       });
-      await loadLeads();
-      toast(status === "archived" ? "Richiesta archiviata" : "Richiesta aggiornata", "ok");
+      loadLeads({ silent: true });
+      toast(status === "archived" ? "Richiesta archiviata" : "Richiesta gestita", "ok");
     } catch (error) {
+      state.leads = previousLeads;
+      renderLeads();
       toast(error.message, "err");
       setStatus(error.message, "warn");
     }
