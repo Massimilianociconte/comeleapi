@@ -6,6 +6,16 @@
   publish = "."
   command = "echo 'Sito statico, nessun build necessario'"
 
+# Canonical URL.
+# Nota: https://www.comeleapi.netlify.app mostra errore certificato prima che
+# Netlify possa applicare redirect. L'URL corretto del sottodominio Netlify è
+# https://comeleapi.netlify.app, senza "www".
+[[redirects]]
+  from = "http://www.comeleapi.netlify.app/*"
+  to = "https://comeleapi.netlify.app/:splat"
+  status = 301
+  force = true
+
 # Headers di sicurezza
 [[headers]]
   for = "/*"

@@ -1,6 +1,6 @@
 /* =============================================================
    SARA — app.js
-   Logica del sito pubblico: rendering prodotti, form, animazioni
+   Logica del sito pubblico: rendering contenuti, form, animazioni
    ============================================================= */
 
 (function () {
@@ -87,7 +87,7 @@
     });
   });
 
-  /* ---------- Rendering prodotti (vetrina) ---------- */
+  /* ---------- Rendering proposte legacy ---------- */
   const grid = $("#productsGrid");
   if (grid && window.SaraData) {
     const fallbackProductImage = "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=70";
@@ -108,7 +108,6 @@
         <article class="product-card ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}" aria-disabled="${unavailable ? "true" : "false"}">
           <div class="product-img">
             <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
-            ${p.price ? `<span class="price">${escapeHtml(p.price)}</span>` : ""}
             ${unavailable ? `<span class="availability-badge">Esaurito</span>` : ""}
           </div>
           <div class="product-body">
@@ -120,7 +119,7 @@
               Prossimamente disponibile
             </span>` : `
             <a class="btn btn--dark btn--sm" href="${escapeHtml(p.link)}" target="_blank" rel="noopener nofollow">
-              Acquista
+              Richiedi dettagli
               <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="16" height="16" alt="" loading="lazy" decoding="async" />
             </a>`}
           </div>
@@ -228,7 +227,7 @@
         });
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || "Invio non riuscito. Riprova tra poco.");
-        success.textContent = "✓ Richiesta inviata. Ti ricontatto entro 24 ore per fissare la consulenza.";
+        success.textContent = "✓ Richiesta inviata. Ti ricontatto entro 24 ore con disponibilità e dettagli.";
         success.classList.remove("err");
         success.classList.add("show");
         form.reset();
@@ -263,10 +262,10 @@
   const body = $("#policyBody");
 
   const PRIVACY = `
-    <p>La presente informativa descrive come Come le Api tratta i dati personali raccolti tramite il modulo di prenotazione della consulenza.</p>
+    <p>La presente informativa descrive come Come le Api tratta i dati personali raccolti tramite i canali di contatto e richiesta informazioni.</p>
     <p><strong>Titolare del trattamento.</strong> Sara [cognome], referente di Come le Api, nella sua qualità di titolare autonomo.</p>
     <p><strong>Dati raccolti.</strong> Nome, email, telefono, eventuali preferenze e messaggio.</p>
-    <p><strong>Finalità.</strong> Ricontattarti per fissare la consulenza gratuita e rispondere alla tua richiesta.</p>
+    <p><strong>Finalità.</strong> Ricontattarti per rispondere alla tua richiesta, verificare disponibilità e fornire dettagli sui trattamenti.</p>
     <p><strong>Base giuridica.</strong> Consenso (art. 6 lett. a GDPR).</p>
     <p><strong>Conservazione.</strong> I dati sono conservati per il tempo strettamente necessario alla finalità e comunque non oltre 24 mesi.</p>
     <p><strong>Tuoi diritti.</strong> Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso scrivendo a <a href="mailto:privacy@comeleapi.it" style="color:var(--terra-deep);">privacy@comeleapi.it</a>.</p>`;

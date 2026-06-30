@@ -1007,7 +1007,7 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/api/products" && req.method === "GET") {
-    const products = (await loadProducts()).map(publicProduct);
+    const products = (await loadProducts()).map((product) => ({ ...publicProduct(product), price: "" }));
     return sendJson(res, 200, { products });
   }
 

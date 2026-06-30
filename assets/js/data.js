@@ -1,9 +1,9 @@
 /**
  * data.js
  * ------------------------------------------------------------------
- * Modulo dati pubblico per la vetrina.
- * I prodotti arrivano dal server tramite /api/products. Il set di
- * default resta come fallback leggibile se il server non risponde.
+ * Modulo dati pubblico per eventuali proposte aromatiche legacy.
+ * Il sito principale usa una sezione consulenziale statica; questo set
+ * resta come fallback senza prezzi se una pagina richiede ancora /api/products.
  *
  * Ogni prodotto:
  * {
@@ -11,7 +11,7 @@
  *   name:      string  nome del prodotto
  *   shortDesc: string  breve descrizione (1 riga)
  *   benefits:  string  benefici principali (testo)
- *   price:     string  prezzo indicativo (es. "18,90 €")
+ *   price:     string  non usato sul sito pubblico
  *   image:     string  URL immagine
  *   link:      string  link esterno di acquisto
  *   visible:   boolean visibilità sul sito pubblico
@@ -22,70 +22,48 @@
 
 const DEFAULT_PRODUCTS = [
   {
-    id: "p-lavanda",
-    name: "Olio Essenziale di Lavanda",
-    shortDesc: "Rilassante e calmante, ideale per la sera.",
-    benefits: " favorisce il relax, riduce tensione e stress, migliora il sonno.",
-    price: "14,90 €",
+    id: "p-mini-guida",
+    name: "Mini guida gratuita agli oli essenziali",
+    shortDesc: "Una risorsa semplice per iniziare a conoscere gli oli essenziali.",
+    benefits: " aiuta a orientarsi tra usi quotidiani, attenzioni di base e piccoli rituali di benessere.",
+    price: "",
     image: "https://images.unsplash.com/photo-1611073615452-4889e2d68957?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+lavanda",
+    link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20ricevere%20la%20mini%20guida%20gratuita%20agli%20oli%20essenziali.",
     visible: true,
     order: 0
   },
   {
-    id: "p-eucalipto",
-    name: "Olio Essenziale di Eucalipto",
-    shortDesc: "Balsamico e rinfrescante, libera le vie respiratorie.",
-    benefits: " purifica l'aria, rinfresca, utile in caso di raffreddore.",
-    price: "12,50 €",
+    id: "p-collezione-essenziale",
+    name: "Collezione Essenziale",
+    shortDesc: "Kit base con 12 oli essenziali selezionati.",
+    benefits: " offre una base ordinata e versatile per avvicinarsi agli oli con più consapevolezza.",
+    price: "",
     image: "https://images.unsplash.com/photo-1615485925600-97237c4fc1ec?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+eucalipto",
+    link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20sulla%20Collezione%20Essenziale.",
     visible: true,
     order: 1
   },
   {
-    id: "p-rosa",
-    name: "Olio Essenziale di Rosa Damascena",
-    shortDesc: "Elegante e nutriente, per una pelle morbida e vellutata.",
-    benefits: " idrata la pelle, equilibra le emozioni, profumo avvolgente.",
-    price: "29,00 €",
+    id: "p-consulenza-aromatica",
+    name: "Consulenza aromatica personalizzata",
+    shortDesc: "Un percorso per scegliere gli oli più adatti alle esigenze personali.",
+    benefits: " collega preferenze, obiettivi di benessere e modalità d'uso in modo semplice e curato.",
+    price: "",
     image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+rosa+damascena",
+    link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20parlare%20di%20una%20consulenza%20aromatica%20personalizzata.",
     visible: true,
     order: 2
   },
   {
-    id: "p-menta",
-    name: "Olio Essenziale di Menta Piperita",
-    shortDesc: "Tonificante e rinfrescante, risveglia mente e corpo.",
-    benefits: " rinfresca, stimola la concentrazione, allevia la stanchezza.",
-    price: "11,90 €",
+    id: "p-signature-blend",
+    name: "Signature Blend",
+    shortDesc: "Consulenza personalizzata con kit benessere su misura.",
+    benefits: " crea un rituale più personale, premium e coerente con il momento della persona.",
+    price: "",
     image: "https://images.unsplash.com/photo-1606914469633-cb9d7b56b27e?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+menta+piperita",
+    link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20creare%20il%20mio%20Signature%20Blend%20personalizzato.",
     visible: true,
     order: 3
-  },
-  {
-    id: "p-arancio",
-    name: "Olio Essenziale di Arancio Dolce",
-    shortDesc: "Solare e luminoso, diffonde ottimismo e leggerezza.",
-    benefits: " migliora l'umore, illumina l'ambiente, dolce e delicato.",
-    price: "10,50 €",
-    image: "https://images.unsplash.com/photo-1582194720944-3e6d6891eba7?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+arancio+dolce",
-    visible: true,
-    order: 4
-  },
-  {
-    id: "p-incenso",
-    name: "Olio Essenziale di Incenso",
-    shortDesc: "Profondo e meditativo, per momenti di raccoglimento.",
-    benefits: " favorisce la meditazione, calma la mente, aroma spirituale.",
-    price: "19,90 €",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+incenso",
-    visible: true,
-    order: 5
   }
 ];
 

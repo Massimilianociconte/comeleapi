@@ -3,6 +3,9 @@ server.js
 package.json
 package-lock.json
 node_modules/
+tmp/
+.git/
+.DS_Store
 data/
 uploads/
 supabase/

@@ -4,17 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Come le Api — Benessere, Massaggi & Cura della Persona</title>
-  <meta name="description" content="Come le Api, progetto di benessere e massaggi curato da Sara. Trattamenti su misura, consulenza gratuita e oli essenziali consigliati." />
+  <meta name="description" content="Come le Api, progetto di benessere e massaggi curato da Sara. Trattamenti a domicilio, percorsi su misura e oli essenziali per il benessere quotidiano." />
   <meta name="theme-color" content="#FEEEEF" />
 
   <meta property="og:title" content="Come le Api — Benessere & Massaggi" />
-  <meta property="og:description" content="Trattamenti su misura per il tuo benessere. Prenota una consulenza telefonica gratuita." />
+  <meta property="og:description" content="Trattamenti su misura a domicilio tra Bresso, Cusano Milanino e Milano su valutazione. Contatta Sara su WhatsApp." />
   <meta property="og:type" content="website" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Mulish:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260628-webnovis" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260630-client-review" />
 
   <link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo-comeleapi.png" />
   <link rel="apple-touch-icon" href="assets/img/logo-comeleapi.png" />
@@ -26,15 +26,15 @@
         <span class="brand-mark" aria-hidden="true">
           <img src="assets/img/logo-comeleapi.png" srcset="assets/img/logo-comeleapi-256.png 256w, assets/img/logo-comeleapi-512.png 512w, assets/img/logo-comeleapi-1024.png 1024w" sizes="48px" width="48" height="48" alt="" />
         </span>
-        <span>Come le Api<small>Benessere · Massaggi</small></span>
+        <span>comeleapi<small>Benessere · Massaggi</small></span>
       </a>
 
       <nav class="nav" id="mainNav" aria-label="Navigazione principale">
         <a href="#chi-sono">Chi è Sara</a>
         <a href="#servizi">Trattamenti</a>
-        <a href="#certificazioni">Formazione</a>
+        <a class="client-hidden" href="#certificazioni" aria-hidden="true" tabindex="-1" data-temporary-note="Formazione integrata nella presentazione, sezione dedicata nascosta.">Formazione</a>
         <a href="#prodotti">Oli essenziali</a>
-        <a href="#prenota" class="btn btn--primary btn--sm nav-cta">Prenota consulenza</a>
+        <a href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20sui%20trattamenti." class="btn btn--primary btn--sm nav-cta" target="_blank" rel="noopener">Scrivimi su WhatsApp</a>
       </nav>
 
       <button class="nav-toggle" id="navToggle" aria-label="Apri menu" aria-expanded="false" aria-controls="mainNav">
@@ -57,15 +57,26 @@
             costruisco percorsi di benessere pensati per te, per ritrovare respiro,
             leggerezza ed energia.
           </p>
-          <div class="hero-cta">
-            <a href="#prenota" class="btn btn--primary">
-              Prenota la consulenza gratuita
-              <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="18" height="18" alt="" decoding="async" />
+          <div class="hero-contact-card reveal" data-delay="1">
+            <span class="hero-contact-card__icon" aria-hidden="true">
+              <img class="generated-icon" src="assets/img/icons/icon-whatsapp-custom.png" alt="" loading="lazy" decoding="async" />
+            </span>
+            <div>
+              <strong>Trattamenti a domicilio</strong>
+              <p>Bresso e Cusano Milanino. Milano su valutazione, in base alla zona e al trattamento.</p>
+              <small>Sede con cabina dedicata in fase di definizione.</small>
+            </div>
+            <a class="btn btn--primary btn--sm" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20richiedere%20disponibilit%C3%A0%20per%20un%20trattamento." target="_blank" rel="noopener">
+              Richiedi disponibilità
+              <img class="btn-icon btn-icon--wa-hero" src="assets/img/icons/icon-whatsapp-custom.png" width="24" height="24" alt="" decoding="async" />
             </a>
+          </div>
+          <div class="hero-cta">
             <a href="#servizi" class="btn btn--ghost">Scopri i trattamenti</a>
+            <a href="#prodotti" class="btn btn--ghost">Oli essenziali</a>
           </div>
 
-          <div class="hero-meta">
+          <div class="hero-meta client-hidden" aria-hidden="true" data-temporary-note="Metriche nascoste temporaneamente su richiesta cliente.">
             <div class="metric">
               <span class="metric-ic metric-ic--experience"><img class="generated-icon" src="assets/img/icons/icon-spark.png" alt="" loading="lazy" decoding="async" /></span>
               <strong>8+</strong><span>Anni di esperienza</span>
@@ -85,11 +96,11 @@
           <div class="hero-photo">
             <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=900&q=80" alt="Ambiente rilassante per un trattamento di massaggio benessere" loading="eager" />
           </div>
-          <div class="hero-badge">
+          <div class="hero-badge client-hidden" aria-hidden="true" data-temporary-note="Badge domicilio nascosto: informazione spostata nel box contatto introduttivo.">
             <span class="dot"></span>
             <div>
-              <b>Consulenza gratuita</b>
-              <small>30 minuti per conoscerti e consigliarti il percorso giusto</small>
+              <b>Trattamenti a domicilio</b>
+              <small>Bresso, Cusano Milanino e Milano su valutazione</small>
             </div>
           </div>
         </div>
@@ -101,9 +112,9 @@
       </div>
     </section>
 
-    <section class="section about" id="chi-sono">
+    <section class="section about about--presentation" id="chi-sono">
       <div class="container about-grid">
-        <div class="about-photo reveal">
+        <div class="about-photo reveal client-hidden" aria-hidden="true" data-temporary-note="Foto secondaria nascosta: la cliente vuole una sola foto iniziale prima della presentazione.">
           <img src="https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=800&q=80" alt="Ritratto di Sara, massaggiatrice professionista" loading="lazy" />
           <span class="tag">
             <img class="tag-icon" src="assets/img/icons/icon-seal.png" width="18" height="18" alt="" loading="lazy" decoding="async" />
@@ -125,9 +136,24 @@
             flessibile, attento e mai uguale a se stesso.
           </p>
           <p class="reveal" data-delay="2">
-            Accoglie ogni cliente in uno spazio curato, silenzioso e profumato, dove il tempo rallenta
-            e il corpo può finalmente abbandonarsi.
+            Ogni appuntamento viene organizzato con attenzione, rispetto dei tempi e cura dell'ambiente,
+            per offrire un trattamento serio, ordinato e realmente centrato sulla persona.
           </p>
+
+          <div class="about-mini-grid reveal" data-delay="2" aria-label="Formazione integrata">
+            <div class="about-mini-card">
+              <span><img class="generated-icon" src="assets/img/icons/icon-scroll.png" alt="" loading="lazy" decoding="async" /></span>
+              <p><b>Diploma professionale</b> in massaggio e tecniche manuali.</p>
+            </div>
+            <div class="about-mini-card">
+              <span><img class="generated-icon" src="assets/img/icons/icon-graduate.png" alt="" loading="lazy" decoding="async" /></span>
+              <p><b>Aromaterapia</b> e uso consapevole degli oli essenziali.</p>
+            </div>
+            <div class="about-mini-card">
+              <span><img class="generated-icon" src="assets/img/icons/icon-shield.png" alt="" loading="lazy" decoding="async" /></span>
+              <p><b>Igiene e sicurezza</b> nella gestione del trattamento.</p>
+            </div>
+          </div>
 
           <ul class="values-list reveal" data-delay="3">
             <li><span class="v-ic">1</span><span><b>Ascolto.</b> Capire la persona prima di scegliere il trattamento.</span></li>
@@ -146,53 +172,59 @@
           <span class="eyebrow reveal">Cosa fa Sara</span>
           <h2 class="section-title reveal" data-delay="1">Trattamenti pensati<br />per il tuo benessere.</h2>
           <p class="section-lead reveal" data-delay="1">
-            Ogni percorso è personalizzato dopo un breve ascolto iniziale.
-            Ecco i trattamenti principali che puoi scegliere o combinare.
+            Ogni percorso nasce da un breve ascolto iniziale e viene adattato alla persona,
+            alla zona da trattare e al beneficio ricercato.
           </p>
         </div>
 
         <div class="services-grid">
           <article class="service-card reveal">
-            <div class="service-ic service-ic--body" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-hands.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Massaggio Decontratturante</h3>
-            <p>Manovre profonde e mirate per sciogliere tensioni accumulate su spalle, collo e schiena.</p>
-            <span class="dur">50 min · su misura</span>
+            <div class="service-ic service-ic--sport" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-sportivo-arm.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Massaggio sportivo</h3>
+            <p>Indicato per chi pratica attività fisica o sente il corpo affaticato: aiuta il recupero muscolare e prepara a ritrovare mobilità.</p>
+            <span class="dur">recupero · tono muscolare</span>
           </article>
           <article class="service-card reveal" data-delay="1">
-            <div class="service-ic service-ic--calm" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-leaf.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Massaggio Rilassante Anti-stress</h3>
-            <p>Tecniche morbide e fluide che calmano il sistema nervoso e restituiscono leggerezza.</p>
-            <span class="dur">45 min · anti-stress</span>
+            <div class="service-ic service-ic--body" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-decontratturante.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Massaggio decontratturante</h3>
+            <p>Un lavoro mirato su tensioni e rigidità, pensato per collo, spalle, schiena e zone sovraccaricate dalla postura o dallo stress.</p>
+            <span class="dur">tensioni · sollievo mirato</span>
           </article>
           <article class="service-card reveal" data-delay="2">
-            <div class="service-ic service-ic--foot" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-foot.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Riflessologia Plantare</h3>
-            <p>Una mappa di punti riflessi sui piedi per favorire equilibrio e rilassamento profondo.</p>
-            <span class="dur">40 min · olistico</span>
+            <div class="service-ic service-ic--calm" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-relax.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Massaggio relax</h3>
+            <p>Manovre lente e avvolgenti per chi ha bisogno di fermarsi, alleggerire la mente e ritrovare una sensazione di calma profonda.</p>
+            <span class="dur">rilassamento · respiro</span>
           </article>
           <article class="service-card reveal">
-            <div class="service-ic service-ic--oil" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-drop.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Trattamento con Oli Essenziali</h3>
-            <p>Un massaggio aromaterapico con fragranze naturali scelte per il tuo stato d'animo.</p>
-            <span class="dur">55 min · aromaterapia</span>
+            <div class="service-ic service-ic--lymph" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-linfodrenante-up.png?v=20260630-linfo2" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Massaggio linfodrenante</h3>
+            <p>Un trattamento delicato e ritmico, ideale per chi desidera favorire leggerezza, microcircolo e benessere delle gambe.</p>
+            <span class="dur">leggerezza · drenaggio</span>
           </article>
           <article class="service-card reveal" data-delay="1">
-            <div class="service-ic service-ic--lymph" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-waves.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Massaggio Linfodrenante</h3>
-            <p>Movimenti leggeri e ritmici che favoriscono microcircolazione e sensazione di leggerezza.</p>
-            <span class="dur">50 min · drenante</span>
+            <div class="service-ic service-ic--short" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-mirato-30.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Trattamento mirato breve da 30 minuti</h3>
+            <p>Una soluzione essenziale per concentrarsi su una zona specifica, utile quando serve un intervento rapido ma curato.</p>
+            <span class="dur">30 min · zona specifica</span>
           </article>
           <article class="service-card reveal" data-delay="2">
-            <div class="service-ic service-ic--mother" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-mother.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Massaggio in Gravidanza</h3>
-            <p>Trattamenti dolci pensati per accompagnare la futura mamma con attenzione e comfort.</p>
-            <span class="dur">45 min · dolce</span>
+            <div class="service-ic service-ic--tape" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-kinesio-taping.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Kinesio taping</h3>
+            <p>Applicazioni elastiche di supporto, pensate per accompagnare movimento, postura e recupero senza limitare la naturale mobilità.</p>
+            <span class="dur">supporto · movimento</span>
+          </article>
+          <article class="service-card reveal">
+            <div class="service-ic service-ic--oil" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-oli-terapeutici.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Massaggio terapeutico con oli essenziali</h3>
+            <p>Un trattamento che unisce manualità e aromaterapia, con oli scelti in modo consapevole per accompagnare rilassamento e riequilibrio.</p>
+            <span class="dur">aromaterapia · cura su misura</span>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section cert" id="certificazioni">
+    <section class="section cert client-hidden" id="certificazioni" aria-hidden="true" data-temporary-note="Sezione dedicata nascosta: formazione condensata nella presentazione.">
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow reveal">Formazione &amp; Certificazioni</span>
@@ -231,76 +263,83 @@
       </div>
     </section>
 
-    <section class="section booking" id="prenota">
-      <div class="container booking-grid">
+    <section class="section booking client-hidden" id="prenota" aria-hidden="true" data-temporary-note="Contatto diretto spostato in versione compatta subito dopo l'introduzione.">
+      <div class="container booking-grid contact-grid">
         <div class="section-head">
-          <span class="eyebrow reveal">Consulenza gratuita</span>
-          <h2 class="section-title reveal" data-delay="1">Parliamone, senza impegno.</h2>
+          <span class="eyebrow reveal">Contatto diretto</span>
+          <h2 class="section-title reveal" data-delay="1">Parliamo del trattamento più adatto a te.</h2>
           <p class="section-lead reveal" data-delay="1">
-            Prenota una consulenza telefonica gratuita di circa 30 minuti. Ti richiamo io.
+            Scrivimi su WhatsApp per raccontarmi cosa cerchi, verificare la disponibilità
+            e ricevere costi e dettagli in modo chiaro e riservato.
           </p>
           <div class="benefits-box reveal" data-delay="2">
-            <h3>Durante la consulenza</h3>
+            <h3>Trattamenti a domicilio</h3>
             <ul>
-              <li><span class="ic ic--calendar"><img class="generated-icon" src="assets/img/icons/icon-calendar.png" alt="" loading="lazy" decoding="async" /></span><span>Capisco le tue esigenze e il momento migliore per sentirci.</span></li>
-              <li><span class="ic ic--chat"><img class="generated-icon" src="assets/img/icons/icon-chat.png" alt="" loading="lazy" decoding="async" /></span><span>Ti propongo il trattamento più adatto, senza pressione.</span></li>
-              <li><span class="ic ic--seal"><img class="generated-icon" src="assets/img/icons/icon-seal.png" alt="" loading="lazy" decoding="async" /></span><span>Rispondo a dubbi su durata, benefici e preparazione.</span></li>
+              <li><span class="ic ic--route"><img class="generated-icon" src="assets/img/icons/icon-compass.png" alt="" loading="lazy" decoding="async" /></span><span>I trattamenti sono disponibili a domicilio nelle zone di Bresso e Cusano Milanino.</span></li>
+              <li><span class="ic ic--calendar"><img class="generated-icon" src="assets/img/icons/icon-calendar.png" alt="" loading="lazy" decoding="async" /></span><span>Per Milano, la disponibilità viene valutata in base alla zona e alle esigenze del trattamento.</span></li>
+              <li><span class="ic ic--seal"><img class="generated-icon" src="assets/img/icons/icon-seal.png" alt="" loading="lazy" decoding="async" /></span><span>È in fase di definizione una sede operativa con cabina dedicata, pensata per offrire uno spazio ancora più accogliente, riservato e professionale.</span></li>
             </ul>
           </div>
         </div>
 
-        <form class="booking-form reveal" id="bookingForm" novalidate>
-          <div class="field">
-            <label for="bf-name">Nome</label>
-            <input id="bf-name" type="text" autocomplete="name" required />
+        <div class="booking-form contact-card reveal" data-delay="1">
+          <span class="contact-kicker">Disponibilità e costi</span>
+          <h3>Un messaggio semplice, poi valutiamo insieme.</h3>
+          <p>
+            Per informazioni, disponibilità e dettagli sui trattamenti, il canale più rapido è WhatsApp.
+            Ti rispondo con discrezione e ti aiuto a capire quale proposta può essere più adatta.
+          </p>
+          <div class="contact-actions">
+            <a class="btn btn--primary btn--block" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20ricevere%20costi%20e%20dettagli%20per%20un%20trattamento." target="_blank" rel="noopener">
+              Richiedi costi e dettagli
+              <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="18" height="18" alt="" loading="lazy" decoding="async" />
+            </a>
+            <a class="btn btn--ghost btn--block" href="tel:+390000000000">Chiama Sara</a>
           </div>
-          <div class="field">
-            <label for="bf-phone">Telefono</label>
-            <input id="bf-phone" type="tel" autocomplete="tel" required />
-          </div>
-          <div class="field">
-            <label for="bf-email">Email</label>
-            <input id="bf-email" type="email" autocomplete="email" required />
-          </div>
-          <div class="field two">
-            <div>
-              <label for="bf-day">Giorno preferito</label>
-              <select id="bf-day">
-                <option value="">Scegli</option>
-                <option>Lunedì</option><option>Martedì</option><option>Mercoledì</option>
-                <option>Giovedì</option><option>Venerdì</option><option>Sabato</option>
-              </select>
-            </div>
-            <div>
-              <label for="bf-slot">Fascia oraria</label>
-              <select id="bf-slot">
-                <option value="">Scegli</option>
-                <option>Mattina</option><option>Pomeriggio</option><option>Sera</option>
-              </select>
-            </div>
-          </div>
-          <div class="field">
-            <label for="bf-msg">Messaggio</label>
-            <textarea id="bf-msg" rows="5" placeholder="Raccontami cosa cerchi o dove senti tensione."></textarea>
-          </div>
-          <button class="btn btn--primary btn--block" type="submit">Invia richiesta</button>
-          <p class="form-note">I tuoi dati restano riservati e vengono usati solo per ricontattarti. Leggi la <a href="#footer">privacy policy</a>.</p>
-          <p class="form-success" id="bookingSuccess" aria-live="polite"></p>
-        </form>
+          <p class="form-note">I messaggi restano riservati e vengono usati solo per rispondere alla tua richiesta. Leggi la <a href="#footer">privacy policy</a>.</p>
+        </div>
       </div>
     </section>
 
     <section class="section products" id="prodotti">
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow reveal">Vetrina Oli Essenziali</span>
-          <h2 class="section-title reveal" data-delay="1">Piccoli alleati naturali<br />per prolungare il benessere.</h2>
+          <span class="eyebrow reveal">Oli essenziali</span>
+          <h2 class="section-title reveal" data-delay="1">Percorsi aromatici<br />per il benessere quotidiano.</h2>
           <p class="section-lead reveal" data-delay="1">
-            Una selezione di oli essenziali consigliati per accompagnare relax, respiro e rituali quotidiani.
+            Non una vetrina con prezzi, ma proposte curate per iniziare a usare gli oli essenziali
+            con più consapevolezza, semplicità e attenzione alla persona.
           </p>
         </div>
-        <div class="products-grid" id="productsGrid" aria-live="polite"></div>
-
+        <div class="aroma-feature reveal">
+          <div class="aroma-feature__icon" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-scroll.png" alt="" loading="lazy" decoding="async" /></div>
+          <div>
+            <span class="contact-kicker">Risorsa gratuita</span>
+            <h3>Mini guida gratuita agli oli essenziali</h3>
+            <p>Una risorsa semplice e utile per iniziare a conoscere gli oli essenziali e il loro utilizzo nel benessere quotidiano. La guida completa sarà strutturata e fornita successivamente.</p>
+          </div>
+          <a class="btn btn--primary" href="links/#guida-oli">Richiedi la mini guida</a>
+        </div>
+        <div class="aroma-grid">
+          <article class="aroma-card reveal">
+            <div class="aroma-card__icon" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-drop.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Collezione Essenziale</h3>
+            <p>Un kit base composto da 12 oli essenziali selezionati, pensato per chi desidera iniziare con una scelta ordinata, versatile e facile da comprendere.</p>
+            <a class="btn btn--dark btn--sm" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20sulla%20Collezione%20Essenziale." target="_blank" rel="noopener">Richiedi informazioni su WhatsApp</a>
+          </article>
+          <article class="aroma-card reveal" data-delay="1">
+            <div class="aroma-card__icon" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-chat.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Consulenza aromatica personalizzata</h3>
+            <p>Un percorso su misura per scegliere gli oli essenziali più adatti alle tue esigenze, al tuo stile di vita e al tipo di beneficio che stai cercando.</p>
+            <a class="btn btn--dark btn--sm" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20parlare%20di%20una%20consulenza%20aromatica%20personalizzata." target="_blank" rel="noopener">Parla con me su WhatsApp</a>
+          </article>
+          <article class="aroma-card aroma-card--premium reveal" data-delay="2">
+            <div class="aroma-card__icon" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-spark.png" alt="" loading="lazy" decoding="async" /></div>
+            <h3>Signature Blend</h3>
+            <p>Una consulenza personalizzata abbinata a un kit benessere su misura: una proposta più curata, personale e pensata per accompagnare un rituale davvero tuo.</p>
+            <a class="btn btn--primary btn--sm" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20creare%20il%20mio%20Signature%20Blend%20personalizzato." target="_blank" rel="noopener">Crea il tuo blend personalizzato</a>
+          </article>
+        </div>
       </div>
     </section>
   </main>
@@ -327,7 +366,7 @@
         <ul>
           <li><a href="#chi-sono">Chi è Sara</a></li>
           <li><a href="#servizi">Trattamenti</a></li>
-          <li><a href="#certificazioni">Formazione</a></li>
+          <li class="client-hidden" aria-hidden="true"><a href="#certificazioni" tabindex="-1">Formazione</a></li>
           <li><a href="#prodotti">Oli essenziali</a></li>
         </ul>
       </div>
@@ -336,7 +375,7 @@
         <ul>
           <li><a href="tel:+390000000000">+39 000 000 0000</a></li>
           <li><a href="mailto:info@comeleapi.it">info@comeleapi.it</a></li>
-          <li>Milano e dintorni</li>
+          <li>Bresso · Cusano Milanino · Milano su valutazione</li>
         </ul>
       </div>
       <div class="footer-col">
@@ -364,12 +403,12 @@
   </div>
 
   <!-- Pulsante flottante di WhatsApp -->
-  <a href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20prenotare%20un%20appuntamento." class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contatta Sara su WhatsApp">
+  <a href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20su%20trattamenti,%20disponibilit%C3%A0%20e%20costi." class="whatsapp-float client-hidden" target="_blank" rel="noopener" aria-label="Contatta Sara su WhatsApp" aria-hidden="true" tabindex="-1" data-temporary-note="Pulsante flottante nascosto temporaneamente su richiesta cliente.">
     <img src="assets/img/icons/social-whatsapp.png" alt="WhatsApp" />
   </a>
 
-  <script src="assets/js/config.js?v=20260628-backend-v3"></script>
-  <script src="assets/js/data.js?v=20260628-backend-v3"></script>
-  <script src="assets/js/app.js?v=20260628-backend-v3"></script>
+  <script src="assets/js/config.js?v=20260630-client-review"></script>
+  <script src="assets/js/data.js?v=20260630-client-review"></script>
+  <script src="assets/js/app.js?v=20260630-client-review"></script>
 </body>
 </html>
