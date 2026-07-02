@@ -27,7 +27,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Una risorsa semplice per iniziare a conoscere gli oli essenziali.",
     benefits: " aiuta a orientarsi tra usi quotidiani, attenzioni di base e piccoli rituali di benessere.",
     price: "",
-    image: "https://images.unsplash.com/photo-1611073615452-4889e2d68957?auto=format&fit=crop&w=800&q=80",
+    image: "assets/img/hero/hero-massage-sara.jpg",
     link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20ricevere%20la%20mini%20guida%20gratuita%20agli%20oli%20essenziali.",
     visible: true,
     order: 0
@@ -38,7 +38,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Kit base con 12 oli essenziali selezionati.",
     benefits: " offre una base ordinata e versatile per avvicinarsi agli oli con più consapevolezza.",
     price: "",
-    image: "https://images.unsplash.com/photo-1615485925600-97237c4fc1ec?auto=format&fit=crop&w=800&q=80",
+    image: "assets/img/hero/hero-massage-sara.jpg",
     link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20sulla%20Collezione%20Essenziale.",
     visible: true,
     order: 1
@@ -49,7 +49,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Un percorso per scegliere gli oli più adatti alle esigenze personali.",
     benefits: " collega preferenze, obiettivi di benessere e modalità d'uso in modo semplice e curato.",
     price: "",
-    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80",
+    image: "assets/img/hero/hero-massage-sara.jpg",
     link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20parlare%20di%20una%20consulenza%20aromatica%20personalizzata.",
     visible: true,
     order: 2
@@ -60,7 +60,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Consulenza personalizzata con kit benessere su misura.",
     benefits: " crea un rituale più personale, premium e coerente con il momento della persona.",
     price: "",
-    image: "https://images.unsplash.com/photo-1606914469633-cb9d7b56b27e?auto=format&fit=crop&w=800&q=80",
+    image: "assets/img/hero/hero-massage-sara.jpg",
     link: "https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20creare%20il%20mio%20Signature%20Blend%20personalizzato.",
     visible: true,
     order: 3

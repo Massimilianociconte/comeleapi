@@ -90,7 +90,7 @@
   /* ---------- Rendering proposte legacy ---------- */
   const grid = $("#productsGrid");
   if (grid && window.SaraData) {
-    const fallbackProductImage = "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=70";
+    const fallbackProductImage = "assets/img/hero/hero-massage-sara.jpg";
     const render = async () => {
       grid.classList.add("is-loading");
       const products = await window.SaraData.getVisibleProducts();
@@ -255,36 +255,260 @@
     );
   }
 
-  /* ---------- Modali Privacy / Cookie ---------- */
+  /* ---------- Privacy, Cookie policy e consenso cookie ---------- */
   const overlay = $("#policyOverlay");
   const modal = $("#policyModal");
   const title = $("#policyTitle");
   const body = $("#policyBody");
 
-  const PRIVACY = `
-    <p>La presente informativa descrive come Come le Api tratta i dati personali raccolti tramite i canali di contatto e richiesta informazioni.</p>
-    <p><strong>Titolare del trattamento.</strong> Sara [cognome], referente di Come le Api, nella sua qualità di titolare autonomo.</p>
-    <p><strong>Dati raccolti.</strong> Nome, email, telefono, eventuali preferenze e messaggio.</p>
-    <p><strong>Finalità.</strong> Ricontattarti per rispondere alla tua richiesta, verificare disponibilità e fornire dettagli sui trattamenti.</p>
-    <p><strong>Base giuridica.</strong> Consenso (art. 6 lett. a GDPR).</p>
-    <p><strong>Conservazione.</strong> I dati sono conservati per il tempo strettamente necessario alla finalità e comunque non oltre 24 mesi.</p>
-    <p><strong>Tuoi diritti.</strong> Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso scrivendo a <a href="mailto:privacy@comeleapi.it" style="color:var(--terra-deep);">privacy@comeleapi.it</a>.</p>`;
+  const CONSENT_COOKIE = "comeleapi_cookie_consent";
+  const CONSENT_VERSION = "2026-07-02";
+  const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
+  const scrollLock = { active: false, y: 0 };
 
-  const COOKIE = `
-    <p>Questo sito utilizza solo cookie tecnici necessari al funzionamento (es. salvataggio delle preferenze del gestionale sul browser).</p>
-    <p>Non sono presenti cookie di profilazione né di terze parti a fini pubblicitari.</p>
-    <p>Le immagini degli oli essenziali e dei contenuti possono essere caricate da fonti esterne (es. Unsplash) che potrebbero impostare cookie tecnici propri.</p>
-    <p>Puoi gestire o disabilitare i cookie dalle impostazioni del tuo browser.</p>`;
+  function hasBlockingPopup() {
+    return modal?.classList.contains("show") || $("#cookieBanner")?.classList.contains("show");
+  }
+
+  function syncScrollLock() {
+    const shouldLock = hasBlockingPopup();
+    if (shouldLock && !scrollLock.active) {
+      scrollLock.y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      document.documentElement.classList.add("is-scroll-locked");
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollLock.y}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      scrollLock.active = true;
+      return;
+    }
+    if (!shouldLock && scrollLock.active) {
+      document.documentElement.classList.remove("is-scroll-locked");
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, scrollLock.y);
+      scrollLock.active = false;
+    }
+  }
+
+  function defaultConsent() {
+    return {
+      version: CONSENT_VERSION,
+      necessary: true,
+      analytics: false,
+      marketing: false,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  function readCookie(name) {
+    const match = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(`${name}=`));
+    if (!match) return "";
+    return decodeURIComponent(match.split("=").slice(1).join("="));
+  }
+
+  function writeCookie(name, value, maxAge) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
+  }
+
+  function normalizeConsent(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    return {
+      version: String(raw.version || ""),
+      necessary: true,
+      analytics: raw.analytics === true,
+      marketing: raw.marketing === true,
+      timestamp: raw.timestamp || ""
+    };
+  }
+
+  function storedConsent() {
+    try {
+      const fromCookie = readCookie(CONSENT_COOKIE);
+      const parsed = fromCookie ? JSON.parse(fromCookie) : null;
+      const normalized = normalizeConsent(parsed);
+      if (normalized) return normalized;
+    } catch (e) {
+      console.warn("[cookie] preferenze cookie non leggibili da cookie.", e);
+    }
+    try {
+      const fallback = window.localStorage?.getItem(CONSENT_COOKIE);
+      return normalizeConsent(fallback ? JSON.parse(fallback) : null);
+    } catch (e) {
+      console.warn("[cookie] preferenze cookie non leggibili da localStorage.", e);
+      return null;
+    }
+  }
+
+  function isConsentFresh(consent) {
+    if (!consent || consent.version !== CONSENT_VERSION || !consent.timestamp) return false;
+    const savedAt = Date.parse(consent.timestamp);
+    if (Number.isNaN(savedAt)) return false;
+    return Date.now() - savedAt < CONSENT_MAX_AGE * 1000;
+  }
+
+  function saveConsent(partial) {
+    const consent = {
+      ...defaultConsent(),
+      ...partial,
+      necessary: true,
+      timestamp: new Date().toISOString()
+    };
+    const value = JSON.stringify(consent);
+    try {
+      writeCookie(CONSENT_COOKIE, value, CONSENT_MAX_AGE);
+    } catch (e) {
+      console.warn("[cookie] impossibile scrivere il cookie tecnico.", e);
+    }
+    try {
+      window.localStorage?.setItem(CONSENT_COOKIE, value);
+    } catch (e) {
+      console.warn("[cookie] impossibile salvare fallback localStorage.", e);
+    }
+    applyConsent(consent);
+    hideCookieBanner();
+    return consent;
+  }
+
+  function applyConsent(consent) {
+    document.documentElement.dataset.analyticsConsent = consent.analytics ? "granted" : "denied";
+    document.documentElement.dataset.marketingConsent = consent.marketing ? "granted" : "denied";
+
+    $$('script[type="text/plain"][data-cookie-category]').forEach((placeholder) => {
+      const category = placeholder.dataset.cookieCategory;
+      if (!consent[category] || placeholder.dataset.loaded === "true") return;
+      const script = document.createElement("script");
+      Array.from(placeholder.attributes).forEach((attr) => {
+        if (attr.name === "type" || attr.name === "data-cookie-category" || attr.name === "data-loaded") return;
+        script.setAttribute(attr.name, attr.value);
+      });
+      script.text = placeholder.textContent || "";
+      placeholder.dataset.loaded = "true";
+      placeholder.after(script);
+    });
+
+    document.dispatchEvent(new CustomEvent("comeleapi:cookie-consent", { detail: consent }));
+  }
+
+  function consentStatusHtml() {
+    const consent = storedConsent();
+    if (!isConsentFresh(consent)) {
+      return "<p><strong>Stato attuale:</strong> nessuna scelta salvata o scelta scaduta. Sono attive solo le impostazioni tecniche necessarie.</p>";
+    }
+    const saved = new Date(consent.timestamp).toLocaleDateString("it-IT");
+    return `
+      <p><strong>Stato attuale:</strong> preferenze salvate il ${saved}.</p>
+      <ul class="policy-list">
+        <li>Cookie tecnici necessari: sempre attivi.</li>
+        <li>Cookie analytics/statistici: ${consent.analytics ? "accettati" : "rifiutati"}.</li>
+        <li>Cookie marketing/profilazione: ${consent.marketing ? "accettati" : "rifiutati"}.</li>
+      </ul>`;
+  }
+
+  function privacyHtml() {
+    return `
+      <div class="policy-content">
+        <p><strong>Ultimo aggiornamento:</strong> 2 luglio 2026.</p>
+        <p>La presente informativa è resa ai sensi degli articoli 12, 13 e 14 del Regolamento (UE) 2016/679 ("GDPR") e descrive come Come le Api tratta i dati personali raccolti tramite questo sito e tramite i canali di contatto collegati.</p>
+
+        <h4>Titolare del trattamento</h4>
+        <p><strong>Come le Api - Sara</strong>, progetto di benessere con riferimento territoriale a 20091 Bresso (Milano). Per richieste privacy: <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>.</p>
+
+        <h4>Dati trattati</h4>
+        <ul class="policy-list">
+          <li><strong>Dati di navigazione:</strong> informazioni tecniche trasmesse dal browser, come indirizzo IP, user agent, data/ora della richiesta e URL richiesto, trattate dai fornitori tecnici per erogare e proteggere il sito.</li>
+          <li><strong>Dati inviati volontariamente:</strong> nome, recapiti, contenuto dei messaggi, preferenze sul trattamento o richieste inviate via email, WhatsApp o eventuali moduli.</li>
+          <li><strong>Preferenze cookie:</strong> scelta di accettazione o rifiuto delle categorie non necessarie, conservata tramite cookie tecnico.</li>
+        </ul>
+
+        <h4>Finalità e basi giuridiche</h4>
+        <table class="policy-table">
+          <thead><tr><th>Finalità</th><th>Base giuridica</th><th>Conservazione</th></tr></thead>
+          <tbody>
+            <tr><td>Funzionamento, sicurezza e manutenzione del sito.</td><td>Legittimo interesse del titolare e necessità tecnica del servizio, art. 6 par. 1 lett. f GDPR.</td><td>Log tecnici per il tempo necessario alla sicurezza e comunque secondo i tempi dei fornitori tecnici.</td></tr>
+            <tr><td>Rispondere a richieste su trattamenti, oli essenziali e disponibilità.</td><td>Esecuzione di misure precontrattuali o contratto, art. 6 par. 1 lett. b GDPR.</td><td>Per il tempo necessario alla risposta e, salvo obblighi ulteriori, non oltre 24 mesi dall'ultimo contatto utile.</td></tr>
+            <tr><td>Gestione delle preferenze cookie.</td><td>Obbligo di documentare la scelta e consenso per eventuali categorie non tecniche, art. 6 par. 1 lett. a GDPR ed ePrivacy.</td><td>180 giorni, salvo modifica anticipata delle preferenze.</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Destinatari e fornitori</h4>
+        <p>I dati possono essere trattati da fornitori tecnici strettamente necessari alla gestione del sito, hosting, sicurezza, manutenzione, email o strumenti di messaggistica. I link verso WhatsApp, Instagram, Facebook e WebNovis aprono servizi esterni: dopo il click, i relativi gestori trattano i dati secondo le proprie informative.</p>
+
+        <h4>Trasferimenti extra SEE</h4>
+        <p>Il sito è stato configurato per caricare font e immagini principali da asset locali, evitando richieste a Google Fonts o servizi immagine esterni durante la navigazione ordinaria. L'uso volontario di servizi esterni, come WhatsApp o social network, può comportare trattamenti o trasferimenti secondo le condizioni dei rispettivi fornitori.</p>
+
+        <h4>Diritti dell'interessato</h4>
+        <p>Puoi chiedere accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso quando applicabile, scrivendo a <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>. Hai inoltre diritto di proporre reclamo al <a href="https://www.garanteprivacy.it/" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</p>
+
+        <h4>Riferimenti normativi</h4>
+        <ul class="policy-list">
+          <li><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng" target="_blank" rel="noopener">Regolamento (UE) 2016/679 - GDPR</a>.</li>
+          <li><a href="https://eur-lex.europa.eu/eli/dir/2002/58/oj/eng" target="_blank" rel="noopener">Direttiva 2002/58/CE ePrivacy</a>.</li>
+          <li><a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876" target="_blank" rel="noopener">Linee guida cookie e altri strumenti di tracciamento del Garante, 10 giugno 2021</a>.</li>
+        </ul>
+      </div>`;
+  }
+
+  function cookieHtml() {
+    return `
+      <div class="policy-content">
+        <p><strong>Ultimo aggiornamento:</strong> 2 luglio 2026.</p>
+        <p>Questa Cookie Policy descrive l'uso di cookie e strumenti analoghi sul sito Come le Api. Per impostazione predefinita sono attivi solo strumenti tecnici necessari. Eventuali strumenti analytics o marketing vengono attivati solo dopo consenso espresso.</p>
+
+        <h4>Cosa sono i cookie</h4>
+        <p>I cookie sono piccoli file o informazioni salvate nel dispositivo dell'utente. La normativa europea e le indicazioni del Garante distinguono i cookie tecnici, necessari o assimilabili, dai cookie usati per finalità ulteriori, come analytics non tecnici o profilazione, che richiedono consenso preventivo e informato.</p>
+
+        <h4>Cookie usati da questo sito</h4>
+        <table class="policy-table">
+          <thead><tr><th>Nome</th><th>Tipo</th><th>Finalità</th><th>Durata</th></tr></thead>
+          <tbody>
+            <tr><td><code>comeleapi_cookie_consent</code></td><td>Tecnico, prima parte</td><td>Memorizza la scelta dell'utente su accettazione o rifiuto delle categorie non necessarie. Non traccia la navigazione.</td><td>180 giorni</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Categorie di consenso</h4>
+        <ul class="policy-list">
+          <li><strong>Necessari:</strong> sempre attivi, servono al funzionamento del sito e alla conservazione della preferenza privacy.</li>
+          <li><strong>Statistiche:</strong> al momento non sono installati strumenti analytics. La categoria è predisposta per eventuali statistiche future, da caricare solo dopo consenso.</li>
+          <li><strong>Marketing:</strong> al momento non sono installati pixel o cookie di profilazione. La categoria è predisposta per eventuali strumenti futuri, da caricare solo dopo consenso.</li>
+        </ul>
+
+        <h4>Come funziona il consenso</h4>
+        <p>Il rifiuto non limita l'accesso al sito. Il pulsante "Rifiuta" e la chiusura del banner mantengono attivi solo i cookie tecnici. Lo scrolling o la semplice prosecuzione della navigazione non sono considerati consenso. Puoi modificare la scelta in qualsiasi momento da questa sezione.</p>
+        ${consentStatusHtml()}
+        <p><button class="btn btn--primary btn--sm" type="button" id="manageCookiePrefs">Gestisci preferenze cookie</button></p>
+
+        <h4>Riferimenti ufficiali</h4>
+        <ul class="policy-list">
+          <li><a href="https://www.garanteprivacy.it/faq/cookie" target="_blank" rel="noopener">FAQ Cookie del Garante Privacy</a>.</li>
+          <li><a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876" target="_blank" rel="noopener">Linee guida cookie e altri strumenti di tracciamento del Garante</a>.</li>
+          <li><a href="https://www.edpb.europa.eu/our-work-tools/our-documents/topic/consent_en" target="_blank" rel="noopener">Linee guida EDPB sul consenso</a>.</li>
+        </ul>
+      </div>`;
+  }
 
   function openModal(kind) {
     title.textContent = kind === "cookie" ? "Cookie Policy" : "Privacy Policy";
-    body.innerHTML = kind === "cookie" ? COOKIE : PRIVACY;
+    body.innerHTML = kind === "cookie" ? cookieHtml() : privacyHtml();
     overlay.classList.add("show");
     modal.classList.add("show");
+    syncScrollLock();
+    $("#manageCookiePrefs")?.addEventListener("click", () => {
+      closePolicy();
+      showCookieBanner(true);
+    });
   }
+
   function closePolicy() {
     overlay.classList.remove("show");
     modal.classList.remove("show");
+    syncScrollLock();
   }
 
   $("#openPrivacy")?.addEventListener("click", (e) => { e.preventDefault(); openModal("privacy"); });
@@ -294,4 +518,115 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && modal.classList.contains("show")) closePolicy();
   });
+
+  function cookieBannerTemplate() {
+    const consent = storedConsent() || defaultConsent();
+    return `
+      <section class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
+        <button class="cookie-banner__close" type="button" data-cookie-action="reject" aria-label="Chiudi e rifiuta i cookie non necessari">×</button>
+        <div class="cookie-banner__copy">
+          <span class="contact-kicker">Privacy e cookie</span>
+          <h3 id="cookieBannerTitle">Scegli quali cookie autorizzare</h3>
+          <p>Usiamo solo cookie tecnici necessari e un cookie tecnico per ricordare questa scelta. Eventuali strumenti statistici o marketing saranno attivati solo con il tuo consenso.</p>
+        </div>
+        <div class="cookie-banner__prefs" id="cookiePrefsPanel" hidden>
+          <label class="cookie-choice cookie-choice--locked">
+            <input type="checkbox" checked disabled />
+            <span><strong>Necessari</strong><small>Sempre attivi per funzionamento e sicurezza.</small></span>
+          </label>
+          <label class="cookie-choice">
+            <input type="checkbox" id="cookieAnalytics" ${consent.analytics ? "checked" : ""} />
+            <span><strong>Statistiche</strong><small>Attualmente non attivi; predisposti solo previo consenso.</small></span>
+          </label>
+          <label class="cookie-choice">
+            <input type="checkbox" id="cookieMarketing" ${consent.marketing ? "checked" : ""} />
+            <span><strong>Marketing</strong><small>Attualmente non attivi; mai caricati senza consenso.</small></span>
+          </label>
+        </div>
+        <div class="cookie-banner__actions">
+          <button class="btn btn--ghost btn--sm" type="button" data-cookie-action="settings">Personalizza</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-cookie-action="reject">Rifiuta</button>
+          <button class="btn btn--primary btn--sm" type="button" data-cookie-action="accept">Accetta tutto</button>
+          <button class="btn btn--primary btn--sm cookie-save" type="button" data-cookie-action="save" hidden>Salva preferenze</button>
+        </div>
+        <p class="cookie-banner__links"><a href="#" data-cookie-action="policy">Leggi la Cookie Policy</a></p>
+      </section>`;
+  }
+
+  function ensureCookieBanner() {
+    let banner = $("#cookieBanner");
+    if (!banner) {
+      document.body.insertAdjacentHTML("beforeend", cookieBannerTemplate());
+      banner = $("#cookieBanner");
+      bindCookieBanner(banner);
+    }
+    return banner;
+  }
+
+  function setPrefsVisible(show) {
+    const banner = ensureCookieBanner();
+    $("#cookiePrefsPanel", banner).hidden = !show;
+    $(".cookie-save", banner).hidden = !show;
+    banner.classList.toggle("is-expanded", show);
+  }
+
+  function showCookieBanner(expand = false) {
+    const banner = ensureCookieBanner();
+    banner.classList.add("show");
+    banner.removeAttribute("aria-hidden");
+    setPrefsVisible(expand);
+    syncScrollLock();
+  }
+
+  function hideCookieBanner() {
+    const banner = $("#cookieBanner");
+    if (!banner) return;
+    banner.classList.remove("show");
+    banner.setAttribute("aria-hidden", "true");
+    syncScrollLock();
+  }
+
+  function bindCookieBanner(banner) {
+    banner.addEventListener("click", (e) => {
+      const action = e.target.closest("[data-cookie-action]")?.dataset.cookieAction;
+      if (!action) return;
+      e.preventDefault();
+      if (action === "settings") {
+        setPrefsVisible(true);
+        return;
+      }
+      if (action === "policy") {
+        openModal("cookie");
+        return;
+      }
+      if (action === "accept") {
+        saveConsent({ analytics: true, marketing: true });
+        return;
+      }
+      if (action === "reject") {
+        saveConsent({ analytics: false, marketing: false });
+        return;
+      }
+      if (action === "save") {
+        saveConsent({
+          analytics: $("#cookieAnalytics", banner)?.checked === true,
+          marketing: $("#cookieMarketing", banner)?.checked === true
+        });
+      }
+    });
+  }
+
+  const initialConsent = storedConsent();
+  if (isConsentFresh(initialConsent)) {
+    applyConsent(initialConsent);
+  } else {
+    showCookieBanner(false);
+  }
+
+  window.ComeLeApiConsent = {
+    get: () => storedConsent(),
+    openPreferences: () => showCookieBanner(true),
+    reject: () => saveConsent({ analytics: false, marketing: false }),
+    acceptAll: () => saveConsent({ analytics: true, marketing: true })
+  };
 })();
