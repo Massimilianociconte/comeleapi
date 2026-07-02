@@ -932,6 +932,10 @@ h1, h2, h3, h4 {
 .aroma-card h3 {
   font-size: clamp(1.35rem, 2.4vw, 1.65rem);
 }
+.aroma-feature h3 em {
+  font-style: italic;
+  font-weight: 600;
+}
 .aroma-feature p,
 .aroma-card p {
   color: var(--ink-soft);
