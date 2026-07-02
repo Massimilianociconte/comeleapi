@@ -936,6 +936,9 @@ h1, h2, h3, h4 {
   gap: 1.4rem;
   margin-top: 1.4rem;
 }
+.aroma-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .aroma-card {
   display: flex;
   flex-direction: column;

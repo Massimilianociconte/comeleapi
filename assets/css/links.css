@@ -89,7 +89,6 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   z-index: 1;
   width: min(100%, 520px);
-  min-height: min(820px, calc(100svh - 2rem));
   display: flex;
   flex-direction: column;
   gap: 1.3rem;
@@ -279,22 +278,6 @@ a { color: inherit; text-decoration: none; }
   transform: translateX(3px);
 }
 
-.links-footer {
-  margin-top: auto;
-  padding-top: .9rem;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .45rem .8rem;
-  color: var(--ink-soft);
-  font-size: .82rem;
-}
-
-.links-footer a {
-  color: var(--terra-deep);
-  font-weight: 800;
-}
-
 @media (max-width: 460px) {
   .links-page {
     align-items: stretch;
@@ -302,7 +285,6 @@ a { color: inherit; text-decoration: none; }
   }
 
   .link-card {
-    min-height: calc(100svh - 1.5rem);
     border-radius: 26px;
     padding: 1rem;
   }
