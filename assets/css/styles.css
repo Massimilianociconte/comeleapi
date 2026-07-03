@@ -494,6 +494,50 @@ h1, h2, h3, h4 {
   border-radius: 999px;
   background: rgba(183,125,109,.62);
 }
+.hero-title.is-buzz-title {
+  max-width: 9ch;
+}
+.buzz-word {
+  position: relative;
+  display: inline-block;
+  padding-inline: .04em;
+  color: #fff7f6;
+  font-style: italic;
+}
+.buzz-word::before {
+  content: "";
+  position: absolute;
+  inset: -.17em -.28em -.07em -.22em;
+  z-index: -1;
+  border: 2px dashed rgba(255,247,246,.82);
+  border-radius: 58% 42% 56% 44%;
+  transform: rotate(-8deg);
+  filter: drop-shadow(0 0 10px rgba(254,238,239,.34));
+  animation: buzz-trace 5.2s ease-in-out infinite;
+}
+.buzz-word::after {
+  content: "";
+  position: absolute;
+  width: .16em;
+  height: .16em;
+  right: -.28em;
+  top: .02em;
+  border-radius: 999px;
+  background: #fff7f6;
+  box-shadow:
+    -.07em .03em 0 .015em rgba(255,247,246,.55),
+    0 0 14px rgba(255,247,246,.8);
+  animation: buzz-dot 3.8s ease-in-out infinite;
+}
+@keyframes buzz-trace {
+  0%, 100% { transform: rotate(-8deg) scale(1); opacity: .78; }
+  50% { transform: rotate(-2deg) scale(1.035); opacity: 1; }
+}
+@keyframes buzz-dot {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  30% { transform: translate(.18em, .16em) scale(.9); }
+  62% { transform: translate(-.12em, .34em) scale(1.08); }
+}
 
 /* ---------- About ---------- */
 .about { background: var(--cream-soft); }
@@ -704,6 +748,32 @@ h1, h2, h3, h4 {
 }
 .slogan-wrap p span {
   display: block;
+}
+.slogan-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.35rem;
+}
+.btn--instagram {
+  background: rgba(255,247,246,.94);
+  color: var(--terra-deep);
+  box-shadow: 0 18px 42px rgba(31,23,24,.22);
+  text-shadow: none;
+}
+.btn--instagram:hover {
+  background: #fffdfc;
+  color: var(--ink);
+  transform: translateY(-3px);
+  box-shadow: 0 22px 52px rgba(31,23,24,.28);
+}
+.btn--instagram .btn-icon {
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+  background: var(--cream);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(90,48,46,.1), 0 8px 18px rgba(50,23,27,.14);
+  object-fit: contain;
 }
 
 /* ---------- Certifications ---------- */

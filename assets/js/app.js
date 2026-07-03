@@ -25,6 +25,176 @@
     return base ? `${base}${path}` : path;
   }
 
+  /* ---------- Lingua pubblica ---------- */
+  const ITALIAN_TIMEZONES = new Set(["Europe/Rome", "Europe/San_Marino", "Europe/Vatican"]);
+
+  function resolveLocale() {
+    const params = new URLSearchParams(window.location.search);
+    const forced = (params.get("lang") || "").trim().toLowerCase();
+    if (forced === "it" || forced === "en") return forced;
+
+    const languages = (navigator.languages && navigator.languages.length)
+      ? navigator.languages
+      : [navigator.language || ""];
+    const primaryLanguage = String(languages[0] || "").toLowerCase();
+    const browserLooksItalian = primaryLanguage.startsWith("it");
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    const timezoneLooksItalian = !timeZone || ITALIAN_TIMEZONES.has(timeZone);
+
+    return browserLooksItalian && timezoneLooksItalian ? "it" : "en";
+  }
+
+  const currentLocale = resolveLocale();
+  const isEnglish = currentLocale === "en";
+  const instagramUrl = "https://www.instagram.com/comeleapi/";
+
+  function setText(selector, text, ctx = document) {
+    const el = $(selector, ctx);
+    if (el) el.textContent = text;
+  }
+
+  function setAllText(selector, text, ctx = document) {
+    $$(selector, ctx).forEach((el) => { el.textContent = text; });
+  }
+
+  function setHtml(selector, html, ctx = document) {
+    const el = $(selector, ctx);
+    if (el) el.innerHTML = html;
+  }
+
+  function setAttr(selector, attr, value, ctx = document) {
+    const el = $(selector, ctx);
+    if (el) el.setAttribute(attr, value);
+  }
+
+  function setAllAttr(selector, attr, value, ctx = document) {
+    $$(selector, ctx).forEach((el) => el.setAttribute(attr, value));
+  }
+
+  function setButtonText(selector, text) {
+    const button = $(selector);
+    if (!button) return;
+    const icon = $("img", button);
+    button.textContent = text;
+    if (icon) {
+      button.appendChild(document.createTextNode(" "));
+      button.appendChild(icon);
+    }
+  }
+
+  function whatsAppUrl(message) {
+    return `https://wa.me/390000000000?text=${encodeURIComponent(message)}`;
+  }
+
+  function applyEnglishLocale() {
+    document.documentElement.lang = "en";
+    document.title = "Come le Api - Wellbeing, Massage & Personal Care";
+    setAttr('meta[name="description"]', "content", "Come le Api is Sara's wellbeing and massage project: at-home treatments, tailored wellness paths and essential oils for daily balance.");
+    setAttr('meta[property="og:title"]', "content", "Come le Api - Wellbeing & Massage");
+    setAttr('meta[property="og:description"]', "content", "A wellbeing project curated by Sara: essential oils, tailored treatments and direct contact in 20091 Bresso, Milan.");
+
+    setAllAttr(".brand", "aria-label", "Come le Api - home");
+    setAttr("#mainNav", "aria-label", "Main navigation");
+    setAttr("#navToggle", "aria-label", "Open menu");
+    setAttr("#closePolicy", "aria-label", "Close");
+    setText('.nav a[href="#prodotti"]', "Essential oils");
+    setText('.nav a[href="#servizi"]', "Treatments");
+    setText('.nav a[href="#chi-sono"]', "The founder");
+    setButtonText(".nav-cta", "Message me on WhatsApp");
+    setAttr(".nav-cta", "href", whatsAppUrl("Hi Sara, I would like information about the treatments."));
+
+    setAttr(".hero-frame img", "alt", "Professional shoulder and neck relaxation treatment");
+    const heroTitle = $(".hero-title");
+    if (heroTitle) {
+      heroTitle.classList.add("is-buzz-title");
+      heroTitle.innerHTML = '<span class="buzz-word">Buzz</span> back to you';
+    }
+
+    setText("#prodotti .eyebrow", "Pure essences");
+    setText("#prodotti .section-title", "Authentic wellbeing");
+    setText("#prodotti .section-lead", "Body care begins with listening, then asks for presence and consistency. Essential oils are made to be simple to use, supporting you every day toward balance, energy and vitality, inside and out.");
+    setHtml(".aroma-feature h3", "<em>The Essential</em>");
+    setText(".aroma-feature p", "A concise guide to the fundamentals, created to help you begin exploring essential oils.");
+    setText(".aroma-feature .btn", "Discover The Essential");
+    setText(".aroma-grid--two .aroma-card:nth-child(1) h3", "Essential Collection");
+    setText(".aroma-grid--two .aroma-card:nth-child(1) p", "A starter kit with 12 foundational essential oils, selected for you and designed to support everyday needs.");
+    setText(".aroma-grid--two .aroma-card:nth-child(1) .btn", "Request information on WhatsApp");
+    setAttr(".aroma-grid--two .aroma-card:nth-child(1) .btn", "href", whatsAppUrl("Hi Sara, I would like information about the Essential Collection."));
+    setText(".aroma-grid--two .aroma-card:nth-child(2) p", "A personalized aromatic consultation: together we will choose the essential oils best suited to your needs for a tailored wellness path.");
+    setText(".aroma-grid--two .aroma-card:nth-child(2) .btn", "Message me on WhatsApp");
+    setAttr(".aroma-grid--two .aroma-card:nth-child(2) .btn", "href", whatsAppUrl("Hi Sara, I would like information about the Signature Blend."));
+
+    setText("#servizi .eyebrow", "Treatments");
+    setText("#servizi .section-title", "A need, not a luxury");
+    setText("#servizi .section-lead", "Hands have always spoken: they hold, soothe, pray, love. Massage is born from this ancient language: a contact that listens to the body and guides it back toward balance.");
+    const serviceNames = [
+      "Sports massage",
+      "Decontracting massage",
+      "Relaxing massage",
+      "Lymphatic drainage massage",
+      "Focused 30-minute treatment",
+      "Kinesio taping",
+      "Therapeutic massage with essential oils"
+    ];
+    $$("#servizi .service-card h3").forEach((el, index) => {
+      if (serviceNames[index]) el.textContent = serviceNames[index];
+    });
+
+    setText(".slogan-kicker", "My mission");
+    setText("#slogan-title", "Every drop is an act of care for you");
+    setHtml(".slogan-wrap p", "<span>Like bees, which gather only the best from every flower, I select pure essential oils and natural treatments for you that bring the body back to its original balance.</span><span>One scent, one pressure, one breath at a time.</span>");
+    setButtonText(".slogan-actions .btn--instagram", "Follow me on Instagram");
+    setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
+
+    setText(".about-text .eyebrow", "Sara Bordenga");
+    setText(".about-text .section-title", "The body never lies.");
+    const aboutParagraphs = $$(".about-text > p.reveal");
+    if (aboutParagraphs[0]) aboutParagraphs[0].textContent = "The body is a perfect machine. If you listen to it and nourish it with balance, it gives you wellbeing. Self-love is the highest expression of health.";
+    if (aboutParagraphs[1]) aboutParagraphs[1].textContent = "Sara has been a professional athlete from an early age, and sport taught her a simple truth: the body never lies. Listening to it, respecting it and nourishing it consistently is the only real secret to feeling well. Massage, treatments and essential oils are natural, pure tools capable of bringing the body back to its natural balance.";
+    if (aboutParagraphs[2]) aboutParagraphs[2].textContent = "Her goal is to help people rediscover vitality and energy through a natural and simple lifestyle. Treatments that are not a luxury, but daily rituals that restore listening to the body and mind. Because feeling well should not be an exception, but the norm. Your body is already speaking to you. Feeling well is a daily choice. Do not wait!";
+    const miniCards = ["Professional Diploma", "Aromatherapy", "Hygiene and safety"];
+    $$(".about-mini-card p").forEach((el, index) => {
+      if (miniCards[index]) el.innerHTML = `<b>${miniCards[index]}</b>`;
+    });
+
+    setHtml(".about-photo .tag", '<img class="tag-icon" src="assets/img/icons/icon-seal.png" width="18" height="18" alt="" loading="lazy" decoding="async" /> Massage & holistic wellbeing');
+    setText(".booking .eyebrow", "Direct contact");
+    setText(".booking .section-title", "Let's talk about the treatment best suited to you.");
+    setText(".booking .section-lead", "Message me on WhatsApp to tell me what you are looking for, check availability and receive costs and details clearly and confidentially.");
+    setText(".benefits-box h3", "At-home treatments");
+    const benefits = [
+      "Treatments are available at home in the Bresso and Cusano Milanino areas.",
+      "For Milan, availability is assessed based on the area and the needs of the treatment.",
+      "An operating space with a dedicated treatment room is being defined, designed to offer an even more welcoming, private and professional environment."
+    ];
+    $$(".benefits-box li span:last-child").forEach((el, index) => {
+      if (benefits[index]) el.textContent = benefits[index];
+    });
+    setText(".booking .contact-kicker", "Availability and costs");
+    setText(".booking .contact-card h3", "One simple message, then we evaluate it together.");
+    setText(".booking .contact-card > p", "For information, availability and treatment details, WhatsApp is the quickest channel. I reply discreetly and help you understand which option may suit you best.");
+    setButtonText(".booking .contact-actions .btn--primary", "Request costs and details");
+    setAttr(".booking .contact-actions .btn--primary", "href", whatsAppUrl("Hi Sara, I would like to receive costs and details for a treatment."));
+    setText(".booking .contact-actions .btn--ghost", "Call Sara");
+    setHtml(".booking .form-note", 'Messages remain confidential and are used only to reply to your request. Read the <a href="#footer">privacy policy</a>.');
+
+    const footerCols = $$(".footer-col");
+    if (footerCols[0]) setText("h5", "Navigation", footerCols[0]);
+    if (footerCols[1]) setText("h5", "Contact", footerCols[1]);
+    if (footerCols[2]) setText("h5", "Legal", footerCols[2]);
+    setText('.footer-col a[href="#prodotti"]', "Essential oils");
+    setText('.footer-col a[href="#servizi"]', "Treatments");
+    setText('.footer-col a[href="#chi-sono"]', "The founder");
+    setText("#openCookie", "Cookie policy");
+    setText("#openPrivacy", "Privacy policy");
+    setHtml(".footer-bottom > span", '© <span id="year"></span> Come le Api. All rights reserved.');
+    setText(".btn-webnovis", "Crafted with care by WebNovis");
+    setAllAttr('.social-link--instagram', "href", instagramUrl);
+    setAllAttr('.social-link--instagram', "aria-label", "Come le Api on Instagram");
+  }
+
+  if (isEnglish) applyEnglishLocale();
+
   /* ---------- Year ---------- */
   const yearEl = $("#year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -97,7 +267,7 @@
       if (!products.length) {
         grid.innerHTML = `
           <p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:2rem;">
-            Al momento non ci sono prodotti in vetrina. Torna a trovarci presto.
+            ${isEnglish ? "There are no featured products at the moment. Please come back soon." : "Al momento non ci sono prodotti in vetrina. Torna a trovarci presto."}
           </p>`;
         grid.classList.remove("is-loading");
         return;
@@ -108,18 +278,18 @@
         <article class="product-card ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}" aria-disabled="${unavailable ? "true" : "false"}">
           <div class="product-img">
             <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
-            ${unavailable ? `<span class="availability-badge">Esaurito</span>` : ""}
+            ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
           </div>
           <div class="product-body">
             <h3>${escapeHtml(p.name)}</h3>
             <p class="desc">${escapeHtml(p.shortDesc)}</p>
-            <div class="benefits"><b>Benefici:</b> ${escapeHtml(p.benefits)}</div>
+            <div class="benefits"><b>${isEnglish ? "Benefits:" : "Benefici:"}</b> ${escapeHtml(p.benefits)}</div>
             ${unavailable ? `
-            <span class="btn btn--disabled btn--sm" aria-label="${escapeHtml(p.name)} non disponibile">
-              Prossimamente disponibile
+            <span class="btn btn--disabled btn--sm" aria-label="${escapeHtml(p.name)} ${isEnglish ? "not available" : "non disponibile"}">
+              ${isEnglish ? "Coming soon" : "Prossimamente disponibile"}
             </span>` : `
             <a class="btn btn--dark btn--sm" href="${escapeHtml(p.link)}" target="_blank" rel="noopener nofollow">
-              Richiedi dettagli
+              ${isEnglish ? "Request details" : "Richiedi dettagli"}
               <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="16" height="16" alt="" loading="lazy" decoding="async" />
             </a>`}
           </div>
@@ -214,7 +384,7 @@
       try {
         if (submit) {
           submit.disabled = true;
-          submit.textContent = "Invio in corso...";
+          submit.textContent = isEnglish ? "Sending..." : "Invio in corso...";
         }
         const response = await fetch(apiUrl("/api/contact"), {
           method: "POST",
@@ -226,15 +396,17 @@
           body: JSON.stringify(payload)
         });
         const result = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(result.error || "Invio non riuscito. Riprova tra poco.");
-        success.textContent = "✓ Richiesta inviata. Ti ricontatto entro 24 ore con disponibilità e dettagli.";
+        if (!response.ok) throw new Error(result.error || (isEnglish ? "Sending failed. Please try again shortly." : "Invio non riuscito. Riprova tra poco."));
+        success.textContent = isEnglish
+          ? "✓ Request sent. I will get back to you within 24 hours with availability and details."
+          : "✓ Richiesta inviata. Ti ricontatto entro 24 ore con disponibilità e dettagli.";
         success.classList.remove("err");
         success.classList.add("show");
         form.reset();
         success.scrollIntoView({ behavior: "smooth", block: "center" });
         setTimeout(() => success.classList.remove("show"), 6000);
       } catch (error) {
-        success.textContent = error.message || "Invio non riuscito. Riprova tra poco.";
+        success.textContent = error.message || (isEnglish ? "Sending failed. Please try again shortly." : "Invio non riuscito. Riprova tra poco.");
         success.classList.add("err", "show");
         success.scrollIntoView({ behavior: "smooth", block: "center" });
       } finally {
@@ -399,9 +571,21 @@
   function consentStatusHtml() {
     const consent = storedConsent();
     if (!isConsentFresh(consent)) {
+      if (isEnglish) {
+        return "<p><strong>Current status:</strong> no saved choice or expired choice. Only strictly necessary technical settings are active.</p>";
+      }
       return "<p><strong>Stato attuale:</strong> nessuna scelta salvata o scelta scaduta. Sono attive solo le impostazioni tecniche necessarie.</p>";
     }
-    const saved = new Date(consent.timestamp).toLocaleDateString("it-IT");
+    const saved = new Date(consent.timestamp).toLocaleDateString(isEnglish ? "en-GB" : "it-IT");
+    if (isEnglish) {
+      return `
+      <p><strong>Current status:</strong> preferences saved on ${saved}.</p>
+      <ul class="policy-list">
+        <li>Strictly necessary technical cookies: always active.</li>
+        <li>Analytics/statistics cookies: ${consent.analytics ? "accepted" : "rejected"}.</li>
+        <li>Marketing/profiling cookies: ${consent.marketing ? "accepted" : "rejected"}.</li>
+      </ul>`;
+    }
     return `
       <p><strong>Stato attuale:</strong> preferenze salvate il ${saved}.</p>
       <ul class="policy-list">
@@ -412,6 +596,49 @@
   }
 
   function privacyHtml() {
+    if (isEnglish) {
+      return `
+      <div class="policy-content">
+        <p><strong>Last updated:</strong> 2 July 2026.</p>
+        <p>This notice is provided under Articles 12, 13 and 14 of Regulation (EU) 2016/679 ("GDPR") and explains how Come le Api processes personal data collected through this website and through the linked contact channels.</p>
+
+        <h4>Data controller</h4>
+        <p><strong>Come le Api - Sara</strong>, wellbeing project based around 20091 Bresso, Milan. For privacy requests: <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>.</p>
+
+        <h4>Data processed</h4>
+        <ul class="policy-list">
+          <li><strong>Browsing data:</strong> technical information sent by the browser, such as IP address, user agent, request date/time and requested URL, processed by technical providers to deliver and protect the website.</li>
+          <li><strong>Data voluntarily sent:</strong> name, contact details, message content, treatment preferences or requests sent by email, WhatsApp or any forms.</li>
+          <li><strong>Cookie preferences:</strong> the acceptance or refusal of non-essential categories, stored through a technical cookie.</li>
+        </ul>
+
+        <h4>Purposes and legal bases</h4>
+        <table class="policy-table">
+          <thead><tr><th>Purpose</th><th>Legal basis</th><th>Retention</th></tr></thead>
+          <tbody>
+            <tr><td>Website operation, security and maintenance.</td><td>Controller's legitimate interest and technical necessity of the service, Article 6(1)(f) GDPR.</td><td>Technical logs for the time required for security and according to technical providers' retention periods.</td></tr>
+            <tr><td>Replying to requests about treatments, essential oils and availability.</td><td>Performance of pre-contractual measures or contract, Article 6(1)(b) GDPR.</td><td>For the time required to reply and, unless further obligations apply, no longer than 24 months from the last useful contact.</td></tr>
+            <tr><td>Managing cookie preferences.</td><td>Need to document the choice and consent for any non-technical categories, Article 6(1)(a) GDPR and ePrivacy rules.</td><td>180 days, unless preferences are changed earlier.</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Recipients and providers</h4>
+        <p>Data may be processed by technical providers strictly necessary for website hosting, security, maintenance, email or messaging tools. Links to WhatsApp, Instagram, Facebook and WebNovis open external services: after the click, those providers process data under their own privacy notices.</p>
+
+        <h4>Transfers outside the EEA</h4>
+        <p>The website is configured to load main fonts and images from local assets, avoiding requests to Google Fonts or external image services during ordinary browsing. Voluntary use of external services, such as WhatsApp or social networks, may involve processing or transfers under the relevant providers' terms.</p>
+
+        <h4>Data subject rights</h4>
+        <p>You may request access, rectification, erasure, restriction, portability, objection and withdrawal of consent where applicable by writing to <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>. You also have the right to lodge a complaint with the <a href="https://www.garanteprivacy.it/" target="_blank" rel="noopener">Italian Data Protection Authority</a>.</p>
+
+        <h4>Official references</h4>
+        <ul class="policy-list">
+          <li><a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng" target="_blank" rel="noopener">Regulation (EU) 2016/679 - GDPR</a>.</li>
+          <li><a href="https://eur-lex.europa.eu/eli/dir/2002/58/oj/eng" target="_blank" rel="noopener">Directive 2002/58/EC - ePrivacy</a>.</li>
+          <li><a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876" target="_blank" rel="noopener">Italian Data Protection Authority cookie guidelines, 10 June 2021</a>.</li>
+        </ul>
+      </div>`;
+    }
     return `
       <div class="policy-content">
         <p><strong>Ultimo aggiornamento:</strong> 2 luglio 2026.</p>
@@ -456,6 +683,43 @@
   }
 
   function cookieHtml() {
+    if (isEnglish) {
+      return `
+      <div class="policy-content">
+        <p><strong>Last updated:</strong> 2 July 2026.</p>
+        <p>This Cookie Policy explains the use of cookies and similar tools on the Come le Api website. By default, only strictly necessary technical tools are active. Any analytics or marketing tools are activated only after express consent.</p>
+
+        <h4>What cookies are</h4>
+        <p>Cookies are small files or pieces of information stored on the user's device. European rules and the Italian Data Protection Authority distinguish technical cookies, which are necessary or equivalent, from cookies used for further purposes, such as non-technical analytics or profiling, which require prior informed consent.</p>
+
+        <h4>Cookies used by this website</h4>
+        <table class="policy-table">
+          <thead><tr><th>Name</th><th>Type</th><th>Purpose</th><th>Duration</th></tr></thead>
+          <tbody>
+            <tr><td><code>comeleapi_cookie_consent</code></td><td>Technical, first party</td><td>Stores the user's acceptance or refusal of non-essential categories. It does not track browsing.</td><td>180 days</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Consent categories</h4>
+        <ul class="policy-list">
+          <li><strong>Necessary:</strong> always active, required for website operation and for storing the privacy preference.</li>
+          <li><strong>Statistics:</strong> no analytics tools are currently installed. This category is prepared for any future statistics tools, to be loaded only after consent.</li>
+          <li><strong>Marketing:</strong> no profiling pixels or cookies are currently installed. This category is prepared for any future tools, never loaded without consent.</li>
+        </ul>
+
+        <h4>How consent works</h4>
+        <p>Refusing does not limit access to the website. The "Reject" button and closing the banner keep only technical cookies active. Scrolling or simply continuing navigation is not treated as consent. You can change your choice at any time from this section.</p>
+        ${consentStatusHtml()}
+        <p><button class="btn btn--primary btn--sm" type="button" id="manageCookiePrefs">Manage cookie preferences</button></p>
+
+        <h4>Official references</h4>
+        <ul class="policy-list">
+          <li><a href="https://www.garanteprivacy.it/faq/cookie" target="_blank" rel="noopener">Italian Data Protection Authority cookie FAQ</a>.</li>
+          <li><a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876" target="_blank" rel="noopener">Cookie and tracking tools guidelines</a>.</li>
+          <li><a href="https://www.edpb.europa.eu/our-work-tools/our-documents/topic/consent_en" target="_blank" rel="noopener">EDPB consent guidelines</a>.</li>
+        </ul>
+      </div>`;
+    }
     return `
       <div class="policy-content">
         <p><strong>Ultimo aggiornamento:</strong> 2 luglio 2026.</p>
@@ -494,7 +758,9 @@
   }
 
   function openModal(kind) {
-    title.textContent = kind === "cookie" ? "Cookie Policy" : "Privacy Policy";
+    title.textContent = kind === "cookie"
+      ? (isEnglish ? "Cookie Policy" : "Cookie Policy")
+      : (isEnglish ? "Privacy Policy" : "Privacy Policy");
     body.innerHTML = kind === "cookie" ? cookieHtml() : privacyHtml();
     overlay.classList.add("show");
     modal.classList.add("show");
@@ -521,6 +787,38 @@
 
   function cookieBannerTemplate() {
     const consent = storedConsent() || defaultConsent();
+    if (isEnglish) {
+      return `
+      <section class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
+        <button class="cookie-banner__close" type="button" data-cookie-action="reject" aria-label="Close and reject non-essential cookies">×</button>
+        <div class="cookie-banner__copy">
+          <span class="contact-kicker">Privacy and cookies</span>
+          <h3 id="cookieBannerTitle">Choose which cookies to allow</h3>
+          <p>We use only strictly necessary technical cookies and one technical cookie to remember this choice. Any statistics or marketing tools will be activated only with your consent.</p>
+        </div>
+        <div class="cookie-banner__prefs" id="cookiePrefsPanel" hidden>
+          <label class="cookie-choice cookie-choice--locked">
+            <input type="checkbox" checked disabled />
+            <span><strong>Necessary</strong><small>Always active for operation and security.</small></span>
+          </label>
+          <label class="cookie-choice">
+            <input type="checkbox" id="cookieAnalytics" ${consent.analytics ? "checked" : ""} />
+            <span><strong>Statistics</strong><small>Not currently active; prepared only with prior consent.</small></span>
+          </label>
+          <label class="cookie-choice">
+            <input type="checkbox" id="cookieMarketing" ${consent.marketing ? "checked" : ""} />
+            <span><strong>Marketing</strong><small>Not currently active; never loaded without consent.</small></span>
+          </label>
+        </div>
+        <div class="cookie-banner__actions">
+          <button class="btn btn--ghost btn--sm" type="button" data-cookie-action="settings">Customize</button>
+          <button class="btn btn--ghost btn--sm" type="button" data-cookie-action="reject">Reject</button>
+          <button class="btn btn--primary btn--sm" type="button" data-cookie-action="accept">Accept all</button>
+          <button class="btn btn--primary btn--sm cookie-save" type="button" data-cookie-action="save" hidden>Save preferences</button>
+        </div>
+        <p class="cookie-banner__links"><a href="#" data-cookie-action="policy">Read the Cookie Policy</a></p>
+      </section>`;
+    }
     return `
       <section class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
         <button class="cookie-banner__close" type="button" data-cookie-action="reject" aria-label="Chiudi e rifiuta i cookie non necessari">×</button>
