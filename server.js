@@ -167,7 +167,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Trattamento skincare luminoso per una pelle dall'aspetto più vitale e uniforme.",
     benefits: "Pensato per rituali viso più curati: texture, profumo e attivi cosmetici lavorano insieme per una pelle dall'aspetto più radioso.",
     price: "Prezzo sul link",
-    image: "assets/img/products/skincare-glow.jpg",
+    image: "assets/img/products/bloom-skin.png",
     link: "https://www.youngliving.com/apps/enrollment/social-links/f6bea7b5-fff7-4ad1-a3a6-c4f8fa265aab",
     visible: true,
     order: 9
@@ -178,7 +178,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Selezione beauty e benessere per una routine luminosa, energica e curata.",
     benefits: "Unisce prodotti pensati per glow, freschezza e presenza: ideale quando vuoi sentirti ordinata, vitale e pronta a brillare.",
     price: "Prezzo sul link",
-    image: "assets/img/products/skincare-glow.jpg",
+    image: "assets/img/products/Shine-Bright-like-a-Diamond.png",
     link: "https://www.youngliving.com/apps/enrollment/social-links/d8202be7-c994-433a-9f38-7d7e1a7f3146",
     visible: true,
     order: 10
@@ -189,7 +189,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Percorso naturale pensato per accompagnare la donna nelle fasi di cambiamento.",
     benefits: "Una routine di supporto al benessere quotidiano, con oli e prodotti scelti per equilibrio, presenza e ascolto del corpo.",
     price: "Prezzo sul link",
-    image: "assets/img/products/personal-care.jpg",
+    image: "assets/img/products/bye-bye-menopausa.png",
     link: "https://www.youngliving.com/apps/enrollment/social-links/8833dee2-aab2-46e1-94d0-c7bb78d5800d",
     visible: true,
     order: 11
