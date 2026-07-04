@@ -99,15 +99,14 @@
     setAttr("#closePolicy", "aria-label", "Close");
     setText('.nav a[href="#prodotti"]', "Essential oils");
     setText('.nav a[href="#servizi"]', "Treatments");
-    setText('.nav a[href="#chi-sono"]', "The founder");
+    setText('.nav a[href="#chi-sono"]', "The Founder");
     setButtonText(".nav-cta", "Message me on WhatsApp");
     setAttr(".nav-cta", "href", whatsAppUrl("Hi Sara, I would like information about the treatments."));
 
     setAttr(".hero-frame img", "alt", "Professional shoulder and neck relaxation treatment");
     const heroTitle = $(".hero-title");
     if (heroTitle) {
-      heroTitle.classList.add("is-buzz-title");
-      heroTitle.innerHTML = '<span class="buzz-word">Buzz</span> back to you';
+      heroTitle.textContent = "Buzz back to you";
     }
 
     setText("#prodotti .eyebrow", "Pure essences");

@@ -49,12 +49,7 @@
   const links = $$(".links-list .link-button");
   const copy = [
     {
-      strong: "Message me on WhatsApp",
-      small: "",
-      href: whatsAppUrl("Hi Sara, I would like to request availability for a treatment.")
-    },
-    {
-      strong: "The Essential",
+      strong: "<em>The Essential</em>",
       small: "A concise guide to essential oils for your natural wellbeing",
       href: whatsAppUrl("Hi Sara, I would like to receive the free essential oils mini guide.")
     },
@@ -88,7 +83,8 @@
   links.forEach((link, index) => {
     const item = copy[index];
     if (!item) return;
-    setText("strong", item.strong, link);
+    const strong = $("strong", link);
+    if (strong) strong.innerHTML = item.strong;
     setText("small", item.small, link);
     link.setAttribute("href", item.href);
   });
