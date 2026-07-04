@@ -24,58 +24,112 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 
 const DEFAULT_PRODUCTS = [
   {
-    id: "p-lavanda", name: "Olio Essenziale di Lavanda",
-    short_desc: "Rilassante e calmante, ideale per la sera.",
-    benefits: "favorisce il relax, riduce tensione e stress, migliora il sonno.",
-    price: "14,90 €",
-    image: "https://images.unsplash.com/photo-1611073615452-4889e2d68957?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+lavanda",
+    id: "p-collezione-essenziale", name: "collezione essenziale",
+    short_desc: "Kit introduttivo con oli essenziali e diffusore per costruire rituali quotidiani semplici e versatili.",
+    benefits: "Unisce diffusione aromatica e oli trasversali per accompagnare casa, energia, respiro e momenti di calma con un approccio ordinato.",
+    price: "196,41 €",
+    image: "assets/img/products/youngliving-premium-starter-kit.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/f3f1cb39-39f4-4f4c-93a3-d869c197613d",
     visible: true, order: 0
   },
   {
-    id: "p-eucalipto", name: "Olio Essenziale di Eucalipto",
-    short_desc: "Balsamico e rinfrescante, libera le vie respiratorie.",
-    benefits: "purifica l'aria, rinfresca, utile in caso di raffreddore.",
-    price: "12,50 €",
-    image: "https://images.unsplash.com/photo-1615485925600-97237c4fc1ec?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+eucalipto",
+    id: "p-baby-essentials", name: "Baby Essentials",
+    short_desc: "Starter kit delicato con diffusore Feather the Owl e oli KidScents per piccoli rituali di famiglia.",
+    benefits: "Pensato per la routine dei più piccoli: atmosfera serale, comfort e profumi morbidi, sempre con uso consapevole e adeguato all'età.",
+    price: "162,25 €",
+    image: "assets/img/products/youngliving-baby-essentials.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/ddab525d-a08a-4c2b-a7ed-c7e2c0522d33",
     visible: true, order: 1
   },
   {
-    id: "p-rosa", name: "Olio Essenziale di Rosa Damascena",
-    short_desc: "Elegante e nutriente, per una pelle morbida e vellutata.",
-    benefits: "idrata la pelle, equilibra le emozioni, profumo avvolgente.",
-    price: "29,00 €",
-    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+rosa+damascena",
+    id: "p-sweet-home", name: "Sweet Home",
+    short_desc: "Selezione per rendere la casa più accogliente, fresca e armoniosa con note naturali e pulite.",
+    benefits: "Combina aromi luminosi e morbidi per profumare gli ambienti e trasformare la casa in uno spazio più ordinato, sereno e familiare.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/home-night.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/91b5e23d-752e-440c-ba56-bf459688c4c1",
     visible: true, order: 2
   },
   {
-    id: "p-menta", name: "Olio Essenziale di Menta Piperita",
-    short_desc: "Tonificante e rinfrescante, risveglia mente e corpo.",
-    benefits: "rinfresca, stimola la concentrazione, allevia la stanchezza.",
-    price: "11,90 €",
-    image: "https://images.unsplash.com/photo-1606914469633-cb9d7b56b27e?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+menta+piperita",
+    id: "p-dolce-notte", name: "Dolce Notte",
+    short_desc: "Blend e oli per accompagnare il rituale della sera e preparare un ambiente più disteso.",
+    benefits: "Note avvolgenti e rilassanti per rallentare, respirare e chiudere la giornata con un gesto semplice di cura.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/home-night.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/82e13afb-0fa8-4efa-a0b8-2abad12ebd60",
     visible: true, order: 3
   },
   {
-    id: "p-arancio", name: "Olio Essenziale di Arancio Dolce",
-    short_desc: "Solare e luminoso, diffonde ottimismo e leggerezza.",
-    benefits: "migliora l'umore, illumina l'ambiente, dolce e delicato.",
-    price: "10,50 €",
-    image: "https://images.unsplash.com/photo-1582194720944-3e6d6891eba7?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+arancio+dolce",
+    id: "p-gym-rat", name: "Gym rat",
+    short_desc: "Set aromatico per chi vive movimento, allenamento e recupero con energia.",
+    benefits: "Note fresche e toniche da integrare prima o dopo l'attività fisica, per sostenere focus, respiro e sensazione di leggerezza.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/sport-recovery.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/88d08118-3dfa-4d07-b492-fbe9bf144bf3",
     visible: true, order: 4
   },
   {
-    id: "p-incenso", name: "Olio Essenziale di Incenso",
-    short_desc: "Profondo e meditativo, per momenti di raccoglimento.",
-    benefits: "favorisce la meditazione, calma la mente, aroma spirituale.",
-    price: "19,90 €",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80",
-    link: "https://www.google.com/search?q=olio+essenziale+incenso",
+    id: "p-per-lui", name: "Per Lui",
+    short_desc: "Selezione dal carattere pulito, legnoso e deciso per una routine maschile naturale.",
+    benefits: "Unisce note fresche e profonde per cura personale, ambiente e momenti di reset quotidiano, senza risultare invadente.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/personal-care.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/a5880fa9-bf5e-4e11-bcad-c39343baa1fa",
     visible: true, order: 5
+  },
+  {
+    id: "p-per-lei", name: "Per Lei",
+    short_desc: "Percorso aromatico femminile, morbido e luminoso, pensato per equilibrio e cura quotidiana.",
+    benefits: "Note floreali e armoniche per rituali di pelle, respiro e presenza, con un profilo elegante e naturale.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/personal-care.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/562399ef-a072-4f8e-811e-2e0ec43abdd6",
+    visible: true, order: 6
+  },
+  {
+    id: "p-animal-scents", name: "Animal scents",
+    short_desc: "Linea dedicata alla cura aromatica degli animali, con prodotti specifici e approccio delicato.",
+    benefits: "Aiuta a creare una routine più attenta e rispettosa per casa e compagni animali, usando prodotti dedicati e non improvvisati.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/family-care.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/ee09a34b-0ef7-4169-82c5-9e2115659705",
+    visible: true, order: 7
+  },
+  {
+    id: "p-balance-skin", name: "BALANCE skin",
+    short_desc: "Routine skincare essenziale per una pelle che cerca equilibrio, freschezza e semplicità.",
+    benefits: "Combina passaggi mirati per pulizia, idratazione e comfort cutaneo, con una sensazione leggera, pulita e ordinata.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/skincare-glow.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/fdce81cc-3f59-415c-8dc0-ca127f413431",
+    visible: true, order: 8
+  },
+  {
+    id: "p-bloom-skin", name: "BLOOM skin",
+    short_desc: "Trattamento skincare luminoso per una pelle dall'aspetto più vitale e uniforme.",
+    benefits: "Pensato per rituali viso più curati: texture, profumo e attivi cosmetici lavorano insieme per una pelle dall'aspetto più radioso.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/skincare-glow.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/f6bea7b5-fff7-4ad1-a3a6-c4f8fa265aab",
+    visible: true, order: 9
+  },
+  {
+    id: "p-shine-bright-like-a-diamond", name: "Shine Bright like a Diamond",
+    short_desc: "Selezione beauty e benessere per una routine luminosa, energica e curata.",
+    benefits: "Unisce prodotti pensati per glow, freschezza e presenza: ideale quando vuoi sentirti ordinata, vitale e pronta a brillare.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/skincare-glow.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/d8202be7-c994-433a-9f38-7d7e1a7f3146",
+    visible: true, order: 10
+  },
+  {
+    id: "p-bye-bye-menopausa", name: "Bye Bye Menopausa",
+    short_desc: "Percorso naturale pensato per accompagnare la donna nelle fasi di cambiamento.",
+    benefits: "Una routine di supporto al benessere quotidiano, con oli e prodotti scelti per equilibrio, presenza e ascolto del corpo.",
+    price: "Prezzo sul link",
+    image: "assets/img/products/personal-care.jpg",
+    link: "https://www.youngliving.com/apps/enrollment/social-links/8833dee2-aab2-46e1-94d0-c7bb78d5800d",
+    visible: true, order: 11
   }
 ];
 

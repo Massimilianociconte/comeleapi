@@ -116,13 +116,9 @@
     setHtml(".aroma-feature h3", "<em>The Essential</em>");
     setText(".aroma-feature p", "A concise guide to the fundamentals, created to help you begin exploring essential oils.");
     setText(".aroma-feature .btn", "Discover The Essential");
-    setText(".aroma-grid--two .aroma-card:nth-child(1) h3", "Essential Collection");
-    setText(".aroma-grid--two .aroma-card:nth-child(1) p", "A starter kit with 12 foundational essential oils, selected for you and designed to support everyday needs.");
-    setText(".aroma-grid--two .aroma-card:nth-child(1) .btn", "Request information on WhatsApp");
-    setAttr(".aroma-grid--two .aroma-card:nth-child(1) .btn", "href", whatsAppUrl("Hi Sara, I would like information about the Essential Collection."));
-    setText(".aroma-grid--two .aroma-card:nth-child(2) p", "A personalized aromatic consultation: together we will choose the essential oils best suited to your needs for a tailored wellness path.");
-    setText(".aroma-grid--two .aroma-card:nth-child(2) .btn", "Message me on WhatsApp");
-    setAttr(".aroma-grid--two .aroma-card:nth-child(2) .btn", "href", whatsAppUrl("Hi Sara, I would like information about the Signature Blend."));
+    setText(".products-showcase__kicker", "Essential oil showcase");
+    setText(".products-showcase__head h3", "Recommended collections");
+    setText(".products-showcase__head p", "Young Living bundles and aromatic paths selected to support home, body and everyday rituals with simplicity.");
 
     setText("#servizi .eyebrow", "Treatments");
     setText("#servizi .section-title", "A need, not a luxury");
@@ -257,10 +253,81 @@
     });
   });
 
-  /* ---------- Rendering proposte legacy ---------- */
+  /* ---------- Rendering vetrina oli essenziali ---------- */
   const grid = $("#productsGrid");
   if (grid && window.SaraData) {
     const fallbackProductImage = "assets/img/hero/hero-massage-sara.jpg";
+    const productTranslations = {
+      "p-collezione-essenziale": {
+        name: "Essential collection",
+        shortDesc: "Introductory kit with essential oils and a diffuser for simple, versatile daily rituals.",
+        benefits: "Combines aromatic diffusion and versatile oils to support home atmosphere, energy, breathing rituals and calm moments with a structured approach."
+      },
+      "p-baby-essentials": {
+        name: "Baby Essentials",
+        shortDesc: "Gentle starter kit with the Feather the Owl diffuser and KidScents oils for small family rituals.",
+        benefits: "Created for little ones' routines: bedtime atmosphere, comfort and soft aromas, always with mindful, age-appropriate use."
+      },
+      "p-sweet-home": {
+        name: "Sweet Home",
+        shortDesc: "A selection to make home feel fresher, warmer and more harmonious through clean natural notes.",
+        benefits: "Combines bright and soft aromas to scent living spaces and turn the home into a calmer, more familiar place."
+      },
+      "p-dolce-notte": {
+        name: "Sweet Night",
+        shortDesc: "Blends and oils for the evening ritual, created to prepare a softer, more relaxed atmosphere.",
+        benefits: "Warm, restful notes to slow down, breathe and close the day with a simple act of care."
+      },
+      "p-gym-rat": {
+        name: "Gym rat",
+        shortDesc: "Aromatic set for movement, training and recovery routines with fresh energy.",
+        benefits: "Fresh, tonic notes to include before or after activity, supporting focus, breath and a lighter body-care ritual."
+      },
+      "p-per-lui": {
+        name: "For Him",
+        shortDesc: "Clean, woody and decisive selection for a natural masculine routine.",
+        benefits: "Combines fresh and deeper notes for personal care, home atmosphere and daily reset moments without feeling overpowering."
+      },
+      "p-per-lei": {
+        name: "For Her",
+        shortDesc: "Soft, luminous feminine aromatic path for balance and daily care.",
+        benefits: "Floral and harmonious notes for skin, breath and presence rituals, with an elegant natural profile."
+      },
+      "p-animal-scents": {
+        name: "Animal scents",
+        shortDesc: "Line dedicated to aromatic care for animals, with specific products and a gentle approach.",
+        benefits: "Helps build a more mindful home routine with dedicated products chosen for this context, not improvised blends."
+      },
+      "p-balance-skin": {
+        name: "BALANCE skin",
+        shortDesc: "Essential skincare routine for skin seeking balance, freshness and simplicity.",
+        benefits: "Combines focused steps for cleansing, hydration and skin comfort with a light, clean and orderly feel."
+      },
+      "p-bloom-skin": {
+        name: "BLOOM skin",
+        shortDesc: "Luminous skincare treatment for skin that looks more vital and even.",
+        benefits: "Designed for a more refined face ritual: textures, aroma and cosmetic actives work together for a brighter-looking complexion."
+      },
+      "p-shine-bright-like-a-diamond": {
+        name: "Shine Bright like a Diamond",
+        shortDesc: "Beauty and wellness selection for a luminous, energetic and polished routine.",
+        benefits: "Brings together products chosen for glow, freshness and presence: ideal when you want to feel bright, vital and put together."
+      },
+      "p-bye-bye-menopausa": {
+        name: "Bye Bye Menopause",
+        shortDesc: "Natural path designed to accompany women through phases of change.",
+        benefits: "A daily wellbeing routine with oils and products chosen for balance, presence and listening to the body."
+      }
+    };
+    const displayProduct = (product) => {
+      if (!isEnglish) return product;
+      const translation = productTranslations[product.id];
+      return {
+        ...product,
+        ...(translation || {}),
+        price: product.price === "Prezzo sul link" ? "Price on link" : product.price
+      };
+    };
     const render = async () => {
       grid.classList.add("is-loading");
       const products = await window.SaraData.getVisibleProducts();
@@ -272,12 +339,16 @@
         grid.classList.remove("is-loading");
         return;
       }
-      grid.innerHTML = products.map((p, i) => {
+      grid.innerHTML = products.map((product, i) => {
+        const p = displayProduct(product);
         const unavailable = p.visible === false;
+        const image = p.image || fallbackProductImage;
+        const price = String(p.price || "").trim();
         return `
         <article class="product-card ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}" aria-disabled="${unavailable ? "true" : "false"}">
           <div class="product-img">
-            <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
+            <img src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
+            ${price ? `<span class="price">${escapeHtml(price)}</span>` : ""}
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
           </div>
           <div class="product-body">
@@ -289,7 +360,7 @@
               ${isEnglish ? "Coming soon" : "Prossimamente disponibile"}
             </span>` : `
             <a class="btn btn--dark btn--sm" href="${escapeHtml(p.link)}" target="_blank" rel="noopener nofollow">
-              ${isEnglish ? "Request details" : "Richiedi dettagli"}
+              ${isEnglish ? "Buy now" : "Acquista"}
               <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="16" height="16" alt="" loading="lazy" decoding="async" />
             </a>`}
           </div>
