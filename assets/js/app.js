@@ -109,13 +109,23 @@
       heroTitle.textContent = "Buzz back to you";
     }
 
-    setText("#prodotti .eyebrow", "Pure essences");
-    setText("#prodotti .section-title", "Authentic wellbeing");
-    setText("#prodotti .section-lead", "Body care begins with listening, then asks for presence and consistency. Essential oils are made to be simple to use, supporting you every day toward balance, energy and vitality, inside and out.");
+    setText("#prodotti .eyebrow", "ESSENTIAL OILS");
+    setText("#prodotti .section-title", "Pure essences, authentic wellbeing");
+    setText("#prodotti .section-lead", "Body care begins with listening, then asks for presence and consistency. Essential oils are made to be simple to use, supporting you every day toward balance, energy and vitality.");
     setHtml(".aroma-feature h3", "<em>The Essential</em>");
     setText(".aroma-feature p", "A concise guide to the fundamentals, created to help you begin exploring essential oils.");
-    setText(".aroma-feature .btn", "Discover The Essential");
-    setText(".products-showcase__kicker", "Essential oil showcase");
+    setHtml(".aroma-feature .btn", "Discover<em>The Essential</em>");
+    const aromaCards = $$(".aroma-cards-grid .aroma-card");
+    if (aromaCards[0]) {
+      setText("h3", "Essential Collection", aromaCards[0]);
+      setText("p", "A starter kit with the 12 fundamental essential oils, selected for you and suited to cover all everyday needs.", aromaCards[0]);
+      setText(".btn", "Request info on WhatsApp", aromaCards[0]);
+    }
+    if (aromaCards[1]) {
+      setText("h3", "Signature Blend", aromaCards[1]);
+      setText("p", "Personalised aromatic consultation: together we will choose the essential oils best suited to your needs for a tailored wellness path.", aromaCards[1]);
+      setText(".btn", "Message me on WhatsApp", aromaCards[1]);
+    }
     setText(".products-showcase__head h3", "Recommended collections");
     setText(".products-showcase__head p", "Young Living bundles and aromatic paths selected to support home, body and everyday rituals with simplicity.");
 
@@ -141,12 +151,13 @@
     setButtonText(".slogan-actions .btn--instagram", "Follow me on Instagram");
     setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
 
-    setText(".about-text .eyebrow", "Sara Bordenga");
-    setText(".about-text .section-title", "The body never lies.");
+    setText(".about-text .eyebrow", "THE FOUNDER");
+    setText(".about-text .section-title", "Sara Bordenga");
     const aboutParagraphs = $$(".about-text > p.reveal");
     if (aboutParagraphs[0]) aboutParagraphs[0].textContent = "The body is a perfect machine. If you listen to it and nourish it with balance, it gives you wellbeing. Self-love is the highest expression of health.";
-    if (aboutParagraphs[1]) aboutParagraphs[1].textContent = "Sara has been a professional athlete from an early age, and sport taught her a simple truth: the body never lies. Listening to it, respecting it and nourishing it consistently is the only real secret to feeling well. Massage, treatments and essential oils are natural, pure tools capable of bringing the body back to its natural balance.";
-    if (aboutParagraphs[2]) aboutParagraphs[2].textContent = "Her goal is to help people rediscover vitality and energy through a natural and simple lifestyle. Treatments that are not a luxury, but daily rituals that restore listening to the body and mind. Because feeling well should not be an exception, but the norm. Your body is already speaking to you. Feeling well is a daily choice. Do not wait!";
+    if (aboutParagraphs[1]) aboutParagraphs[1].textContent = "Sara has been a professional athlete from an early age. Sport taught her a simple truth: the body never lies.";
+    if (aboutParagraphs[2]) aboutParagraphs[2].textContent = "Listening to it, respecting it, nourishing it consistently: it is the only real secret to feeling well. Massage and essential oils are natural and pure tools, capable of bringing the body back to its balance.";
+    if (aboutParagraphs[3]) aboutParagraphs[3].textContent = "Her goal is to help you restore energy and vitality. Because feeling well is not a luxury, but a daily ritual. Your body is already speaking to you. Listen to it, do not wait!";
     const miniCards = ["Professional Diploma", "Aromatherapy", "Hygiene and safety"];
     $$(".about-mini-card p").forEach((el, index) => {
       if (miniCards[index]) el.innerHTML = `<b>${miniCards[index]}</b>`;
@@ -347,13 +358,11 @@
         <article class="product-card ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}" aria-disabled="${unavailable ? "true" : "false"}">
           <div class="product-img">
             <img src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
-            ${price ? `<span class="price">${escapeHtml(price)}</span>` : ""}
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
           </div>
+          ${price ? `<div class="product-price">${escapeHtml(price)}</div>` : ""}
           <div class="product-body">
             <h3>${escapeHtml(p.name)}</h3>
-            <p class="desc">${escapeHtml(p.shortDesc)}</p>
-            <div class="benefits"><b>${isEnglish ? "Benefits:" : "Benefici:"}</b> ${escapeHtml(p.benefits)}</div>
             ${unavailable ? `
             <span class="btn btn--disabled btn--sm" aria-label="${escapeHtml(p.name)} ${isEnglish ? "not available" : "non disponibile"}">
               ${isEnglish ? "Coming soon" : "Prossimamente disponibile"}

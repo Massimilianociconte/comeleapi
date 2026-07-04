@@ -23,7 +23,7 @@
 const DEFAULT_PRODUCTS = [
   {
     id: "p-collezione-essenziale",
-    name: "collezione essenziale",
+    name: "Collezione Essenziale",
     shortDesc: "Kit introduttivo con oli essenziali e diffusore per costruire rituali quotidiani semplici e versatili.",
     benefits: "Unisce diffusione aromatica e oli trasversali per accompagnare casa, energia, respiro e momenti di calma con un approccio ordinato.",
     price: "196,41 €",
