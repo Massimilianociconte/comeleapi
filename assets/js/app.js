@@ -47,6 +47,46 @@
   const currentLocale = resolveLocale();
   const isEnglish = currentLocale === "en";
   const instagramUrl = "https://www.instagram.com/comeleapi/";
+  const productDisplayOverrides = {
+    "p-collezione-essenziale": {
+      name: "Collezione Essenziale",
+      icon: "assets/img/icons/products/collezione-essenziale.png"
+    },
+    "p-baby-essentials": {
+      icon: "assets/img/icons/products/baby-essentials.png"
+    },
+    "p-sweet-home": {
+      icon: "assets/img/icons/products/sweet-home.png"
+    },
+    "p-dolce-notte": {
+      icon: "assets/img/icons/products/dolce-notte.png"
+    },
+    "p-gym-rat": {
+      name: "Sport & Wellness",
+      icon: "assets/img/icons/products/sport-wellness.png"
+    },
+    "p-per-lui": {
+      icon: "assets/img/icons/products/per-lui.png"
+    },
+    "p-per-lei": {
+      icon: "assets/img/icons/products/per-lei.png"
+    },
+    "p-animal-scents": {
+      icon: "assets/img/icons/products/animal-scents.png"
+    },
+    "p-balance-skin": {
+      icon: "assets/img/icons/products/balance-skin.png"
+    },
+    "p-bloom-skin": {
+      icon: "assets/img/icons/products/bloom-skin.png"
+    },
+    "p-shine-bright-like-a-diamond": {
+      icon: "assets/img/icons/products/shine-bright.png"
+    },
+    "p-bye-bye-menopausa": {
+      icon: "assets/img/icons/products/bye-bye-menopausa.png"
+    }
+  };
 
   function setText(selector, text, ctx = document) {
     const el = $(selector, ctx);
@@ -111,7 +151,7 @@
 
     setText("#prodotti .eyebrow", "ESSENTIAL OILS");
     setText("#prodotti .section-title", "Pure essences, authentic wellbeing");
-    setText("#prodotti .section-lead", "Body care begins with listening, then asks for presence and consistency. Essential oils are made to be simple to use, supporting you every day toward balance, energy and vitality.");
+    setHtml("#prodotti .section-lead", "<span>Body care begins with listening, then asks for presence and consistency.</span><span>Essential oils are made to be simple to use.</span><span>They support you every day toward balance, energy and vitality.</span>");
     setHtml(".aroma-feature h3", "<em>The Essential</em>");
     setText(".aroma-feature p", "A concise guide to the fundamentals, created to help you begin exploring essential oils.");
     setHtml(".aroma-feature .btn", "Discover<em>The Essential</em>");
@@ -131,7 +171,7 @@
 
     setText("#servizi .eyebrow", "Treatments");
     setText("#servizi .section-title", "A need, not a luxury");
-    setText("#servizi .section-lead", "Hands have always spoken: they hold, soothe, pray, love. Massage is born from this ancient language: a contact that listens to the body and guides it back toward balance.");
+    setHtml("#servizi .section-lead", "<span>Hands have always spoken: they hold, soothe, pray, love.</span><span>Massage is born from this ancient language.</span><span>A contact that listens to the body and guides it back toward balance.</span>");
     const serviceNames = [
       "Sports massage",
       "Decontracting massage",
@@ -147,21 +187,22 @@
 
     setText(".slogan-kicker", "My mission");
     setText("#slogan-title", "Every drop is an act of care for you");
-    setHtml(".slogan-wrap p", "<span>Like bees, which gather only the best from every flower, I select pure essential oils and natural treatments for you that bring the body back to its original balance.</span><span>One scent, one pressure, one breath at a time.</span>");
-    setButtonText(".slogan-actions .btn--instagram", "Follow me on Instagram");
+    setHtml(".slogan-wrap p", "<span>Like bees, which gather only the best from every flower, I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>One scent, one pressure, one breath at a time. Follow the official profile <strong>@comeleapi</strong>.</span>");
+    setButtonText(".slogan-actions .btn--instagram", "Follow @comeleapi on Instagram");
     setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
 
     setText(".about-text .eyebrow", "THE FOUNDER");
     setText(".about-text .section-title", "Sara Bordenga");
-    const aboutParagraphs = $$(".about-text > p.reveal");
-    if (aboutParagraphs[0]) aboutParagraphs[0].textContent = "The body is a perfect machine. If you listen to it and nourish it with balance, it gives you wellbeing. Self-love is the highest expression of health.";
-    if (aboutParagraphs[1]) aboutParagraphs[1].textContent = "Sara has been a professional athlete from an early age. Sport taught her a simple truth: the body never lies.";
-    if (aboutParagraphs[2]) aboutParagraphs[2].textContent = "Listening to it, respecting it, nourishing it consistently: it is the only real secret to feeling well. Massage and essential oils are natural and pure tools, capable of bringing the body back to its balance.";
-    if (aboutParagraphs[3]) aboutParagraphs[3].textContent = "Her goal is to help you restore energy and vitality. Because feeling well is not a luxury, but a daily ritual. Your body is already speaking to you. Listen to it, do not wait!";
+    setHtml(".about-quote", "<span>\"The body is a perfect machine.</span><span>If you listen to it and nourish it with balance, it gives you wellbeing.</span><span>Self-love is the highest expression of health.\"</span>");
+    setHtml(".about-story--intro", "<span>Sara has been a professional athlete from an early age.</span><span>Sport taught her a simple truth: the body never lies.</span>");
+    setHtml(".about-story--tools", "<span>Listening to it, respecting it, nourishing it consistently: it is the only real secret to feeling well.</span><span>Massage and essential oils are natural and pure tools, capable of bringing the body back to its balance.</span>");
+    setHtml(".about-story--goal", "<span>Her goal is to help you restore energy and vitality.</span><span>Because feeling well is not a luxury, but a daily ritual.</span><span>Your body is already speaking to you. Listen to it, do not wait!</span>");
     const miniCards = ["Professional Diploma", "Aromatherapy", "Hygiene and safety"];
     $$(".about-mini-card p").forEach((el, index) => {
       if (miniCards[index]) el.innerHTML = `<b>${miniCards[index]}</b>`;
     });
+    setHtml(".community-cta__copy", "<strong>Community</strong><small>Support and conversation in the WhatsApp group</small>");
+    setAttr(".community-cta", "href", whatsAppUrl("Hi Sara, I would like to join the Come le Api Community."));
 
     setHtml(".about-photo .tag", '<img class="tag-icon" src="assets/img/icons/icon-seal.png" width="18" height="18" alt="" loading="lazy" decoding="async" /> Massage & holistic wellbeing');
     setText(".booking .eyebrow", "Direct contact");
@@ -193,7 +234,7 @@
     setText('.footer-col a[href="#chi-sono"]', "The founder");
     setText("#openCookie", "Cookie policy");
     setText("#openPrivacy", "Privacy policy");
-    setHtml(".footer-bottom > span", '© <span id="year"></span> Come le Api. All rights reserved.');
+    setHtml(".footer-bottom > span", '© <span id="year"></span> comeleapi. All rights reserved.');
     setText(".btn-webnovis", "Crafted with care by WebNovis");
     setAllAttr('.social-link--instagram', "href", instagramUrl);
     setAllAttr('.social-link--instagram', "aria-label", "Come le Api on Instagram");
@@ -289,7 +330,7 @@
         benefits: "Warm, restful notes to slow down, breathe and close the day with a simple act of care."
       },
       "p-gym-rat": {
-        name: "Gym rat",
+        name: "Sport & Wellness",
         shortDesc: "Aromatic set for movement, training and recovery routines with fresh energy.",
         benefits: "Fresh, tonic notes to include before or after activity, supporting focus, breath and a lighter body-care ritual."
       },
@@ -330,14 +371,22 @@
       }
     };
     const displayProduct = (product) => {
-      if (!isEnglish) return product;
+      const override = productDisplayOverrides[product.id] || {};
+      const base = {
+        ...product,
+        ...(override.name ? { name: override.name } : {})
+      };
+      if (!isEnglish) return base;
       const translation = productTranslations[product.id];
       return {
-        ...product,
+        ...base,
         ...(translation || {}),
-        price: product.price === "Prezzo sul link" ? "Price on link" : product.price
+        price: base.price === "Prezzo sul link" ? "Price on link" : base.price
       };
     };
+    const productIcon = (product) => (
+      productDisplayOverrides[product.id]?.icon || "assets/img/icons/icon-drop.png"
+    );
     const render = async () => {
       grid.classList.add("is-loading");
       const products = await window.SaraData.getVisibleProducts();
@@ -353,16 +402,25 @@
         const p = displayProduct(product);
         const unavailable = p.visible === false;
         const image = p.image || fallbackProductImage;
+        const icon = productIcon(p);
         const price = String(p.price || "").trim();
         return `
         <article class="product-card ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}" aria-disabled="${unavailable ? "true" : "false"}">
           <div class="product-img">
-            <img src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
+            <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
           </div>
-          ${price ? `<div class="product-price">${escapeHtml(price)}</div>` : ""}
           <div class="product-body">
-            <h3>${escapeHtml(p.name)}</h3>
+            <div class="product-heading">
+              <span class="product-kit-icon" aria-hidden="true">
+                <img class="product-icon-img" src="${escapeHtml(icon)}" alt="" decoding="async" />
+              </span>
+              <div>
+                <h3>${escapeHtml(p.name)}</h3>
+                ${p.shortDesc ? `<p class="desc">${escapeHtml(p.shortDesc)}</p>` : ""}
+              </div>
+            </div>
+            ${price ? `<span class="product-price">${escapeHtml(price)}</span>` : ""}
             ${unavailable ? `
             <span class="btn btn--disabled btn--sm" aria-label="${escapeHtml(p.name)} ${isEnglish ? "not available" : "non disponibile"}">
               ${isEnglish ? "Coming soon" : "Prossimamente disponibile"}
@@ -375,9 +433,14 @@
         </article>
       `;
       }).join("");
-      $$("img", grid).forEach((img) => {
+      $$(".product-photo", grid).forEach((img) => {
         img.addEventListener("error", () => {
           img.src = fallbackProductImage;
+        }, { once: true });
+      });
+      $$(".product-icon-img", grid).forEach((img) => {
+        img.addEventListener("error", () => {
+          img.src = "assets/img/icons/icon-drop.png";
         }, { once: true });
       });
       grid.classList.remove("is-loading");

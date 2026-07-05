@@ -24,7 +24,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 
 const DEFAULT_PRODUCTS = [
   {
-    id: "p-collezione-essenziale", name: "collezione essenziale",
+    id: "p-collezione-essenziale", name: "Collezione Essenziale",
     short_desc: "Kit introduttivo con oli essenziali e diffusore per costruire rituali quotidiani semplici e versatili.",
     benefits: "Unisce diffusione aromatica e oli trasversali per accompagnare casa, energia, respiro e momenti di calma con un approccio ordinato.",
     price: "196,41 €",
@@ -60,7 +60,7 @@ const DEFAULT_PRODUCTS = [
     visible: true, order: 3
   },
   {
-    id: "p-gym-rat", name: "Gym rat",
+    id: "p-gym-rat", name: "Sport & Wellness",
     short_desc: "Set aromatico per chi vive movimento, allenamento e recupero con energia.",
     benefits: "Note fresche e toniche da integrare prima o dopo l'attività fisica, per sostenere focus, respiro e sensazione di leggerezza.",
     price: "156,38 €",

@@ -67,7 +67,7 @@ const DEFAULT_PRODUCTS = [
   },
   {
     id: "p-gym-rat",
-    name: "Gym rat",
+    name: "Sport & Wellness",
     shortDesc: "Set aromatico per chi vive movimento, allenamento e recupero con energia.",
     benefits: "Note fresche e toniche da integrare prima o dopo l'attività fisica, per sostenere focus, respiro e sensazione di leggerezza.",
     price: "156,38 €",

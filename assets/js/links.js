@@ -26,6 +26,11 @@
     if (el) el.textContent = text;
   }
 
+  function setHtml(selector, html, ctx = document) {
+    const el = $(selector, ctx);
+    if (el) el.innerHTML = html;
+  }
+
   function setAttr(selector, attr, value, ctx = document) {
     const el = $(selector, ctx);
     if (el) el.setAttribute(attr, value);
@@ -39,11 +44,11 @@
 
   document.documentElement.lang = "en";
   document.title = "Come le Api - Useful links";
-  setAttr('meta[name="description"]', "content", "All useful Come le Api links: WhatsApp, The Essential guide, essences and tailored wellbeing treatments.");
+  setAttr('meta[name="description"]', "content", "Useful Come le Api links: essential oils guide, essences, treatments and the @comeleapi Instagram profile.");
   setAttr('meta[property="og:title"]', "content", "Come le Api - Useful links");
-  setAttr('meta[property="og:description"]', "content", "Message Sara on WhatsApp, discover The Essential, choose your essences and tailored treatments.");
+  setAttr('meta[property="og:description"]', "content", "In harmony with nature: a project curated by Sara for your daily wellbeing.");
   setAttr(".logo-link", "aria-label", "Go to the official Come le Api website");
-  setText(".intro", "In harmony with nature, a project curated by Sara for your daily balance.");
+  setHtml(".intro", "<span>In harmony with nature.</span><span>A project curated by Sara for your daily wellbeing.</span>");
   setAttr(".links-list", "aria-label", "Main links");
 
   const links = $$(".links-list .link-button");
@@ -53,6 +58,7 @@
       small: "A concise guide to essential oils for your natural wellbeing",
       href: whatsAppUrl("Hi Sara, I would like to receive the free essential oils mini guide.")
     },
+
     {
       strong: "Visit the official website",
       small: "Discover the Come le Api method and approach",
