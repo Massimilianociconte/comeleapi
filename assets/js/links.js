@@ -44,7 +44,7 @@
 
   document.documentElement.lang = "en";
   document.title = "Come le Api - Useful links";
-  setAttr('meta[name="description"]', "content", "Useful Come le Api links: essential oils guide, essences, treatments and the @comeleapi Instagram profile.");
+  setAttr('meta[name="description"]', "content", "Useful Come le Api links: essential oils guide, essences, treatments and the @come_le_api Instagram profile.");
   setAttr('meta[property="og:title"]', "content", "Come le Api - Useful links");
   setAttr('meta[property="og:description"]', "content", "In harmony with nature: a project curated by Sara for your daily wellbeing.");
   setAttr(".logo-link", "aria-label", "Go to the official Come le Api website");
@@ -82,7 +82,7 @@
     {
       strong: "Follow Sara on Instagram",
       small: "Tips, news and wellbeing moments",
-      href: "https://www.instagram.com/comeleapi/"
+      href: "https://www.instagram.com/come_le_api/"
     }
   ];
 

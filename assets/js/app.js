@@ -46,14 +46,14 @@
 
   const currentLocale = resolveLocale();
   const isEnglish = currentLocale === "en";
-  const instagramUrl = "https://www.instagram.com/comeleapi/";
+  const instagramUrl = "https://www.instagram.com/come_le_api/";
   const productDisplayOverrides = {
     "p-collezione-essenziale": {
       name: "Collezione Essenziale",
       icon: "assets/img/icons/products/collezione-essenziale.png"
     },
     "p-baby-essentials": {
-      icon: "assets/img/icons/products/baby-essentials.png"
+      icon: "assets/img/icons/products/kit-bambini-icon.png"
     },
     "p-sweet-home": {
       icon: "assets/img/icons/products/sweet-home.png"
@@ -81,7 +81,7 @@
       icon: "assets/img/icons/products/bloom-skin.png"
     },
     "p-shine-bright-like-a-diamond": {
-      icon: "assets/img/icons/products/shine-bright.png"
+      icon: "assets/img/icons/products/kit-diamond-icon.png"
     },
     "p-bye-bye-menopausa": {
       icon: "assets/img/icons/products/bye-bye-menopausa.png"
@@ -139,7 +139,7 @@
     setAttr("#closePolicy", "aria-label", "Close");
     setText('.nav a[href="#prodotti"]', "Essential oils");
     setText('.nav a[href="#servizi"]', "Treatments");
-    setText('.nav a[href="#chi-sono"]', "The Founder");
+    setText('.nav a[href="#chi-sono"]', "The founder");
     setButtonText(".nav-cta", "Message me on WhatsApp");
     setAttr(".nav-cta", "href", whatsAppUrl("Hi Sara, I would like information about the treatments."));
 
@@ -154,17 +154,12 @@
     setHtml("#prodotti .section-lead", "<span>Body care begins with listening, then asks for presence and consistency.</span><span>Essential oils are made to be simple to use.</span><span>They support you every day toward balance, energy and vitality.</span>");
     setHtml(".aroma-feature h3", "<em>The Essential</em>");
     setText(".aroma-feature p", "A concise guide to the fundamentals, created to help you begin exploring essential oils.");
-    setHtml(".aroma-feature .btn", "Discover<em>The Essential</em>");
+    setHtml(".aroma-feature .btn", "Discover <em>The Essential</em>");
     const aromaCards = $$(".aroma-cards-grid .aroma-card");
     if (aromaCards[0]) {
-      setText("h3", "Essential Collection", aromaCards[0]);
-      setText("p", "A starter kit with the 12 fundamental essential oils, selected for you and suited to cover all everyday needs.", aromaCards[0]);
-      setText(".btn", "Request info on WhatsApp", aromaCards[0]);
-    }
-    if (aromaCards[1]) {
-      setText("h3", "Signature Blend", aromaCards[1]);
-      setText("p", "Personalised aromatic consultation: together we will choose the essential oils best suited to your needs for a tailored wellness path.", aromaCards[1]);
-      setText(".btn", "Message me on WhatsApp", aromaCards[1]);
+      setText("h3", "Signature Blend", aromaCards[0]);
+      setText("p", "Personalized aromatic consultation: together we will choose the essential oils best suited to your needs, for a tailor-made wellbeing process.", aromaCards[0]);
+      setText(".btn", "Message me on WhatsApp", aromaCards[0]);
     }
     setText(".products-showcase__head h3", "Recommended collections");
     setText(".products-showcase__head p", "Young Living bundles and aromatic paths selected to support home, body and everyday rituals with simplicity.");
@@ -187,13 +182,13 @@
 
     setText(".slogan-kicker", "My mission");
     setText("#slogan-title", "Every drop is an act of care for you");
-    setHtml(".slogan-wrap p", "<span>Like bees, which gather only the best from every flower, I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>One scent, one pressure, one breath at a time. Follow the official profile <strong>@comeleapi</strong>.</span>");
-    setButtonText(".slogan-actions .btn--instagram", "Follow @comeleapi on Instagram");
+    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower, I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>One scent, one pressure, one breath at a time.</span>");
+    setButtonText(".slogan-actions .btn--instagram", "@come_le_api");
     setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
 
     setText(".about-text .eyebrow", "THE FOUNDER");
     setText(".about-text .section-title", "Sara Bordenga");
-    setHtml(".about-quote", "<span>\"The body is a perfect machine.</span><span>If you listen to it and nourish it with balance, it gives you wellbeing.</span><span>Self-love is the highest expression of health.\"</span>");
+    setHtml(".about-quote", "<span>\"The body is a perfect machine.</span><span>If you listen to it and nourish it with love, it gives you wellbeing.</span><span>Balance is the key to health.\"</span>");
     setHtml(".about-story--intro", "<span>Sara has been a professional athlete from an early age.</span><span>Sport taught her a simple truth: the body never lies.</span>");
     setHtml(".about-story--tools", "<span>Listening to it, respecting it, nourishing it consistently: it is the only real secret to feeling well.</span><span>Massage and essential oils are natural and pure tools, capable of bringing the body back to its balance.</span>");
     setHtml(".about-story--goal", "<span>Her goal is to help you restore energy and vitality.</span><span>Because feeling well is not a luxury, but a daily ritual.</span><span>Your body is already speaking to you. Listen to it, do not wait!</span>");
@@ -201,7 +196,7 @@
     $$(".about-mini-card p").forEach((el, index) => {
       if (miniCards[index]) el.innerHTML = `<b>${miniCards[index]}</b>`;
     });
-    setHtml(".community-cta__copy", "<strong>Community</strong><small>Support and conversation in the WhatsApp group</small>");
+    setHtml(".community-cta__copy", "<strong>Community</strong>");
     setAttr(".community-cta", "href", whatsAppUrl("Hi Sara, I would like to join the Come le Api Community."));
 
     setHtml(".about-photo .tag", '<img class="tag-icon" src="assets/img/icons/icon-seal.png" width="18" height="18" alt="" loading="lazy" decoding="async" /> Massage & holistic wellbeing');
@@ -311,7 +306,7 @@
     const productTranslations = {
       "p-collezione-essenziale": {
         name: "Essential collection",
-        shortDesc: "Introductory kit with essential oils and a diffuser for simple, versatile daily rituals.",
+        shortDesc: "Starter kit with 12 oils.",
         benefits: "Combines aromatic diffusion and versatile oils to support home atmosphere, energy, breathing rituals and calm moments with a structured approach."
       },
       "p-baby-essentials": {
@@ -404,8 +399,14 @@
         const image = p.image || fallbackProductImage;
         const icon = productIcon(p);
         const price = String(p.price || "").trim();
+        const link = String(p.link || "").trim();
+        const clickable = !unavailable && link;
+        const cardTag = clickable ? "a" : "article";
+        const cardAttrs = clickable
+          ? ` href="${escapeHtml(link)}" target="_blank" rel="noopener nofollow" aria-label="${escapeHtml(`${isEnglish ? "Open purchase link for" : "Apri il link di acquisto per"} ${p.name}${price ? ` - ${price}` : ""}`)}"`
+          : ` aria-disabled="${unavailable ? "true" : "false"}"`;
         return `
-        <article class="product-card ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}" aria-disabled="${unavailable ? "true" : "false"}">
+        <${cardTag} class="product-card ${clickable ? "product-card--clickable" : ""} ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}"${cardAttrs}>
           <div class="product-img">
             <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
@@ -421,16 +422,8 @@
               </div>
             </div>
             ${price ? `<span class="product-price">${escapeHtml(price)}</span>` : ""}
-            ${unavailable ? `
-            <span class="btn btn--disabled btn--sm" aria-label="${escapeHtml(p.name)} ${isEnglish ? "not available" : "non disponibile"}">
-              ${isEnglish ? "Coming soon" : "Prossimamente disponibile"}
-            </span>` : `
-            <a class="btn btn--dark btn--sm" href="${escapeHtml(p.link)}" target="_blank" rel="noopener nofollow">
-              ${isEnglish ? "Buy now" : "Acquista"}
-              <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="16" height="16" alt="" loading="lazy" decoding="async" />
-            </a>`}
           </div>
-        </article>
+        </${cardTag}>
       `;
       }).join("");
       $$(".product-photo", grid).forEach((img) => {
@@ -463,12 +456,12 @@
     render();
 
     grid.addEventListener("pointerdown", (e) => {
-      const btn = e.target.closest(".product-card .btn--dark");
-      if (!btn) return;
-      btn.classList.remove("is-tapping");
-      void btn.offsetWidth;
-      btn.classList.add("is-tapping");
-      setTimeout(() => btn.classList.remove("is-tapping"), 420);
+      const card = e.target.closest(".product-card--clickable");
+      if (!card) return;
+      card.classList.remove("is-tapping");
+      void card.offsetWidth;
+      card.classList.add("is-tapping");
+      setTimeout(() => card.classList.remove("is-tapping"), 420);
     });
 
     // Aggiorna la vetrina quando l'utente torna sulla pagina dopo modifiche dal gestionale.

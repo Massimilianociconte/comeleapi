@@ -66,7 +66,7 @@ const DEFAULT_PRODUCTS = [
   {
     id: "p-collezione-essenziale",
     name: "Collezione Essenziale",
-    shortDesc: "Kit introduttivo con oli essenziali e diffusore per costruire rituali quotidiani semplici e versatili.",
+    shortDesc: "Starter kit con 12 oli",
     benefits: "Unisce diffusione aromatica e oli trasversali per accompagnare casa, energia, respiro e momenti di calma con un approccio ordinato.",
     price: "196,41 €",
     image: "foto-prodotti/collezione-essenziale.png",
@@ -113,7 +113,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Set aromatico per chi vive movimento, allenamento e recupero con energia.",
     benefits: "Note fresche e toniche da integrare prima o dopo l'attività fisica, per sostenere focus, respiro e sensazione di leggerezza.",
     price: "156,38 €",
-    image: "foto-prodotti/gym-rat.png",
+    image: "foto-prodotti/sport-wellness-clean.png",
     link: "https://www.youngliving.com/apps/enrollment/social-links/88d08118-3dfa-4d07-b492-fbe9bf144bf3",
     visible: true,
     order: 4
@@ -135,7 +135,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Percorso aromatico femminile, morbido e luminoso, pensato per equilibrio e cura quotidiana.",
     benefits: "Note floreali e armoniche per rituali di pelle, respiro e presenza, con un profilo elegante e naturale.",
     price: "76,58 €",
-    image: "foto-prodotti/per-lei.png",
+    image: "foto-prodotti/kit-per-lei.png",
     link: "https://www.youngliving.com/apps/enrollment/social-links/562399ef-a072-4f8e-811e-2e0ec43abdd6",
     visible: true,
     order: 6
@@ -157,7 +157,7 @@ const DEFAULT_PRODUCTS = [
     shortDesc: "Routine skincare essenziale per una pelle che cerca equilibrio, freschezza e semplicità.",
     benefits: "Combina passaggi mirati per pulizia, idratazione e comfort cutaneo, con una sensazione leggera, pulita e ordinata.",
     price: "148,67 €",
-    image: "foto-prodotti/balance-skin.png",
+    image: "foto-prodotti/balance-skin-clean.png",
     link: "https://www.youngliving.com/apps/enrollment/social-links/fdce81cc-3f59-415c-8dc0-ca127f413431",
     visible: true,
     order: 8
