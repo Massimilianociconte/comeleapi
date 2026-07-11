@@ -76,7 +76,7 @@
       icon: "assets/img/icons/products/animal-scents.png"
     },
     "p-balance-skin": {
-      icon: "assets/img/icons/products/per-lei.png?v=20260711-rose"
+      icon: "assets/img/icons/products/balance-skin.png?v=20260711-restored"
     },
     "p-bloom-skin": {
       icon: "assets/img/icons/products/bloom-skin.png"
