@@ -11,7 +11,7 @@
   <meta property="og:description" content="Progetto di benessere curato da Sara: oli essenziali, trattamenti su misura e contatto diretto a 20091 Bresso (Milano)." />
   <meta property="og:type" content="website" />
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260706-kit-refine" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260711-mobile-carousel-v3" />
 
   <link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo-comeleapi.png" />
   <link rel="apple-touch-icon" href="assets/img/logo-comeleapi.png" />
@@ -31,8 +31,8 @@
         <a href="#servizi">Trattamenti</a>
         <a href="#chi-sono">The founder</a>
         <a class="client-hidden" href="#certificazioni" aria-hidden="true" tabindex="-1" data-temporary-note="Formazione integrata nella presentazione, sezione dedicata nascosta.">Formazione</a>
-        <a href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20sui%20trattamenti." class="btn btn--primary btn--sm nav-cta" target="_blank" rel="noopener">
-          Scrivimi su WhatsApp
+        <a href="https://wa.me/393881639306?text=Ciao%20Sara,%20vorrei%20prenotare%20una%20consulenza." class="btn btn--primary btn--sm nav-cta" target="_blank" rel="noopener">
+          Prenota la tua consulenza
           <img class="btn-icon" src="assets/img/icons/icon-whatsapp-custom.png" width="18" height="18" alt="" loading="lazy" decoding="async" />
         </a>
       </nav>
@@ -46,7 +46,7 @@
   <main id="top">
     <section class="hero">
       <div class="hero-frame reveal">
-        <img src="assets/img/hero/hero-massage-sara.jpg" alt="Trattamento professionale di rilassamento spalle e collo" loading="eager" />
+        <img src="assets/img/hero/hero-comeleapi-botanica.jpg?v=20260711-hero-v1" alt="Trattamento professionale con oli essenziali in uno studio botanico" loading="eager" fetchpriority="high" />
         <div class="hero-overlay">
           <h1 class="hero-title">Vola verso il tuo benessere</h1>
         </div>
@@ -70,16 +70,16 @@
             <h3><em>L'Essenziale</em></h3>
             <p>Una piccola guida con i fondamentali, per iniziare a conoscere gli oli essenziali.</p>
           </div>
-          <a class="btn btn--primary" href="links/#guida-oli">Scopri <em>L'Essenziale</em></a>
+          <a class="btn btn--primary" href="assets/pdf/guida-oli-essenziali-come-le-api.pdf?v=20260711-editorial-v3" target="_blank" rel="noopener">Scopri <em>L'Essenziale</em></a>
         </div>
         <div class="aroma-cards-grid reveal">
           <div class="aroma-card">
             <div class="aroma-card__icon" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-spark.png" alt="" loading="lazy" decoding="async" /></div>
             <div class="aroma-card__copy">
               <h3>Signature Blend</h3>
-              <p>Consulenza aromatica personalizzata: insieme sceglieremo gli oli essenziali più adatti alle tue esigenze, per un processo di benessere su misura.</p>
+              <p>Consulenza aromatica personalizzata: insieme sceglieremo gli oli essenziali più adatti alle tue esigenze, per un percorso di benessere su misura.</p>
             </div>
-            <a class="btn btn--primary btn--sm" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20su%20Signature%20Blend." target="_blank" rel="noopener">Scrivimi su WhatsApp</a>
+            <a class="btn btn--primary btn--sm" href="https://wa.me/393881639306?text=Ciao%20Sara,%20vorrei%20prenotare%20una%20consulenza%20aromatica%20Signature%20Blend." target="_blank" rel="noopener">Prenota la tua consulenza</a>
           </div>
         </div>
         <div class="products-showcase">
@@ -123,7 +123,7 @@
           </article>
           <article class="service-card reveal" data-delay="1">
             <div class="service-ic service-ic--short" aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-mirato-30.png" alt="" loading="lazy" decoding="async" /></div>
-            <h3>Trattamento mirato breve da 30'</h3>
+            <h3 class="service-title--nowrap">Trattamento Mirato 30 minuti</h3>
             <span class="service-price">30 €</span>
           </article>
           <article class="service-card reveal" data-delay="2">
@@ -146,13 +146,13 @@
           <span class="slogan-kicker">La mia missione</span>
           <h2 id="slogan-title">Ogni goccia è un gesto d'amore per te</h2>
           <p>
-            <span>Come le api che raccolgono solo il meglio da ogni fiore, così seleziono per voi oli essenziali puri e trattamenti naturali che riportano l'organismo al suo equilibrio originario.</span>
-            <span>Un profumo, una pressione, un respiro alla volta.</span>
+            <span>Come le api che raccolgono solo il meglio da ogni fiore,</span>
+            <span>così seleziono per voi oli essenziali puri e trattamenti naturali che riportano l'organismo al suo equilibrio originario.</span>
+            <span>&mdash; un profumo, una pressione, un respiro alla volta.</span>
           </p>
           <div class="slogan-actions">
-            <a class="btn btn--primary btn--instagram" href="https://www.instagram.com/come_le_api/" target="_blank" rel="noopener">
-              @come_le_api
-              <img class="btn-icon" src="assets/img/icons/social-instagram.png" width="22" height="22" alt="" loading="lazy" decoding="async" />
+            <a class="btn btn--primary btn--instagram" href="https://www.instagram.com/comeleapi/" target="_blank" rel="noopener">
+              comeleapi
             </a>
           </div>
         </div>
@@ -177,19 +177,21 @@
             <span>SE LO ASCOLTI E LO NUTRI CON AMORE, LUI TI DONA BENESSERE.</span>
             <span>L'EQUILIBRIO È LA CHIAVE DELLA SALUTE."</span>
           </p>
-          <p class="about-copy-lines about-story--intro reveal" data-delay="2">
-            <span>Sara è stata atleta professionista fin da piccola.</span>
-            <span>Lo sport le ha insegnato una verità semplice: il corpo non mente mai.</span>
-          </p>
-          <p class="about-copy-lines about-story--tools reveal" data-delay="2">
-            <span>Ascoltarlo, rispettarlo, nutrirlo con costanza: è l'unico vero segreto per stare bene.</span>
-            <span>Massaggi e oli essenziali sono strumenti naturali e puri, capaci di riportare l'organismo al suo equilibrio.</span>
-          </p>
-          <p class="about-copy-lines about-story--goal reveal" data-delay="2">
-            <span>Il suo obiettivo è aiutarti a ritrovare energia e vitalità.</span>
-            <span>Perché stare bene non è un lusso, ma un rituale quotidiano.</span>
-            <span>Il tuo corpo ti sta già parlando. Ascoltalo, non aspettare!</span>
-          </p>
+          <div class="about-story-deck" aria-label="La storia di Sara">
+            <p class="about-copy-lines about-story--intro reveal" data-delay="2">
+              <span>Sara è stata atleta professionista fin da piccola.</span>
+              <span>Lo sport le ha insegnato una verità semplice: il corpo non mente mai.</span>
+            </p>
+            <p class="about-copy-lines about-story--tools reveal" data-delay="2">
+              <span>Ascoltarlo, rispettarlo, nutrirlo con costanza: è l'unico vero segreto per stare bene.</span>
+              <span>Massaggi e oli essenziali sono strumenti naturali e puri, capaci di riportare l'organismo al suo equilibrio.</span>
+            </p>
+            <p class="about-copy-lines about-story--goal reveal" data-delay="2">
+              <span>Il suo obiettivo è aiutarti a ritrovare energia e vitalità.</span>
+              <span>Perché stare bene non è un lusso, ma un rituale quotidiano.</span>
+              <span>Il tuo corpo ti sta già parlando. Ascoltalo, non aspettare!</span>
+            </p>
+          </div>
 
           <div class="about-mini-grid reveal" data-delay="2" aria-label="Formazione integrata">
             <div class="about-mini-card">
@@ -204,13 +206,11 @@
               <span><img class="generated-icon" src="assets/img/icons/icon-shield.png" alt="" loading="lazy" decoding="async" /></span>
               <p><b>Igiene e sicurezza</b></p>
             </div>
+            <div class="about-mini-card community-cta community-cta--disabled client-hidden" aria-disabled="true" aria-hidden="true" data-future-href="https://wa.me/393881639306?text=Ciao%20Sara,%20vorrei%20entrare%20nella%20Community%20Come%20le%20Api." data-temporary-note="Community nascosta temporaneamente su richiesta cliente.">
+              <span aria-hidden="true"><img class="generated-icon" src="assets/img/icons/icon-community.png" alt="" loading="lazy" decoding="async" /></span>
+              <p class="community-cta__copy"><b>Community</b></p>
+            </div>
           </div>
-          <a class="community-cta reveal" data-delay="2" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20entrare%20nella%20Community%20Come%20le%20Api." target="_blank" rel="noopener">
-            <span class="community-cta__icon" aria-hidden="true"><img src="assets/img/icons/icon-community.png" alt="" loading="lazy" decoding="async" /></span>
-            <span class="community-cta__copy">
-              <strong>Community</strong>
-            </span>
-          </a>
         </div>
       </div>
     </section>
@@ -260,7 +260,7 @@
           <span class="eyebrow reveal">Contatto diretto</span>
           <h2 class="section-title reveal" data-delay="1">Parliamo del trattamento più adatto a te.</h2>
           <p class="section-lead reveal" data-delay="1">
-            Scrivimi su WhatsApp per raccontarmi cosa cerchi, verificare la disponibilità
+            Prenota la tua consulenza su WhatsApp per raccontarmi cosa cerchi, verificare la disponibilità
             e ricevere costi e dettagli in modo chiaro e riservato.
           </p>
           <div class="benefits-box reveal" data-delay="2">
@@ -281,11 +281,11 @@
             Ti rispondo con discrezione e ti aiuto a capire quale proposta può essere più adatta.
           </p>
           <div class="contact-actions">
-            <a class="btn btn--primary btn--block" href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20ricevere%20costi%20e%20dettagli%20per%20un%20trattamento." target="_blank" rel="noopener">
+            <a class="btn btn--primary btn--block" href="https://wa.me/393881639306?text=Ciao%20Sara,%20vorrei%20ricevere%20costi%20e%20dettagli%20per%20un%20trattamento." target="_blank" rel="noopener">
               Richiedi costi e dettagli
               <img class="btn-icon" src="assets/img/icons/icon-arrow.png" width="18" height="18" alt="" loading="lazy" decoding="async" />
             </a>
-            <a class="btn btn--ghost btn--block" href="tel:+390000000000">Chiama Sara</a>
+            <a class="btn btn--ghost btn--block" href="tel:+393881639306">Chiama Sara</a>
           </div>
           <p class="form-note">I messaggi restano riservati e vengono usati solo per rispondere alla tua richiesta. Leggi la <a href="#footer">privacy policy</a>.</p>
         </div>
@@ -303,9 +303,8 @@
           <span>comeleapi</span>
         </a>
         <div class="socials" aria-label="Social">
-          <a class="social-link social-link--instagram" href="https://www.instagram.com/come_le_api/" target="_blank" rel="noopener" aria-label="Instagram Come le Api"><img src="assets/img/icons/social-instagram.png" alt="" /></a>
-          <a class="social-link social-link--facebook" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"><img src="assets/img/icons/social-facebook.png" alt="" /></a>
-          <a class="social-link social-link--whatsapp" href="https://wa.me/390000000000" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="assets/img/icons/social-whatsapp.png" alt="" /></a>
+          <a class="social-link social-link--instagram" href="https://www.instagram.com/comeleapi/" target="_blank" rel="noopener" aria-label="Instagram Come le Api"><img src="assets/img/icons/social-instagram.png" alt="" /></a>
+          <a class="social-link social-link--whatsapp" href="https://wa.me/393881639306" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="assets/img/icons/social-whatsapp.png" alt="" /></a>
         </div>
       </div>
 
@@ -321,6 +320,8 @@
       <div class="footer-col">
         <h5>Contatti</h5>
         <ul>
+          <li><a href="mailto:sara.bordenga@gmail.com">sara.bordenga@gmail.com</a></li>
+          <li><a href="tel:+393881639306">388 163 9306</a></li>
           <li>20091 Bresso (Milano)</li>
         </ul>
       </div>
@@ -341,19 +342,19 @@
   </footer>
 
   <div class="policy-overlay" id="policyOverlay"></div>
-  <div class="policy-modal" id="policyModal" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+  <div class="policy-modal" id="policyModal" role="dialog" aria-modal="true" aria-labelledby="policyTitle" tabindex="-1">
     <button class="policy-close" id="closePolicy" type="button" aria-label="Chiudi">×</button>
     <h3 id="policyTitle">Privacy Policy</h3>
     <div id="policyBody"></div>
   </div>
 
   <!-- Pulsante flottante di WhatsApp -->
-  <a href="https://wa.me/390000000000?text=Ciao%20Sara,%20vorrei%20informazioni%20su%20trattamenti,%20disponibilit%C3%A0%20e%20costi." class="whatsapp-float client-hidden" target="_blank" rel="noopener" aria-label="Contatta Sara su WhatsApp" aria-hidden="true" tabindex="-1" data-temporary-note="Pulsante flottante nascosto temporaneamente su richiesta cliente.">
+  <a href="https://wa.me/393881639306?text=Ciao%20Sara,%20vorrei%20informazioni%20su%20trattamenti,%20disponibilit%C3%A0%20e%20costi." class="whatsapp-float client-hidden" target="_blank" rel="noopener" aria-label="Contatta Sara su WhatsApp" aria-hidden="true" tabindex="-1" data-temporary-note="Pulsante flottante nascosto temporaneamente su richiesta cliente.">
     <img src="assets/img/icons/social-whatsapp.png" alt="WhatsApp" />
   </a>
 
   <script src="assets/js/config.js?v=20260702-scroll-lock"></script>
-  <script src="assets/js/data.js?v=20260706-kit-refine"></script>
-  <script src="assets/js/app.js?v=20260706-kit-refine"></script>
+  <script src="assets/js/data.js?v=20260711-guide-and-contact-v2"></script>
+  <script src="assets/js/app.js?v=20260711-mobile-carousel-v3"></script>
 </body>
 </html>

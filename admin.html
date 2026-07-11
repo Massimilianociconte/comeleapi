@@ -180,15 +180,14 @@
       </div>
 
       <div class="field">
-        <label for="f-shortDesc">Breve descrizione <span class="req">*</span></label>
-        <input type="text" id="f-shortDesc" required maxlength="120" placeholder="Una frase che descrive il prodotto" />
-        <div class="err">Inserisci una breve descrizione.</div>
+        <label for="f-shortDesc">Descrizione ufficiale <span class="req">*</span></label>
+        <textarea id="f-shortDesc" required maxlength="320" placeholder="Descrizione completa approvata dalla cliente"></textarea>
+        <div class="err">Inserisci la descrizione ufficiale.</div>
       </div>
 
       <div class="field">
-        <label for="f-benefits">Benefici principali <span class="req">*</span></label>
-        <textarea id="f-benefits" required maxlength="240" placeholder="Es. favorisce il relax, riduce lo stress…"></textarea>
-        <div class="err">Indica almeno un beneficio.</div>
+        <label for="f-benefits">Note interne facoltative</label>
+        <textarea id="f-benefits" maxlength="500" placeholder="Non vengono mostrate nella vetrina pubblica"></textarea>
       </div>
 
       <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">

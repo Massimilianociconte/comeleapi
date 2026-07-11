@@ -46,10 +46,12 @@
 
   const currentLocale = resolveLocale();
   const isEnglish = currentLocale === "en";
-  const instagramUrl = "https://www.instagram.com/come_le_api/";
+  const instagramUrl = "https://www.instagram.com/comeleapi/";
+  const contactEmail = "sara.bordenga@gmail.com";
+  const contactPhoneDisplay = "388 163 9306";
+  const contactPhoneE164 = "393881639306";
   const productDisplayOverrides = {
     "p-collezione-essenziale": {
-      name: "Collezione Essenziale",
       icon: "assets/img/icons/products/collezione-essenziale.png"
     },
     "p-baby-essentials": {
@@ -62,20 +64,19 @@
       icon: "assets/img/icons/products/dolce-notte.png"
     },
     "p-gym-rat": {
-      name: "Sport & Wellness",
       icon: "assets/img/icons/products/sport-wellness.png"
     },
     "p-per-lui": {
       icon: "assets/img/icons/products/per-lui.png"
     },
     "p-per-lei": {
-      icon: "assets/img/icons/products/per-lei.png"
+      icon: "assets/img/icons/products/per-lei.png?v=20260711-rose"
     },
     "p-animal-scents": {
       icon: "assets/img/icons/products/animal-scents.png"
     },
     "p-balance-skin": {
-      icon: "assets/img/icons/products/balance-skin.png"
+      icon: "assets/img/icons/products/per-lei.png?v=20260711-rose"
     },
     "p-bloom-skin": {
       icon: "assets/img/icons/products/bloom-skin.png"
@@ -123,7 +124,7 @@
   }
 
   function whatsAppUrl(message) {
-    return `https://wa.me/390000000000?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/${contactPhoneE164}?text=${encodeURIComponent(message)}`;
   }
 
   function applyEnglishLocale() {
@@ -140,8 +141,8 @@
     setText('.nav a[href="#prodotti"]', "Essential oils");
     setText('.nav a[href="#servizi"]', "Treatments");
     setText('.nav a[href="#chi-sono"]', "The founder");
-    setButtonText(".nav-cta", "Message me on WhatsApp");
-    setAttr(".nav-cta", "href", whatsAppUrl("Hi Sara, I would like information about the treatments."));
+    setButtonText(".nav-cta", "Book your consultation");
+    setAttr(".nav-cta", "href", whatsAppUrl("Hi Sara, I would like to book a consultation."));
 
     setAttr(".hero-frame img", "alt", "Professional shoulder and neck relaxation treatment");
     const heroTitle = $(".hero-title");
@@ -158,8 +159,9 @@
     const aromaCards = $$(".aroma-cards-grid .aroma-card");
     if (aromaCards[0]) {
       setText("h3", "Signature Blend", aromaCards[0]);
-      setText("p", "Personalized aromatic consultation: together we will choose the essential oils best suited to your needs, for a tailor-made wellbeing process.", aromaCards[0]);
-      setText(".btn", "Message me on WhatsApp", aromaCards[0]);
+      setText("p", "Personalized aromatic consultation: together we will choose the essential oils best suited to your needs, for a tailor-made wellbeing path.", aromaCards[0]);
+      setText(".btn", "Book your consultation", aromaCards[0]);
+      setAttr(".btn", "href", whatsAppUrl("Hi Sara, I would like to book a Signature Blend aromatic consultation."), aromaCards[0]);
     }
     setText(".products-showcase__head h3", "Recommended collections");
     setText(".products-showcase__head p", "Young Living bundles and aromatic paths selected to support home, body and everyday rituals with simplicity.");
@@ -172,7 +174,7 @@
       "Decontracting massage",
       "Relaxing massage",
       "Lymphatic drainage massage",
-      "Focused 30-minute treatment",
+      "Targeted 30-minute treatment",
       "Kinesio taping",
       "Therapeutic massage with essential oils"
     ];
@@ -182,8 +184,8 @@
 
     setText(".slogan-kicker", "My mission");
     setText("#slogan-title", "Every drop is an act of care for you");
-    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower, I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>One scent, one pressure, one breath at a time.</span>");
-    setButtonText(".slogan-actions .btn--instagram", "@come_le_api");
+    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower,</span><span>I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>&mdash; one scent, one pressure, one breath at a time.</span>");
+    setButtonText(".slogan-actions .btn--instagram", "comeleapi");
     setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
 
     setText(".about-text .eyebrow", "THE FOUNDER");
@@ -196,13 +198,13 @@
     $$(".about-mini-card p").forEach((el, index) => {
       if (miniCards[index]) el.innerHTML = `<b>${miniCards[index]}</b>`;
     });
-    setHtml(".community-cta__copy", "<strong>Community</strong>");
-    setAttr(".community-cta", "href", whatsAppUrl("Hi Sara, I would like to join the Come le Api Community."));
+    setHtml(".community-cta__copy", "<b>Community</b>");
+    setAttr(".community-cta", "aria-label", "Community section coming soon");
 
     setHtml(".about-photo .tag", '<img class="tag-icon" src="assets/img/icons/icon-seal.png" width="18" height="18" alt="" loading="lazy" decoding="async" /> Massage & holistic wellbeing');
     setText(".booking .eyebrow", "Direct contact");
     setText(".booking .section-title", "Let's talk about the treatment best suited to you.");
-    setText(".booking .section-lead", "Message me on WhatsApp to tell me what you are looking for, check availability and receive costs and details clearly and confidentially.");
+    setText(".booking .section-lead", "Book your consultation on WhatsApp, tell me what you are looking for and receive availability, costs and details clearly and confidentially.");
     setText(".benefits-box h3", "At-home treatments");
     const benefits = [
       "Treatments are available at home in the Bresso and Cusano Milanino areas.",
@@ -299,70 +301,219 @@
     });
   });
 
+  function alignCurrentHash(behavior = "auto") {
+    if (!window.location.hash || window.location.hash === "#") return;
+    const target = document.querySelector(window.location.hash);
+    if (!target) return;
+    const top = target.getBoundingClientRect().top + window.scrollY - 70;
+    window.scrollTo({ top: Math.max(0, top), behavior });
+  }
+
+  window.addEventListener("load", () => requestAnimationFrame(() => alignCurrentHash("auto")));
+  window.addEventListener("hashchange", () => alignCurrentHash("smooth"));
+
+  /* ---------- Caroselli compatti per smartphone ---------- */
+  const mobileCarouselMedia = window.matchMedia("(max-width: 600px)");
+  const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const mobileCarouselStates = new WeakMap();
+
+  function setupMobileCarousel(track, {
+    label,
+    itemSelector,
+    autoplay = false,
+    interval = 4600
+  }) {
+    if (!track) return null;
+    const existing = mobileCarouselStates.get(track);
+    if (existing) {
+      existing.refresh();
+      return existing;
+    }
+
+    track.classList.add("mobile-carousel-track");
+    track.setAttribute("role", "region");
+    track.setAttribute("aria-roledescription", isEnglish ? "carousel" : "carosello");
+    track.setAttribute("aria-label", label);
+
+    const controls = document.createElement("div");
+    controls.className = "mobile-carousel-controls";
+    controls.innerHTML = `
+      <button class="mobile-carousel-button mobile-carousel-prev" type="button" aria-label="${isEnglish ? "Previous" : "Precedente"}">&lsaquo;</button>
+      <span class="mobile-carousel-counter" role="status" aria-live="polite">1 / 1</span>
+      ${autoplay ? `<button class="mobile-carousel-button mobile-carousel-toggle" type="button" aria-label="${isEnglish ? "Pause automatic scrolling" : "Pausa scorrimento automatico"}">&#10074;&#10074;</button>` : ""}
+      <button class="mobile-carousel-button mobile-carousel-next" type="button" aria-label="${isEnglish ? "Next" : "Successivo"}">&rsaquo;</button>
+    `;
+    track.insertAdjacentElement("afterend", controls);
+
+    const previous = $(".mobile-carousel-prev", controls);
+    const next = $(".mobile-carousel-next", controls);
+    const counter = $(".mobile-carousel-counter", controls);
+    const toggle = $(".mobile-carousel-toggle", controls);
+    let currentIndex = 0;
+    let userPaused = autoplay && reducedMotionMedia.matches;
+    let pauseUntil = 0;
+    let isVisible = false;
+    let scrollFrame = 0;
+
+    const items = () => $$(itemSelector, track).filter((item) => !item.classList.contains("client-hidden"));
+
+    function updateControls() {
+      const list = items();
+      const count = list.length;
+      if (currentIndex >= count) currentIndex = Math.max(0, count - 1);
+      controls.hidden = count < 2;
+      counter.textContent = `${count ? currentIndex + 1 : 0} / ${count}`;
+      previous.disabled = currentIndex <= 0;
+      next.disabled = currentIndex >= count - 1;
+      if (toggle) {
+        toggle.innerHTML = userPaused ? "&#9654;" : "&#10074;&#10074;";
+        toggle.setAttribute("aria-label", userPaused
+          ? (isEnglish ? "Start automatic scrolling" : "Avvia scorrimento automatico")
+          : (isEnglish ? "Pause automatic scrolling" : "Pausa scorrimento automatico"));
+      }
+    }
+
+    function refresh() {
+      items().forEach((item, index) => {
+        item.setAttribute("role", "group");
+        item.setAttribute("aria-roledescription", isEnglish ? "slide" : "diapositiva");
+        item.setAttribute("aria-label", `${index + 1} ${isEnglish ? "of" : "di"} ${items().length}`);
+      });
+      updateControls();
+    }
+
+    function goTo(index, manual = true) {
+      const list = items();
+      if (!list.length || !mobileCarouselMedia.matches) return;
+      currentIndex = Math.max(0, Math.min(index, list.length - 1));
+      if (manual) pauseUntil = Date.now() + 8000;
+      const item = list[currentIndex];
+      const itemLeft = item.offsetLeft - track.offsetLeft;
+      const left = itemLeft - ((track.clientWidth - item.offsetWidth) / 2);
+      track.scrollTo({ left, behavior: reducedMotionMedia.matches ? "auto" : "smooth" });
+      updateControls();
+    }
+
+    function syncFromScroll() {
+      const list = items();
+      if (!list.length) return;
+      const center = track.scrollLeft + (track.clientWidth / 2);
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      list.forEach((item, index) => {
+        const itemCenter = (item.offsetLeft - track.offsetLeft) + (item.offsetWidth / 2);
+        const distance = Math.abs(itemCenter - center);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      currentIndex = closestIndex;
+      updateControls();
+    }
+
+    previous.addEventListener("click", () => goTo(currentIndex - 1));
+    next.addEventListener("click", () => goTo(currentIndex + 1));
+    toggle?.addEventListener("click", () => {
+      userPaused = !userPaused;
+      pauseUntil = Date.now() + 8000;
+      updateControls();
+    });
+    track.addEventListener("scroll", () => {
+      cancelAnimationFrame(scrollFrame);
+      scrollFrame = requestAnimationFrame(syncFromScroll);
+    }, { passive: true });
+    ["pointerdown", "touchstart", "wheel"].forEach((eventName) => {
+      track.addEventListener(eventName, () => { pauseUntil = Date.now() + 8000; }, { passive: true });
+    });
+    track.addEventListener("focusin", () => { pauseUntil = Date.now() + 8000; });
+
+    if ("IntersectionObserver" in window) {
+      const visibilityObserver = new IntersectionObserver((entries) => {
+        isVisible = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= .35);
+      }, { threshold: [.35] });
+      visibilityObserver.observe(track);
+    } else {
+      isVisible = true;
+    }
+
+    if (autoplay) {
+      window.setInterval(() => {
+        const list = items();
+        if (!mobileCarouselMedia.matches || userPaused || !isVisible || document.hidden || Date.now() < pauseUntil || list.length < 2) return;
+        goTo((currentIndex + 1) % list.length, false);
+      }, interval);
+    }
+
+    mobileCarouselMedia.addEventListener("change", () => {
+      if (!mobileCarouselMedia.matches) track.scrollTo({ left: 0, behavior: "auto" });
+      currentIndex = 0;
+      updateControls();
+    });
+
+    const state = { refresh, goTo };
+    mobileCarouselStates.set(track, state);
+    refresh();
+    return state;
+  }
+
+  setupMobileCarousel($("#servizi .services-grid"), {
+    label: isEnglish ? "Treatments" : "Trattamenti",
+    itemSelector: ".service-card"
+  });
+
   /* ---------- Rendering vetrina oli essenziali ---------- */
   const grid = $("#productsGrid");
   if (grid && window.SaraData) {
-    const fallbackProductImage = "assets/img/hero/hero-massage-sara.jpg";
+    const fallbackProductImage = "assets/img/hero/hero-comeleapi-botanica.jpg?v=20260711-hero-v1";
     const productTranslations = {
       "p-collezione-essenziale": {
-        name: "Essential collection",
-        shortDesc: "Starter kit with 12 oils.",
-        benefits: "Combines aromatic diffusion and versatile oils to support home atmosphere, energy, breathing rituals and calm moments with a structured approach."
+        name: "Essential Collection",
+        shortDesc: "A starter kit with 12 fundamental essential oils, selected for you and suited to cover the needs of everyday life."
       },
       "p-baby-essentials": {
         name: "Baby Essentials",
-        shortDesc: "Gentle starter kit with the Feather the Owl diffuser and KidScents oils for small family rituals.",
-        benefits: "Created for little ones' routines: bedtime atmosphere, comfort and soft aromas, always with mindful, age-appropriate use."
+        shortDesc: "Pre-diluted, gentle essential oils that are perfect for little ones. Sweetness and safety in a kit designed for the whole family."
       },
       "p-sweet-home": {
         name: "Sweet Home",
-        shortDesc: "A selection to make home feel fresher, warmer and more harmonious through clean natural notes.",
-        benefits: "Combines bright and soft aromas to scent living spaces and turn the home into a calmer, more familiar place."
+        shortDesc: "Turn your home into a natural haven: deep cleaning and zero toxins, for a healthy and safe space for the whole family."
       },
       "p-dolce-notte": {
         name: "Sweet Night",
-        shortDesc: "Blends and oils for the evening ritual, created to prepare a softer, more relaxed atmosphere.",
-        benefits: "Warm, restful notes to slow down, breathe and close the day with a simple act of care."
+        shortDesc: "The perfect ritual for peaceful nights. Relax and let good rest gently carry you. Sweet dreams!"
       },
       "p-gym-rat": {
-        name: "Sport & Wellness",
-        shortDesc: "Aromatic set for movement, training and recovery routines with fresh energy.",
-        benefits: "Fresh, tonic notes to include before or after activity, supporting focus, breath and a lighter body-care ritual."
+        name: "Sport",
+        shortDesc: "Energy, performance and results in one kit. Everything you need to train at your best and recover well."
       },
       "p-per-lui": {
         name: "For Him",
-        shortDesc: "Clean, woody and decisive selection for a natural masculine routine.",
-        benefits: "Combines fresh and deeper notes for personal care, home atmosphere and daily reset moments without feeling overpowering."
+        shortDesc: "The essentials for your daily routine, tailored to the modern man."
       },
       "p-per-lei": {
         name: "For Her",
-        shortDesc: "Soft, luminous feminine aromatic path for balance and daily care.",
-        benefits: "Floral and harmonious notes for skin, breath and presence rituals, with an elegant natural profile."
+        shortDesc: "Pamper yourself every day: a simple, regenerating beauty routine."
       },
       "p-animal-scents": {
-        name: "Animal scents",
-        shortDesc: "Line dedicated to aromatic care for animals, with specific products and a gentle approach.",
-        benefits: "Helps build a more mindful home routine with dedicated products chosen for this context, not improvised blends."
+        name: "Animals",
+        shortDesc: "Blends designed for the wellbeing of our little companions. Safe, natural care tailored to them."
       },
       "p-balance-skin": {
         name: "BALANCE skin",
-        shortDesc: "Essential skincare routine for skin seeking balance, freshness and simplicity.",
-        benefits: "Combines focused steps for cleansing, hydration and skin comfort with a light, clean and orderly feel."
+        shortDesc: "Rediscover your skin's natural balance: Radiant, Pure, Balanced."
       },
       "p-bloom-skin": {
-        name: "BLOOM skin",
-        shortDesc: "Luminous skincare treatment for skin that looks more vital and even.",
-        benefits: "Designed for a more refined face ritual: textures, aroma and cosmetic actives work together for a brighter-looking complexion."
+        name: "Bloom",
+        shortDesc: "A boost of hydration for luminous, regenerated skin. Your natural shield against external agents."
       },
       "p-shine-bright-like-a-diamond": {
-        name: "Shine Bright like a Diamond",
-        shortDesc: "Beauty and wellness selection for a luminous, energetic and polished routine.",
-        benefits: "Brings together products chosen for glow, freshness and presence: ideal when you want to feel bright, vital and put together."
+        name: "Shine Bright",
+        shortDesc: "The perfect duo for a toned face and a luminous gaze."
       },
       "p-bye-bye-menopausa": {
-        name: "Bye Bye Menopause",
-        shortDesc: "Natural path designed to accompany women through phases of change.",
-        benefits: "A daily wellbeing routine with oils and products chosen for balance, presence and listening to the body."
+        name: "Menopause",
+        shortDesc: "Your natural ally through every stage of change. Rediscover balance, energy and serenity, day after day."
       }
     };
     const displayProduct = (product) => {
@@ -391,6 +542,11 @@
             ${isEnglish ? "There are no featured products at the moment. Please come back soon." : "Al momento non ci sono prodotti in vetrina. Torna a trovarci presto."}
           </p>`;
         grid.classList.remove("is-loading");
+        setupMobileCarousel(grid, {
+          label: isEnglish ? "Essential oil kits" : "Kit di oli essenziali",
+          itemSelector: ".product-card",
+          autoplay: true
+        });
         return;
       }
       grid.innerHTML = products.map((product, i) => {
@@ -437,6 +593,11 @@
         }, { once: true });
       });
       grid.classList.remove("is-loading");
+      setupMobileCarousel(grid, {
+        label: isEnglish ? "Essential oil kits" : "Kit di oli essenziali",
+        itemSelector: ".product-card",
+        autoplay: true
+      });
 
       // riattiva reveal per le nuove card
       $$(".product-card.reveal", grid).forEach((el) => {
@@ -452,6 +613,7 @@
           el.classList.add("in");
         }
       });
+      requestAnimationFrame(() => alignCurrentHash("auto"));
     };
     render();
 
@@ -569,12 +731,13 @@
   const body = $("#policyBody");
 
   const CONSENT_COOKIE = "comeleapi_cookie_consent";
-  const CONSENT_VERSION = "2026-07-02";
+  const CONSENT_VERSION = "2026-07-11";
   const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
   const scrollLock = { active: false, y: 0 };
+  let lastPolicyTrigger = null;
 
   function hasBlockingPopup() {
-    return modal?.classList.contains("show") || $("#cookieBanner")?.classList.contains("show");
+    return modal?.classList.contains("show");
   }
 
   function syncScrollLock() {
@@ -597,7 +760,12 @@
       document.body.style.left = "";
       document.body.style.right = "";
       document.body.style.width = "";
-      window.scrollTo(0, scrollLock.y);
+      const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo({ top: scrollLock.y, left: 0, behavior: "auto" });
+      requestAnimationFrame(() => {
+        document.documentElement.style.scrollBehavior = previousScrollBehavior;
+      });
       scrollLock.active = false;
     }
   }
@@ -734,11 +902,11 @@
     if (isEnglish) {
       return `
       <div class="policy-content">
-        <p><strong>Last updated:</strong> 2 July 2026.</p>
+        <p><strong>Last updated:</strong> 11 July 2026.</p>
         <p>This notice is provided under Articles 12, 13 and 14 of Regulation (EU) 2016/679 ("GDPR") and explains how Come le Api processes personal data collected through this website and through the linked contact channels.</p>
 
         <h4>Data controller</h4>
-        <p><strong>Come le Api - Sara</strong>, wellbeing project based around 20091 Bresso, Milan. For privacy requests: <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>.</p>
+        <p><strong>Come le Api - Sara Bordenga</strong>, wellbeing project based around 20091 Bresso, Milan. For privacy requests: <a href="mailto:${contactEmail}">${contactEmail}</a> or <a href="tel:+${contactPhoneE164}">${contactPhoneDisplay}</a>.</p>
 
         <h4>Data processed</h4>
         <ul class="policy-list">
@@ -758,13 +926,13 @@
         </table>
 
         <h4>Recipients and providers</h4>
-        <p>Data may be processed by technical providers strictly necessary for website hosting, security, maintenance, email or messaging tools. Links to WhatsApp, Instagram, Facebook and WebNovis open external services: after the click, those providers process data under their own privacy notices.</p>
+        <p>Data may be processed by technical providers strictly necessary for website hosting, security, maintenance, email or messaging tools. Links to WhatsApp, Instagram and WebNovis open external services: after the click, those providers process data under their own privacy notices.</p>
 
         <h4>Transfers outside the EEA</h4>
         <p>The website is configured to load main fonts and images from local assets, avoiding requests to Google Fonts or external image services during ordinary browsing. Voluntary use of external services, such as WhatsApp or social networks, may involve processing or transfers under the relevant providers' terms.</p>
 
         <h4>Data subject rights</h4>
-        <p>You may request access, rectification, erasure, restriction, portability, objection and withdrawal of consent where applicable by writing to <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>. You also have the right to lodge a complaint with the <a href="https://www.garanteprivacy.it/" target="_blank" rel="noopener">Italian Data Protection Authority</a>.</p>
+        <p>You may request access, rectification, erasure, restriction, portability, objection and withdrawal of consent where applicable by writing to <a href="mailto:${contactEmail}">${contactEmail}</a>. You also have the right to lodge a complaint with the <a href="https://www.garanteprivacy.it/" target="_blank" rel="noopener">Italian Data Protection Authority</a>.</p>
 
         <h4>Official references</h4>
         <ul class="policy-list">
@@ -776,11 +944,11 @@
     }
     return `
       <div class="policy-content">
-        <p><strong>Ultimo aggiornamento:</strong> 2 luglio 2026.</p>
+        <p><strong>Ultimo aggiornamento:</strong> 11 luglio 2026.</p>
         <p>La presente informativa è resa ai sensi degli articoli 12, 13 e 14 del Regolamento (UE) 2016/679 ("GDPR") e descrive come Come le Api tratta i dati personali raccolti tramite questo sito e tramite i canali di contatto collegati.</p>
 
         <h4>Titolare del trattamento</h4>
-        <p><strong>Come le Api - Sara</strong>, progetto di benessere con riferimento territoriale a 20091 Bresso (Milano). Per richieste privacy: <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>.</p>
+        <p><strong>Come le Api - Sara Bordenga</strong>, progetto di benessere con riferimento territoriale a 20091 Bresso (Milano). Per richieste privacy: <a href="mailto:${contactEmail}">${contactEmail}</a> oppure <a href="tel:+${contactPhoneE164}">${contactPhoneDisplay}</a>.</p>
 
         <h4>Dati trattati</h4>
         <ul class="policy-list">
@@ -800,13 +968,13 @@
         </table>
 
         <h4>Destinatari e fornitori</h4>
-        <p>I dati possono essere trattati da fornitori tecnici strettamente necessari alla gestione del sito, hosting, sicurezza, manutenzione, email o strumenti di messaggistica. I link verso WhatsApp, Instagram, Facebook e WebNovis aprono servizi esterni: dopo il click, i relativi gestori trattano i dati secondo le proprie informative.</p>
+        <p>I dati possono essere trattati da fornitori tecnici strettamente necessari alla gestione del sito, hosting, sicurezza, manutenzione, email o strumenti di messaggistica. I link verso WhatsApp, Instagram e WebNovis aprono servizi esterni: dopo il click, i relativi gestori trattano i dati secondo le proprie informative.</p>
 
         <h4>Trasferimenti extra SEE</h4>
         <p>Il sito è stato configurato per caricare font e immagini principali da asset locali, evitando richieste a Google Fonts o servizi immagine esterni durante la navigazione ordinaria. L'uso volontario di servizi esterni, come WhatsApp o social network, può comportare trattamenti o trasferimenti secondo le condizioni dei rispettivi fornitori.</p>
 
         <h4>Diritti dell'interessato</h4>
-        <p>Puoi chiedere accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso quando applicabile, scrivendo a <a href="mailto:info@comeleapi.it">info@comeleapi.it</a>. Hai inoltre diritto di proporre reclamo al <a href="https://www.garanteprivacy.it/" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</p>
+        <p>Puoi chiedere accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso quando applicabile, scrivendo a <a href="mailto:${contactEmail}">${contactEmail}</a>. Hai inoltre diritto di proporre reclamo al <a href="https://www.garanteprivacy.it/" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</p>
 
         <h4>Riferimenti normativi</h4>
         <ul class="policy-list">
@@ -821,7 +989,7 @@
     if (isEnglish) {
       return `
       <div class="policy-content">
-        <p><strong>Last updated:</strong> 2 July 2026.</p>
+        <p><strong>Last updated:</strong> 11 July 2026.</p>
         <p>This Cookie Policy explains the use of cookies and similar tools on the Come le Api website. By default, only strictly necessary technical tools are active. Any analytics or marketing tools are activated only after express consent.</p>
 
         <h4>What cookies are</h4>
@@ -857,7 +1025,7 @@
     }
     return `
       <div class="policy-content">
-        <p><strong>Ultimo aggiornamento:</strong> 2 luglio 2026.</p>
+        <p><strong>Ultimo aggiornamento:</strong> 11 luglio 2026.</p>
         <p>Questa Cookie Policy descrive l'uso di cookie e strumenti analoghi sul sito Come le Api. Per impostazione predefinita sono attivi solo strumenti tecnici necessari. Eventuali strumenti analytics o marketing vengono attivati solo dopo consenso espresso.</p>
 
         <h4>Cosa sono i cookie</h4>
@@ -892,7 +1060,8 @@
       </div>`;
   }
 
-  function openModal(kind) {
+  function openModal(kind, trigger = document.activeElement) {
+    lastPolicyTrigger = trigger instanceof HTMLElement ? trigger : null;
     title.textContent = kind === "cookie"
       ? (isEnglish ? "Cookie Policy" : "Cookie Policy")
       : (isEnglish ? "Privacy Policy" : "Privacy Policy");
@@ -900,6 +1069,7 @@
     overlay.classList.add("show");
     modal.classList.add("show");
     syncScrollLock();
+    window.setTimeout(() => $("#closePolicy")?.focus({ preventScroll: true }), 40);
     $("#manageCookiePrefs")?.addEventListener("click", () => {
       closePolicy();
       showCookieBanner(true);
@@ -910,14 +1080,33 @@
     overlay.classList.remove("show");
     modal.classList.remove("show");
     syncScrollLock();
+    if (lastPolicyTrigger?.isConnected) lastPolicyTrigger.focus({ preventScroll: true });
+    lastPolicyTrigger = null;
   }
 
-  $("#openPrivacy")?.addEventListener("click", (e) => { e.preventDefault(); openModal("privacy"); });
-  $("#openCookie")?.addEventListener("click", (e) => { e.preventDefault(); openModal("cookie"); });
+  $("#openPrivacy")?.addEventListener("click", (e) => { e.preventDefault(); openModal("privacy", e.currentTarget); });
+  $("#openCookie")?.addEventListener("click", (e) => { e.preventDefault(); openModal("cookie", e.currentTarget); });
   $("#closePolicy")?.addEventListener("click", closePolicy);
   overlay?.addEventListener("click", closePolicy);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && modal.classList.contains("show")) closePolicy();
+    if (e.key !== "Tab" || !modal.classList.contains("show")) return;
+    const focusable = $$('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])', modal)
+      .filter((element) => !element.hasAttribute("hidden"));
+    if (!focusable.length) {
+      e.preventDefault();
+      modal.focus();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   function cookieBannerTemplate() {
@@ -1029,7 +1218,7 @@
         return;
       }
       if (action === "policy") {
-        openModal("cookie");
+        openModal("cookie", e.target.closest("[data-cookie-action]"));
         return;
       }
       if (action === "accept") {

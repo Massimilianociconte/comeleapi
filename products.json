@@ -1,0 +1,134 @@
+[
+  {
+    "id": "p-collezione-essenziale",
+    "name": "Collezione Essenziale",
+    "shortDesc": "Uno starter kit con i 12 oli essenziali fondamentali, selezionati per te e adatti a coprire tutte le esigenze della vita quotidiana.",
+    "benefits": "",
+    "price": "196,41 €",
+    "image": "foto-prodotti/collezione-essenziale.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/f3f1cb39-39f4-4f4c-93a3-d869c197613d",
+    "visible": true,
+    "order": 0
+  },
+  {
+    "id": "p-baby-essentials",
+    "name": "Baby Essentials",
+    "shortDesc": "Oli essenziali pre-diluiti, delicati e perfetti per i più piccoli. Dolcezza e sicurezza in un kit pensato per tutta la famiglia.",
+    "benefits": "",
+    "price": "162,25 €",
+    "image": "foto-prodotti/baby-essentials.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/ddab525d-a08a-4c2b-a7ed-c7e2c0522d33",
+    "visible": true,
+    "order": 1
+  },
+  {
+    "id": "p-sweet-home",
+    "name": "Sweet Home",
+    "shortDesc": "Trasforma la tua casa in un rifugio naturale: pulizia profonda e zero tossine. Per un ambiente sano e sicuro per tutta la famiglia.",
+    "benefits": "",
+    "price": "178,11 €",
+    "image": "foto-prodotti/sweet-home.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/91b5e23d-752e-440c-ba56-bf459688c4c1",
+    "visible": true,
+    "order": 2
+  },
+  {
+    "id": "p-dolce-notte",
+    "name": "Dolce Notte",
+    "shortDesc": "Il rituale perfetto per notti serene. Rilassati e lasciati cullare dal buon riposo. Sogni d'oro!",
+    "benefits": "",
+    "price": "92,10 €",
+    "image": "foto-prodotti/dolce-notte.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/82e13afb-0fa8-4efa-a0b8-2abad12ebd60",
+    "visible": true,
+    "order": 3
+  },
+  {
+    "id": "p-gym-rat",
+    "name": "Sport",
+    "shortDesc": "Energia, performance e risultati in un solo kit. Tutto ciò che serve per allenarti al massimo e recuperare al meglio.",
+    "benefits": "",
+    "price": "156,38 €",
+    "image": "foto-prodotti/sport-wellness-clean.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/88d08118-3dfa-4d07-b492-fbe9bf144bf3",
+    "visible": true,
+    "order": 4
+  },
+  {
+    "id": "p-per-lui",
+    "name": "Per lui",
+    "shortDesc": "L'essenziale per la tua routine quotidiana, pensato su misura per l'uomo moderno.",
+    "benefits": "",
+    "price": "104,75 €",
+    "image": "foto-prodotti/per-lui.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/a5880fa9-bf5e-4e11-bcad-c39343baa1fa",
+    "visible": true,
+    "order": 5
+  },
+  {
+    "id": "p-per-lei",
+    "name": "Per lei",
+    "shortDesc": "Coccolati ogni giorno: la tua routine di bellezza, semplice e rigenerante.",
+    "benefits": "",
+    "price": "76,58 €",
+    "image": "foto-prodotti/per-lei.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/562399ef-a072-4f8e-811e-2e0ec43abdd6",
+    "visible": true,
+    "order": 6
+  },
+  {
+    "id": "p-animal-scents",
+    "name": "Animali",
+    "shortDesc": "Miscele pensate per il benessere dei nostri piccoli amici. Coccole naturali sicure e su misura per loro.",
+    "benefits": "",
+    "price": "86,34 €",
+    "image": "foto-prodotti/animal-scents.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/ee09a34b-0ef7-4169-82c5-9e2115659705",
+    "visible": true,
+    "order": 7
+  },
+  {
+    "id": "p-balance-skin",
+    "name": "BALANCE skin",
+    "shortDesc": "Ritrova l'equilibrio naturale della tua pelle: Splendida, Pura, Bilanciata.",
+    "benefits": "",
+    "price": "148,67 €",
+    "image": "foto-prodotti/balance-skin-clean.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/fdce81cc-3f59-415c-8dc0-ca127f413431",
+    "visible": true,
+    "order": 8
+  },
+  {
+    "id": "p-bloom-skin",
+    "name": "Bloom",
+    "shortDesc": "Un boost di idratazione per una pelle luminosa e rigenerata. Il tuo scudo naturale contro gli agenti esterni.",
+    "benefits": "",
+    "price": "169,69 €",
+    "image": "foto-prodotti/bloom-skin.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/f6bea7b5-fff7-4ad1-a3a6-c4f8fa265aab",
+    "visible": true,
+    "order": 9
+  },
+  {
+    "id": "p-shine-bright-like-a-diamond",
+    "name": "Shine Bright",
+    "shortDesc": "Il duo perfetto per un viso tonico e uno sguardo luminoso.",
+    "benefits": "",
+    "price": "163,09 €",
+    "image": "foto-prodotti/shine-bright-like-a-diamond.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/d8202be7-c994-433a-9f38-7d7e1a7f3146",
+    "visible": true,
+    "order": 10
+  },
+  {
+    "id": "p-bye-bye-menopausa",
+    "name": "Menopausa",
+    "shortDesc": "Il tuo alleato naturale in ogni fase del cambiamento. Riscopri equilibrio, energia e serenità, giorno dopo giorno.",
+    "benefits": "",
+    "price": "188,22 €",
+    "image": "foto-prodotti/bye-bye-menopausa.png",
+    "link": "https://www.youngliving.com/apps/enrollment/social-links/8833dee2-aab2-46e1-94d0-c7bb78d5800d",
+    "visible": true,
+    "order": 11
+  }
+]

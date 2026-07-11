@@ -37,7 +37,7 @@
   }
 
   function whatsAppUrl(message) {
-    return `https://wa.me/390000000000?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/393881639306?text=${encodeURIComponent(message)}`;
   }
 
   if (resolveLocale() !== "en") return;
@@ -55,8 +55,8 @@
   const copy = [
     {
       strong: "<em>The Essential</em>",
-      small: "A concise guide to essential oils for your natural wellbeing",
-      href: whatsAppUrl("Hi Sara, I would like to receive the free essential oils mini guide.")
+      small: "The official Come le Api essential oils mini guide",
+      href: "../assets/pdf/guida-oli-essenziali-come-le-api.pdf?v=20260711-editorial-v3"
     },
 
     {
@@ -82,7 +82,7 @@
     {
       strong: "Follow Sara on Instagram",
       small: "Tips, news and wellbeing moments",
-      href: "https://www.instagram.com/come_le_api/"
+      href: "https://www.instagram.com/comeleapi/"
     }
   ];
 

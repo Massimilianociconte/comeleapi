@@ -67,7 +67,7 @@ Sono link a una ricerca Google generica, non a uno shop reale né a un programma
 La meta description della link-bio è: *"Tutti i link utili di Come le Api: consulenza gratuita, trattamenti, oli essenziali, WhatsApp e Instagram."* Zero menzione di Bresso, zero menzione di "massaggi" come termine di ricerca. Stessa cosa per il title. Dettaglio completo in Sezione 4.
 
 #### 🟡 IMPORTANTE 6 — Dati di contatto placeholder
-`+390000000000`, `+39 000 000 0000`, `privacy@comeleapi.it` (dominio inesistente), `Sara [cognome]`. Capisco che siano provvisori per costruzione, ma li segnalo come checklist pre-lancio: un sito con numero di telefono fittizio pubblicato per errore è un danno reputazionale immediato e difficile da recuperare (screenshot, recensioni negative, ecc.).
+I recapiti provvisori sono stati sostituiti con i dati forniti dalla cliente: Sara Bordenga, `sara.bordenga@gmail.com` e `+39 388 163 9306`.
 
 #### 🟡 IMPORTANTE 7 — Nessun canonical tag, nessuna immagine Open Graph
 Assenza di `<link rel="canonical">` e `<meta property="og:image">`. Su WhatsApp/Instagram (i due canali social citati nella link-bio stessa) un link condiviso senza `og:image` mostra una card vuota o generica — un problema diretto per chi userà proprio quei canali per promuoversi.

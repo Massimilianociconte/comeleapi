@@ -644,6 +644,7 @@
 
   function isValidUrl(v) {
     if (/^\/uploads\/[a-z0-9._-]+\.(jpe?g|png|webp)$/i.test(v)) return true;
+    if (/^\/?(?:assets\/img|foto-prodotti)\/[a-z0-9_./-]+\.(jpe?g|png|webp)$/i.test(v)) return true;
     try {
       const url = new URL(v);
       return url.protocol === "https:" || (url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname));
@@ -655,7 +656,7 @@
   async function save() {
     clearErrors();
     let ok = true;
-    ["#f-name", "#f-shortDesc", "#f-benefits"].forEach((sel) => {
+    ["#f-name", "#f-shortDesc"].forEach((sel) => {
       const el = $(sel);
       const valid = el.value.trim().length > 0;
       setFieldError(el, !valid);

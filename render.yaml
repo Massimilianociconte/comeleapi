@@ -29,6 +29,6 @@ services:
       - key: VAPID_PRIVATE_KEY
         sync: false
       - key: VAPID_SUBJECT
-        value: "mailto:privacy@comeleapi.it"
+        value: "mailto:sara.bordenga@gmail.com"
       - key: PUBLIC_SITE_ORIGINS
         sync: false
