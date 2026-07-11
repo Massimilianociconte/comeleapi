@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
 FONTS = ASSETS / "fonts"
 OILS = ASSETS / "img/guide/oils-v2"
+MACROS = ASSETS / "img/guide/macros-v1"
 COVER_ART = ASSETS / "img/guide/cover-botanical-v3.png"
 LOGO = ASSETS / "img/logo-comeleapi.png"
 
@@ -109,6 +110,108 @@ def paste_cover(page: Image.Image, source_path: Path, box: tuple[int, int, int, 
         page.paste(source, (x, y), mask)
 
 
+def paste_complete(page: Image.Image, source_path: Path, box: tuple[int, int, int, int], radius: int = 0) -> None:
+    """Frame a complete bottle over a quiet, matching botanical backdrop."""
+    x, y, width, height = box
+    with Image.open(source_path) as opened:
+        source = opened.convert("RGBA")
+        backdrop = ImageOps.fit(source, (width, height), method=Image.Resampling.LANCZOS, centering=(.5, .52))
+        backdrop = backdrop.filter(ImageFilter.GaussianBlur(18))
+        backdrop = ImageEnhance.Brightness(backdrop).enhance(1.08)
+        veil = Image.new("RGBA", (width, height), hex_rgba(PAPER, 92))
+        backdrop = Image.alpha_composite(backdrop, veil)
+
+        foreground = ImageOps.contain(source, (int(width * .82), int(height * .96)), Image.Resampling.LANCZOS)
+        framed = backdrop.copy()
+        fx = (width - foreground.width) // 2
+        fy = (height - foreground.height) // 2
+        framed.alpha_composite(foreground, (fx, fy))
+        mask = rounded_mask((width, height), radius) if radius else framed.getchannel("A")
+        page.paste(framed, (x, y), mask)
+
+
+def paste_macro(page: Image.Image, source_path: Path, box: tuple[int, int, int, int],
+                crop: tuple[float, float, float, float], radius: int = 0, opacity: int = 255) -> None:
+    """Place a crisp ingredient detail without including the product bottle."""
+    x, y, width, height = box
+    with Image.open(source_path) as opened:
+        source = opened.convert("RGBA")
+        left, top, right, bottom = crop
+        detail = source.crop((
+            int(source.width * left), int(source.height * top),
+            int(source.width * right), int(source.height * bottom),
+        ))
+        detail = ImageOps.fit(detail, (width, height), Image.Resampling.LANCZOS)
+        detail = ImageEnhance.Color(detail).enhance(1.04)
+        mask = rounded_mask((width, height), radius) if radius else detail.getchannel("A")
+        if opacity < 255:
+            mask = ImageEnhance.Brightness(mask).enhance(opacity / 255)
+        page.paste(detail, (x, y), mask)
+
+
+def paste_transparent(page: Image.Image, source_path: Path, box: tuple[int, int, int, int],
+                      opacity: int = 255) -> None:
+    x, y, width, height = box
+    with Image.open(source_path) as opened:
+        source = opened.convert("RGBA")
+        source = ImageOps.contain(source, (width, height), Image.Resampling.LANCZOS)
+        if opacity < 255:
+            source.putalpha(ImageEnhance.Brightness(source.getchannel("A")).enhance(opacity / 255))
+        page.alpha_composite(source, (x + (width - source.width) // 2, y + (height - source.height) // 2))
+
+
+def paste_bottle_vignette(page: Image.Image, source_path: Path, center: tuple[int, int], max_size: tuple[int, int]) -> None:
+    """Extract the central bottle with a feathered, paper-like transparency."""
+    with Image.open(source_path) as opened:
+        source = opened.convert("RGB")
+    crop = source.crop((int(source.width * .28), int(source.height * .24),
+                        int(source.width * .72), int(source.height * .94)))
+    keep = Image.new("L", crop.size, 0)
+    keep_draw = ImageDraw.Draw(keep)
+    cap_top = .22 if source_path.stem == "rc" else .18
+    keep_draw.rounded_rectangle((int(crop.width * .31), int(crop.height * cap_top),
+                                 int(crop.width * .69), int(crop.height * .40)), radius=32, fill=255)
+    keep_draw.rounded_rectangle((int(crop.width * .29), int(crop.height * .37),
+                                 int(crop.width * .71), int(crop.height * .46)), radius=18, fill=255)
+    keep_draw.polygon([
+        (int(crop.width * .27), int(crop.height * .47)),
+        (int(crop.width * .30), int(crop.height * .42)),
+        (int(crop.width * .70), int(crop.height * .42)),
+        (int(crop.width * .73), int(crop.height * .47)),
+        (int(crop.width * .73), int(crop.height * .89)),
+        (int(crop.width * .27), int(crop.height * .89)),
+    ], fill=255)
+    keep_draw.rounded_rectangle((int(crop.width * .27), int(crop.height * .45),
+                                 int(crop.width * .73), int(crop.height * .91)), radius=24, fill=255)
+    alpha = keep.filter(ImageFilter.GaussianBlur(1.4))
+    bottle = crop.convert("RGBA")
+    bottle.putalpha(alpha)
+    bottle = ImageOps.contain(bottle, max_size, Image.Resampling.LANCZOS)
+    page.alpha_composite(bottle, (center[0] - bottle.width // 2, center[1] - bottle.height // 2))
+
+
+def paste_atlas_diptych(page: Image.Image, source_path: Path, box: tuple[int, int, int, int],
+                        macro_crop: tuple[float, float, float, float], radius: int = 0) -> None:
+    """Combine a complete bottle plate with a sharp botanical macro."""
+    x, y, width, height = box
+    left_width = int(width * .58)
+    right_width = width - left_width
+    composition = Image.new("RGBA", (width, height), hex_rgba(PAPER))
+    with Image.open(source_path) as opened:
+        source = opened.convert("RGBA")
+        bottle = ImageOps.contain(source, (left_width - 18, height - 12), Image.Resampling.LANCZOS)
+        composition.alpha_composite(bottle, ((left_width - bottle.width) // 2, (height - bottle.height) // 2))
+
+        l, t, r, b = macro_crop
+        detail = source.crop((int(source.width * l), int(source.height * t),
+                              int(source.width * r), int(source.height * b)))
+        detail = ImageOps.fit(detail, (right_width, height), Image.Resampling.LANCZOS)
+        composition.alpha_composite(detail, (left_width, 0))
+    ImageDraw.Draw(composition).line((left_width, 22, left_width, height - 22), fill=LINE, width=2)
+    mask = rounded_mask((width, height), radius) if radius else composition.getchannel("A")
+    page.paste(composition, (x, y), mask)
+
+
 def wrap_lines(draw: ImageDraw.ImageDraw, text: str, text_font: ImageFont.FreeTypeFont,
                max_width: int) -> list[str]:
     lines: list[str] = []
@@ -143,6 +246,21 @@ def draw_text(draw: ImageDraw.ImageDraw, text: str, xy: tuple[int, int], max_wid
     return y
 
 
+def draw_centered_box_text(draw: ImageDraw.ImageDraw, text: str, box: tuple[int, int, int, int],
+                           max_width: int, text_font: ImageFont.FreeTypeFont, fill: str = PAPER,
+                           line_height: int | None = None) -> None:
+    """Center wrapped copy on both axes with identical visual padding."""
+    x1, y1, x2, y2 = box
+    line_height = line_height or int(text_font.size * 1.45)
+    lines = wrap_lines(draw, text, text_font, max_width)
+    content_height = len(lines) * line_height
+    y = y1 + ((y2 - y1) - content_height) / 2
+    center_x = (x1 + x2) / 2
+    for line in lines:
+        draw.text((center_x, y), line, font=text_font, fill=fill, anchor="ma")
+        y += line_height
+
+
 def draw_rule(draw: ImageDraw.ImageDraw, y: int, x1: int = 96, x2: int = W - 96, color: str = LINE,
               width: int = 2) -> None:
     draw.line((x1, y, x2, y), fill=color, width=width)
@@ -175,10 +293,9 @@ def save_page(page: Image.Image, page_no: int, slug: str) -> Path:
 
 def cover_page() -> Path:
     page = paper_background()
-    paste_cover(page, COVER_ART, (0, 0, W, H), focus=(.5, .5))
-    veil = Image.new("RGBA", (W, 780), hex_rgba(PAPER, 232))
-    soft = veil.filter(ImageFilter.GaussianBlur(18))
-    page.alpha_composite(soft, (0, 0))
+    image_top = 740
+    paste_cover(page, COVER_ART, (0, image_top, W, H - image_top), focus=(.5, .72))
+    ImageDraw.Draw(page).line((0, image_top, W, image_top), fill=LINE, width=2)
     draw = ImageDraw.Draw(page)
 
     with Image.open(LOGO) as logo:
@@ -230,16 +347,18 @@ def introduction_page() -> Path:
         22,
     ) + 42
 
-    draw.rounded_rectangle((MARGIN, y, 746, y + 290), radius=34, fill=hex_rgba(DEEP), outline=None)
-    draw_text(
+    box = (MARGIN, y, 746, y + 290)
+    draw.rounded_rectangle(box, radius=34, fill=hex_rgba(DEEP), outline=None)
+    draw_centered_box_text(
         draw,
         "Altamente biocompatibili con il nostro organismo, gli oli essenziali vengono riconosciuti e assorbiti al 100%, attivando e velocizzando il processo di guarigione.",
-        (MARGIN + 34, y + 42),
+        box,
         580,
         F_BODY_MEDIUM_31,
         PAPER,
         48,
     )
+    paste_transparent(page, MACROS / "lavanda.png", (MARGIN, 1400, 650, 340))
     return save_page(page, 2, "introduzione")
 
 
@@ -280,6 +399,7 @@ def plant_intelligence_page() -> Path:
         DEEP,
         53,
     )
+    paste_transparent(page, MACROS / "thieves.png", (MARGIN, 1285, 680, 350))
     return save_page(page, 3, "cosa-sono")
 
 
@@ -311,16 +431,18 @@ def absorption_page() -> Path:
         metric_y += 230
 
     paste_cover(page, OILS / "menta-piperita.png", (804, 470, 540, 850), radius=270, focus=(.5, .53))
-    draw.rounded_rectangle((804, 1325, RIGHT, 1775), radius=42, fill=hex_rgba(DEEP))
-    draw_text(
+    box = (804, 1325, RIGHT, 1775)
+    draw.rounded_rectangle(box, radius=42, fill=hex_rgba(DEEP))
+    draw_centered_box_text(
         draw,
         "Oltre a tutti i benefici fisici legati al sistema immunitario ed endocrino, l'aromaterapia coinvolge l'emotività, la memoria, la sensibilità e tutte le aree cognitive correlate. Potentissimo è l’impiego degli oli essenziali per riequilibrare la sfera psichica ed emozionale.",
-        (844, 1368),
+        box,
         460,
         font("body", 24),
         PAPER,
         39,
     )
+    paste_transparent(page, MACROS / "menta-piperita.png", (MARGIN, 1435, 580, 290))
     return save_page(page, 4, "assorbimento")
 
 
@@ -342,8 +464,9 @@ def applications_page() -> Path:
         draw.line((246, y + 320, RIGHT, y + 320), fill=LINE, width=2)
         y += 365
 
-    draw.rounded_rectangle((MARGIN, 1660, RIGHT, 1805), radius=72, fill=hex_rgba(DEEP))
-    draw.text((720, 1705), "Chiedi sempre prima il parere di un esperto!", font=F_DISPLAY_ITALIC_42, fill=PAPER, anchor="ma")
+    box = (MARGIN, 1660, RIGHT, 1805)
+    draw.rounded_rectangle(box, radius=72, fill=hex_rgba(DEEP))
+    draw_centered_box_text(draw, "Chiedi sempre prima il parere di un esperto!", box, 1100, F_DISPLAY_ITALIC_42)
     return save_page(page, 5, "applicazioni")
 
 
@@ -370,6 +493,7 @@ def quality_page() -> Path:
         "Fondamentale affidarsi ad un’azienda seria, capace e sicura nei propri mezzi economici. Un’azienda che garantisca trasparenza nella produzione e nel controllo qualità."
     )
     draw_text(draw, body, (MARGIN, y), 650, F_BODY_31, INK_SOFT, 47, 22)
+    paste_transparent(page, MACROS / "frankincense.png", (MARGIN, 1490, 650, 285))
     return save_page(page, 6, "qualita")
 
 
@@ -393,11 +517,12 @@ def purity_page() -> Path:
         draw.line((246, y + 245, RIGHT, y + 245), fill=LINE, width=2)
         y += 270
 
-    draw.rounded_rectangle((MARGIN, 1570, RIGHT, 1820), radius=38, fill=hex_rgba(DEEP))
-    draw_text(
+    box = (MARGIN, 1570, RIGHT, 1820)
+    draw.rounded_rectangle(box, radius=38, fill=hex_rgba(DEEP))
+    draw_centered_box_text(
         draw,
         "Di questi solo il 5% della produzione mondiale rispetta i criteri necessari per mantenere tutti i principi attivi della pianta. Sono quindi pochissimi gli oli essenziali in commercio veramente efficaci, che contengano in sé tutta la potenza terapeutica della natura.",
-        (130, 1608),
+        box,
         1180,
         F_BODY_28,
         PAPER,
@@ -412,20 +537,24 @@ def gallery_page(page_no: int, title: str, oils: list[tuple[str, str]], slug: st
     draw.text((96, 230), title, font=F_DISPLAY_92, fill=INK)
     draw.text((98, 350), "Dodici essenze, dodici identità botaniche.", font=F_DISPLAY_ITALIC_42, fill=DEEP)
 
-    card_w, card_h = 592, 410
+    card_w, card_h = 592, 380
     xs = [MARGIN, MARGIN + card_w + 64]
-    ys = [470, 925, 1380]
+    ys = [450, 865, 1280]
     for index, (name, filename) in enumerate(oils):
         x = xs[index % 2]
         y = ys[index // 2]
-        paste_cover(page, OILS / filename, (x, y, card_w, 330), radius=34, focus=(.5, .53))
-        draw.rounded_rectangle((x, y + 296, x + card_w, y + card_h), radius=34, fill=hex_rgba(PAPER, 246), outline=hex_rgba(LINE))
-        draw.text((x + 30, y + 332), name, font=F_DISPLAY_56, fill=INK)
+        column = index % 2
+        macro_x = x + (150 if column == 0 else 44)
+        bottle_x = x + (235 if column == 0 else 357)
+        paste_transparent(page, MACROS / filename, (macro_x, y + 4, 398, 270))
+        paste_bottle_vignette(page, OILS / filename, (bottle_x, y + 145), (240, 300))
+        draw.text((x + card_w // 2, y + 304), name, font=F_DISPLAY_56, fill=INK, anchor="ma")
 
     if closing:
-        draw.rounded_rectangle((MARGIN, 1798, RIGHT, 1900), radius=35, fill=hex_rgba(DEEP))
-        draw.text((720, 1824), "sara.bordenga@gmail.com  ·  388 163 9306", font=F_BODY_SEMI_30, fill=PAPER, anchor="ma")
-        draw.text((720, 1870), "Guida informativa: chiedi sempre il parere di un professionista qualificato.", font=F_BODY_19, fill=PAPER, anchor="ma")
+        footer = (MARGIN, 1685, RIGHT, 1810)
+        draw.rounded_rectangle(footer, radius=35, fill=hex_rgba(DEEP))
+        draw.text((720, 1718), "sara.bordenga@gmail.com  ·  388 163 9306", font=F_BODY_SEMI_30, fill=PAPER, anchor="ma")
+        draw.text((720, 1766), "Guida informativa: chiedi sempre il parere di un professionista qualificato.", font=F_BODY_19, fill=PAPER, anchor="ma")
     return save_page(page, page_no, slug)
 
 

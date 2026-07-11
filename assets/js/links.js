@@ -56,7 +56,7 @@
     {
       strong: "<em>The Essential</em>",
       small: "The official Come le Api essential oils mini guide",
-      href: "../assets/pdf/guida-oli-essenziali-come-le-api.pdf?v=20260711-editorial-v3"
+      href: "../assets/pdf/mini-guida-oli-comeleapi.pdf?v=20260711-final"
     },
 
     {
