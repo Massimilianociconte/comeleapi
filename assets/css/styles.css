@@ -1061,6 +1061,16 @@ h1, h2, h3, h4 {
 .product-img { aspect-ratio: 4/3; overflow:hidden; position:relative; background: var(--sand); }
 .product-img img { width:100%; height:100%; object-fit:cover; transition: transform .6s ease; }
 .product-card:hover .product-img img { transform: scale(1.06); }
+.product-card[data-product-id="p-per-lui"] .product-img {
+  background: #c5a27d;
+}
+.product-card[data-product-id="p-per-lui"] .product-img img {
+  object-fit: contain;
+  transform: scale(.9);
+}
+.product-card[data-product-id="p-per-lui"]:hover .product-img img {
+  transform: scale(.93);
+}
 .product-img .price {
   display: none;
 }

@@ -76,7 +76,7 @@
       icon: "assets/img/icons/products/animal-scents.png"
     },
     "p-balance-skin": {
-      icon: "assets/img/icons/products/balance-skin.png?v=20260712-skincare-v1"
+      icon: "assets/img/icons/products/balance-skin.png?v=20260712-skincare-v2"
     },
     "p-bloom-skin": {
       icon: "assets/img/icons/products/bloom-skin.png"
@@ -562,7 +562,7 @@
           ? ` href="${escapeHtml(link)}" target="_blank" rel="noopener nofollow" aria-label="${escapeHtml(`${isEnglish ? "Open purchase link for" : "Apri il link di acquisto per"} ${p.name}${price ? ` - ${price}` : ""}`)}"`
           : ` aria-disabled="${unavailable ? "true" : "false"}"`;
         return `
-        <${cardTag} class="product-card ${clickable ? "product-card--clickable" : ""} ${unavailable ? "product-card--unavailable" : ""} reveal" data-delay="${(i % 3)}"${cardAttrs}>
+        <${cardTag} class="product-card ${clickable ? "product-card--clickable" : ""} ${unavailable ? "product-card--unavailable" : ""} reveal" data-product-id="${escapeHtml(p.id)}" data-delay="${(i % 3)}"${cardAttrs}>
           <div class="product-img">
             <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
