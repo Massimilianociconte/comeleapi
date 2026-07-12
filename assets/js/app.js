@@ -58,7 +58,7 @@
       icon: "assets/img/icons/products/kit-bambini-icon.png"
     },
     "p-sweet-home": {
-      icon: "assets/img/icons/products/sweet-home.png"
+      icon: "assets/img/icons/products/sweet-home.png?v=20260712-home-v2"
     },
     "p-dolce-notte": {
       icon: "assets/img/icons/products/dolce-notte.png"
