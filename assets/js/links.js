@@ -55,7 +55,7 @@
   const copy = [
     {
       strong: "<em>The Essential</em>",
-      small: "The official Come le Api essential oils mini guide",
+      small: "A concise guide to essential oils for your natural wellbeing",
       href: "../assets/pdf/mini-guida-oli-comeleapi.pdf?v=20260711-final"
     },
 

@@ -6,7 +6,7 @@
  * prioritaria per consentire gli aggiornamenti dal gestionale.
  */
 
-const PRODUCT_CATALOG_URL = "products.json?v=20260711-official-copy";
+const PRODUCT_CATALOG_URL = "products.json?v=20260712-collection-copy-v1";
 
 function apiBase() {
   return String(window.COMELEAPI_API_BASE || "").trim().replace(/\/+$/, "");

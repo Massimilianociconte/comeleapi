@@ -76,7 +76,7 @@
       icon: "assets/img/icons/products/animal-scents.png"
     },
     "p-balance-skin": {
-      icon: "assets/img/icons/products/balance-skin.png?v=20260711-restored"
+      icon: "assets/img/icons/products/balance-skin.png?v=20260712-skincare-v1"
     },
     "p-bloom-skin": {
       icon: "assets/img/icons/products/bloom-skin.png"
@@ -141,7 +141,7 @@
     setText('.nav a[href="#prodotti"]', "Essential oils");
     setText('.nav a[href="#servizi"]', "Treatments");
     setText('.nav a[href="#chi-sono"]', "The founder");
-    setButtonText(".nav-cta", "Book your consultation");
+    setButtonText(".nav-cta", "Message me on WhatsApp");
     setAttr(".nav-cta", "href", whatsAppUrl("Hi Sara, I would like to book a consultation."));
 
     setAttr(".hero-frame img", "alt", "Professional shoulder and neck relaxation treatment");
@@ -184,8 +184,8 @@
 
     setText(".slogan-kicker", "My mission");
     setText("#slogan-title", "Every drop is an act of care for you");
-    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower,</span><span>I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>&mdash; one scent, one pressure, one breath at a time.</span>");
-    setButtonText(".slogan-actions .btn--instagram", "comeleapi");
+    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower,</span><span>I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>one aroma, one caress, one breath at a time.</span>");
+    setButtonText(".slogan-actions .btn--instagram", "@comeleapi");
     setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
 
     setText(".about-text .eyebrow", "THE FOUNDER");
