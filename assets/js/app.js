@@ -67,7 +67,8 @@
       icon: "assets/img/icons/products/sport-wellness.png"
     },
     "p-per-lui": {
-      icon: "assets/img/icons/products/per-lui.png"
+      icon: "assets/img/icons/products/per-lui.png",
+      image: "foto-prodotti/per-lui.png?v=20260712-cover-v2"
     },
     "p-per-lei": {
       icon: "assets/img/icons/products/per-lei.png?v=20260711-rose"
@@ -520,7 +521,8 @@
       const override = productDisplayOverrides[product.id] || {};
       const base = {
         ...product,
-        ...(override.name ? { name: override.name } : {})
+        ...(override.name ? { name: override.name } : {}),
+        ...(override.image ? { image: override.image } : {})
       };
       if (!isEnglish) return base;
       const translation = productTranslations[product.id];
