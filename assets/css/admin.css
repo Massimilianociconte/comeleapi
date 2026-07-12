@@ -3,6 +3,14 @@
    Foglio di stile coerente con il sito, tono più "strumento"
    ============================================================= */
 
+@font-face {
+  font-family: "Roxborough CF";
+  src: url("../fonts/roxborough-cf.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --cream:        #FEEEEF;
   --cream-soft:   #FFF7F6;
@@ -24,8 +32,8 @@
   --ok-soft:      #EFE7E4;
   --warn:         #9B6C54;
 
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-body:    "Mulish", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Roxborough CF", Georgia, serif;
+  --font-body:    "Roxborough CF", Georgia, serif;
 
   --shadow-sm: 0 2px 10px rgba(50, 23, 27, 0.06);
   --shadow-md: 0 14px 40px rgba(50, 23, 27, 0.10);

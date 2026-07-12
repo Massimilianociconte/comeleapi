@@ -4,79 +4,9 @@
    ============================================================= */
 
 @font-face {
-  font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-500.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-600.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-700.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-italic-500.ttf") format("truetype");
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-italic-600.ttf") format("truetype");
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Mulish";
-  src: url("../fonts/mulish-300.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Mulish";
-  src: url("../fonts/mulish-400.ttf") format("truetype");
+  font-family: "Roxborough CF";
+  src: url("../fonts/roxborough-cf.ttf") format("truetype");
   font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Mulish";
-  src: url("../fonts/mulish-500.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Mulish";
-  src: url("../fonts/mulish-600.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Mulish";
-  src: url("../fonts/mulish-700.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Mulish";
-  src: url("../fonts/mulish-800.ttf") format("truetype");
-  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
@@ -94,8 +24,8 @@
   --line:         #E8D6D3;
   --white:        #FFFCFB;
 
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-body:    "Mulish", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Roxborough CF", Georgia, serif;
+  --font-body:    "Roxborough CF", Georgia, serif;
 
   --shadow-sm: 0 8px 24px rgba(50, 23, 27, .08);
   --shadow-md: 0 20px 56px rgba(50, 23, 27, .13);
