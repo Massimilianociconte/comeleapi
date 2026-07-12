@@ -77,7 +77,7 @@
       icon: "assets/img/icons/products/animal-scents.png"
     },
     "p-balance-skin": {
-      icon: "assets/img/icons/products/balance-skin.png?v=20260712-skincare-v2"
+      icon: "assets/img/icons/products/balance-skin.png?v=20260712-skincare-v4"
     },
     "p-bloom-skin": {
       icon: "assets/img/icons/products/bloom-skin.png"
