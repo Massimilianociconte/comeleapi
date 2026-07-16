@@ -290,6 +290,12 @@
   }
 
   /* ---------- Smooth scroll offset per header fisso ---------- */
+  function getAnchorOffset(id) {
+    const isMobileDeepLink = window.matchMedia("(max-width: 600px)").matches
+      && (id === "#prodotti" || id === "#servizi");
+    return isMobileDeepLink ? 112 : 70;
+  }
+
   $$('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (ev) => {
       const id = a.getAttribute("href");
@@ -297,7 +303,7 @@
       const target = document.querySelector(id);
       if (!target) return;
       ev.preventDefault();
-      const top = target.getBoundingClientRect().top + window.scrollY - 70;
+      const top = target.getBoundingClientRect().top + window.scrollY - getAnchorOffset(id);
       window.scrollTo({ top, behavior: "smooth" });
     });
   });
@@ -306,7 +312,7 @@
     if (!window.location.hash || window.location.hash === "#") return;
     const target = document.querySelector(window.location.hash);
     if (!target) return;
-    const top = target.getBoundingClientRect().top + window.scrollY - 70;
+    const top = target.getBoundingClientRect().top + window.scrollY - getAnchorOffset(window.location.hash);
     window.scrollTo({ top: Math.max(0, top), behavior });
   }
 
