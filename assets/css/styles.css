@@ -809,8 +809,19 @@ h1, h2, h3, h4 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: .55rem;
-  margin-top: 1.35rem;
+  gap: .3rem;
+  margin-top: .7rem;
+}
+.slogan-signature {
+  width: clamp(250px, 29vw, 340px);
+  max-width: 78vw;
+  line-height: 0;
+  filter: drop-shadow(0 8px 18px rgba(31,23,24,.18));
+}
+.slogan-signature img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .btn--instagram {
   min-width: 170px;
@@ -1773,6 +1784,9 @@ h1, h2, h3, h4 {
     margin-top: 1.25rem;
     font-size: 1rem;
     line-height: 1.42;
+  }
+  .slogan-signature {
+    width: min(290px, 82vw);
   }
   .section-title { font-size: clamp(1.8rem, 8vw, 2.6rem); }
   .footer {
