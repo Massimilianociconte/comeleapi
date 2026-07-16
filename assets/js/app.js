@@ -293,7 +293,10 @@
   function getAnchorOffset(id) {
     const isMobileDeepLink = window.matchMedia("(max-width: 600px)").matches
       && (id === "#prodotti" || id === "#servizi");
-    return isMobileDeepLink ? 112 : 70;
+    if (!isMobileDeepLink) return 70;
+
+    const header = $(".site-header");
+    return Math.ceil(header?.getBoundingClientRect().height || 64);
   }
 
   $$('a[href^="#"]').forEach((a) => {
