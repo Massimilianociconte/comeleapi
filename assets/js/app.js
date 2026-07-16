@@ -185,7 +185,7 @@
 
     setText(".slogan-kicker", "My mission");
     setText("#slogan-title", "Every drop is an act of care for you");
-    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower,</span><span>I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span>&mdash; One aroma, one caress, one breath at a time.</span>");
+    setHtml(".slogan-wrap p", "<span>Like bees that gather only the best from every flower,</span><span>I select pure essential oils and natural treatments that bring the body back to its original balance.</span><span class=\"slogan-closing-line\">&mdash; One aroma, one caress, one breath at a time.</span>");
     setButtonText(".slogan-actions .btn--instagram", "@comeleapi");
     setAttr(".slogan-actions .btn--instagram", "href", instagramUrl);
 

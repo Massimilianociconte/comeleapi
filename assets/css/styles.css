@@ -800,6 +800,11 @@ h1, h2, h3, h4 {
 .slogan-wrap p span {
   display: block;
 }
+.slogan-wrap p .slogan-closing-line {
+  width: min(100%, 33rem);
+  margin-top: .12rem;
+  text-align: left;
+}
 .slogan-wrap p strong {
   color: #fffdfc;
   font-weight: 800;
@@ -807,16 +812,18 @@ h1, h2, h3, h4 {
 .slogan-actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: .3rem;
-  margin-top: .7rem;
+  width: min(100%, 33rem);
+  margin: .55rem auto 0;
 }
 .slogan-signature {
-  width: clamp(250px, 29vw, 340px);
-  max-width: 78vw;
+  width: clamp(205px, 21vw, 255px);
+  max-width: 68vw;
   line-height: 0;
   filter: drop-shadow(0 8px 18px rgba(31,23,24,.18));
+  transform: translateX(-18%);
 }
 .slogan-signature img {
   display: block;
@@ -824,6 +831,7 @@ h1, h2, h3, h4 {
   height: auto;
 }
 .btn--instagram {
+  align-self: center;
   min-width: 170px;
   background: rgba(255,247,246,.94);
   color: var(--terra-deep);
@@ -1786,7 +1794,7 @@ h1, h2, h3, h4 {
     line-height: 1.42;
   }
   .slogan-signature {
-    width: min(290px, 82vw);
+    width: min(220px, 64vw);
   }
   .section-title { font-size: clamp(1.8rem, 8vw, 2.6rem); }
   .footer {
