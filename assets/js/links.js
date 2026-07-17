@@ -76,8 +76,7 @@
     },
     {
       strong: "Join the Community",
-      small: "Tailored advice and preview news on WhatsApp",
-      href: whatsAppUrl("Hi Sara, I would like to join the Come le Api Community.")
+      small: "Support for all your questions and tailored advice, the first place to discover promotions and news."
     },
     {
       strong: "Message Sara on WhatsApp",
