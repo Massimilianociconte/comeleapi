@@ -56,7 +56,7 @@
     {
       strong: "<em>The Essential</em>",
       small: "A concise guide to essential oils for your natural wellbeing",
-      href: "../assets/pdf/mini-guida-oli-comeleapi.pdf?v=20260711-final"
+      href: "../assets/pdf/mini-guida-oli-comeleapi.pdf?v=20260717-v3"
     },
 
     {
@@ -94,4 +94,10 @@
     setText("small", item.small, link);
     link.setAttribute("href", item.href);
   });
+
+  const downloadBtn = $(".download-action-btn");
+  if (downloadBtn) {
+    downloadBtn.setAttribute("href", "../assets/pdf/mini-guida-oli-comeleapi.pdf?v=20260717-v3");
+    downloadBtn.setAttribute("aria-label", "Download PDF");
+  }
 })();

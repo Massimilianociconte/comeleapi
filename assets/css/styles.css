@@ -459,6 +459,9 @@ h1, h2, h3, h4 {
   inset: 0;
   overflow: hidden;
 }
+.hero-frame picture {
+  display: contents;
+}
 .hero-frame::after {
   content: "";
   position: absolute;
@@ -819,11 +822,12 @@ h1, h2, h3, h4 {
   margin: .55rem auto 0;
 }
 .slogan-signature {
-  width: clamp(205px, 21vw, 255px);
+  width: clamp(160px, 16vw, 200px);
   max-width: 68vw;
   line-height: 0;
   filter: drop-shadow(0 8px 18px rgba(31,23,24,.18));
-  transform: translateX(-18%);
+  align-self: flex-end;
+  transform: translateX(4%);
 }
 .slogan-signature img {
   display: block;
@@ -1617,7 +1621,7 @@ h1, h2, h3, h4 {
   .brand-mark { width: 40px; height: 40px; border-radius: 14px; }
   .brand small { font-size: .55rem; letter-spacing: .22em; }
   .hero { min-height: clamp(500px, 82svh, 620px); }
-  .hero-frame img { object-position: 72% 50%; }
+  .hero-frame img { object-position: center center; }
   .hero-overlay { bottom: clamp(2.4rem, 10vw, 3.6rem); }
   .hero-overlay::before { margin-bottom: .8rem; }
   .hero-title { font-size: 1.6rem; max-width: none; }
@@ -1785,7 +1789,7 @@ h1, h2, h3, h4 {
     width: 24px;
   }
   .slogan-wrap h2 {
-    max-width: 11ch;
+    max-width: 18ch;
     font-size: clamp(2.3rem, 11vw, 3.25rem);
   }
   .slogan-wrap p {
@@ -1793,8 +1797,18 @@ h1, h2, h3, h4 {
     font-size: 1rem;
     line-height: 1.42;
   }
+  .slogan-wrap p span {
+    display: inline;
+  }
+  .slogan-wrap p .slogan-closing-line {
+    display: block;
+    width: 100%;
+    margin-top: .8rem;
+    text-align: center;
+  }
   .slogan-signature {
-    width: min(220px, 64vw);
+    width: min(160px, 50vw);
+    transform: translateX(4%);
   }
   .section-title { font-size: clamp(1.8rem, 8vw, 2.6rem); }
   .footer {
