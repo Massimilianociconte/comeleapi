@@ -1023,6 +1023,70 @@ h1, h2, h3, h4 {
 .products-showcase .products-grid {
   margin-top: 0;
 }
+
+/* ---------- Community Section Landing Page ---------- */
+.community-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 3.5rem;
+}
+
+.community-box-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  padding: 2.2rem clamp(1.2rem, 5vw, 2rem);
+  border-radius: 28px;
+  background: radial-gradient(120% 140% at 100% 0%, rgba(215, 170, 162, 0.12), transparent 70%), var(--white);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.community-box-cta:hover {
+  transform: translateY(-4px);
+  border-color: rgba(183, 125, 109, 0.32);
+  box-shadow: var(--shadow-md);
+}
+
+.community-box-icon {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--cream);
+  border: 1px solid rgba(50, 23, 27, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+  margin-bottom: 1.2rem;
+}
+
+.community-box-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.community-box-content h3 {
+  color: var(--terra-deep);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.community-box-content p {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
 .products-grid.is-loading {
   opacity: .62;
 }

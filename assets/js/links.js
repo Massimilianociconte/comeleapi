@@ -75,6 +75,11 @@
       href: "../index.html?lang=en#servizi"
     },
     {
+      strong: "Join the Community",
+      small: "Tailored advice and preview news on WhatsApp",
+      href: whatsAppUrl("Hi Sara, I would like to join the Come le Api Community.")
+    },
+    {
       strong: "Message Sara on WhatsApp",
       small: "For availability, details and costs",
       href: whatsAppUrl("Hi Sara, I would like information about availability, details and costs.")

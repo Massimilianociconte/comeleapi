@@ -167,6 +167,9 @@
     setText(".products-showcase__head h3", "Recommended collections");
     setText(".products-showcase__head p", "Young Living bundles and aromatic paths selected to support home, body and everyday rituals with simplicity.");
 
+    setText(".community-box-content h3", "Community");
+    setText(".community-box-content p", "Support for all your questions and tailored advice, the first place to discover promotions and news.");
+
     setText("#servizi .eyebrow", "Treatments");
     setText("#servizi .section-title", "A need, not a luxury");
     setHtml("#servizi .section-lead", "<span>Hands have always spoken: they hold, soothe, pray, love.</span><span>Massage is born from this ancient language.</span><span>A contact that listens to the body and guides it back toward balance.</span>");
