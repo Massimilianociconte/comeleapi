@@ -97,7 +97,9 @@
     const strong = $("strong", link);
     if (strong) strong.innerHTML = item.strong;
     setText("small", item.small, link);
-    link.setAttribute("href", item.href);
+    if (link.tagName === "A") {
+      link.setAttribute("href", item.href);
+    }
   });
 
   const downloadBtn = $(".download-action-btn");

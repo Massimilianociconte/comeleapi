@@ -294,6 +294,17 @@ a { color: inherit; text-decoration: none; }
   grid-template-columns: 52px minmax(0, 1fr) 70px;
 }
 
+.link-button--no-interaction {
+  grid-template-columns: 52px minmax(0, 1fr);
+  cursor: default;
+}
+
+.link-button--no-interaction:hover {
+  transform: none !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 12px 28px rgba(50, 23, 27, .065) !important;
+}
+
 .link-arrow-placeholder {
   width: 70px;
   height: 28px;
@@ -464,6 +475,10 @@ a { color: inherit; text-decoration: none; }
 
   .link-button--split {
     grid-template-columns: 48px minmax(0, 1fr) 62px;
+  }
+
+  .link-button--no-interaction {
+    grid-template-columns: 48px minmax(0, 1fr);
   }
 
   .link-arrow-placeholder {

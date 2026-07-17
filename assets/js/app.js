@@ -239,6 +239,8 @@
     setText(".btn-webnovis", "Crafted with care by WebNovis");
     setAllAttr('.social-link--instagram', "href", instagramUrl);
     setAllAttr('.social-link--instagram', "aria-label", "Come le Api on Instagram");
+    setAllAttr('.social-link--whatsapp', "href", whatsAppUrl("Hi Sara, I would like to receive more information about your Come le Api wellbeing project."));
+    setAllAttr('.social-link--whatsapp', "aria-label", "Contact Sara on WhatsApp");
   }
 
   if (isEnglish) applyEnglishLocale();
