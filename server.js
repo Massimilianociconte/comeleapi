@@ -1446,7 +1446,7 @@ async function main() {
 
   const server = http.createServer(handleRequest);
   server.listen(PORT, "0.0.0.0", () => {
-    console.log(`[server] Come le Api attivo su http://0.0.0.0:${PORT}/`);
+    console.log(`[server] comeleapi attivo su http://0.0.0.0:${PORT}/`);
     console.log(`[server] Gestionale protetto: http://0.0.0.0:${PORT}/admin.html`);
     if (!USE_SUPABASE) {
       console.log(`[server] ATTENZIONE: Esecuzione in MODALITÀ LOCALE (senza Supabase).`);

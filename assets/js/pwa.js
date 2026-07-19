@@ -1,5 +1,5 @@
 /* =============================================================
-   COME LE API — PWA helpers
+   * comeleapi — PWA helpers
    Installazione gestionale + notifiche web push dove disponibili.
    ============================================================= */
 
@@ -128,7 +128,7 @@
     }
     const registration = await registrationPromise;
     if (!registration) return { ok: false, message: "Service worker non disponibile." };
-    const title = lead?.name ? `Nuova richiesta da ${lead.name}` : "Nuova richiesta Come le Api";
+    const title = lead?.name ? `Nuova richiesta da ${lead.name}` : "Nuova richiesta comeleapi";
     if (nav.serviceWorker?.controller) {
       nav.serviceWorker.controller.postMessage({ type: "SHOW_LEAD_NOTIFICATION", title });
       return { ok: true };

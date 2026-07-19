@@ -1,5 +1,5 @@
 /* =============================================================
-   COME LE API — admin.js
+   comeleapi — admin.js
    Gestionale prodotti con sessione server, CSRF e API protette.
    ============================================================= */
 
@@ -245,11 +245,11 @@
   }
 
   function leadMailHref(lead) {
-    const subject = `Richiesta consulenza Come le Api`;
+    const subject = `Richiesta consulenza comeleapi`;
     const body = [
       `Ciao ${lead.name || ""},`,
       "",
-      "ti scrivo in merito alla richiesta di consulenza inviata dal sito Come le Api.",
+      "ti scrivo in merito alla richiesta di consulenza inviata dal sito comeleapi.",
       "",
       "A presto,",
       "Sara",

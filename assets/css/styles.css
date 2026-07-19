@@ -1674,6 +1674,7 @@ h1, h2, h3, h4 {
   :root { --gutter: 1rem; }
   body { font-size: 1rem; }
   .site-header { padding-block: .75rem; }
+  .section { scroll-margin-top: 60px; }
   .brand { font-size: 1.22rem; gap: .55rem; }
   .brand-mark { width: 40px; height: 40px; border-radius: 14px; }
   .brand small { font-size: .55rem; letter-spacing: .22em; }

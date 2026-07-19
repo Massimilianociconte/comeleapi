@@ -2,7 +2,7 @@
   "name": "comeleapi-sara",
   "version": "1.0.0",
   "private": true,
-  "description": "Sito Come le Api con gestionale protetto.",
+  "description": "Sito comeleapi con gestionale protetto.",
   "scripts": {
     "start": "node server.js",
     "seed": "node supabase/seed.js",

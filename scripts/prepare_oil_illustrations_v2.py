@@ -70,7 +70,7 @@ def add_label(image: Image.Image, name: str) -> None:
     descriptor_font = ImageFont.truetype(str(FONTS / "mulish-600.ttf"), 13)
     display_path = FONTS / "cormorant-garamond-700.ttf"
 
-    draw.text((center_x, 884), "COME LE API", font=brand_font, fill=ROSE, anchor="mm")
+    draw.text((center_x, 884), "comeleapi", font=brand_font, fill=ROSE, anchor="mm")
     draw.line((center_x - 48, 906, center_x + 48, 906), fill=ROSE, width=2)
 
     lines = split_name(name)

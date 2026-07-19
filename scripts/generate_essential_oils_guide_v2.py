@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the image-first, mobile-friendly Come le Api essential-oils guide."""
+"""Create the image-first, mobile-friendly comeleapi essential-oils guide."""
 
 from __future__ import annotations
 
@@ -314,7 +314,7 @@ def cover_page() -> Path:
         66,
         16,
     )
-    draw.text((MARGIN + 8, H - 96), "SARA BORDENGA  ·  COME LE API", font=F_BODY_BOLD_22, fill=DEEP)
+    draw.text((MARGIN + 8, H - 96), "SARA BORDENGA  ·  comeleapi", font=F_BODY_BOLD_22, fill=DEEP)
     return save_page(page, 1, "copertina")
 
 
@@ -562,7 +562,7 @@ def build_pdf(page_paths: list[Path]) -> None:
     PDF_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     c = canvas.Canvas(str(PDF_OUTPUT), pagesize=(PDF_W, PDF_H), pageCompression=1)
     c.setTitle("L'Essenziale - Guida agli oli essenziali")
-    c.setAuthor("Sara Bordenga - Come le Api")
+    c.setAuthor("Sara Bordenga - comeleapi")
     c.setSubject("Mini guida illustrata agli oli essenziali")
     for page_path in page_paths:
         with Image.open(page_path) as image:

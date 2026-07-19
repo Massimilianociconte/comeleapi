@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the official Come le Api essential-oils mini guide."""
+"""Generate the official comeleapi essential-oils mini guide."""
 
 from __future__ import annotations
 
@@ -126,7 +126,7 @@ def draw_brand_mark(c: canvas.Canvas, x: float, y: float, compact: bool = True) 
     c.drawString(x + size + 7, y + (8 if compact else 19), "SB")
     c.setFillColor(TERRA)
     c.setFont("Mulish-Bold", 5.8 if compact else 7.2)
-    c.drawString(x + size + (25 if compact else 35), y + (10 if compact else 22), "COME LE API")
+    c.drawString(x + size + (25 if compact else 35), y + (10 if compact else 22), "comeleapi")
 
 
 def page_base(c: canvas.Canvas, page_no: int, section: str = "L'ESSENZIALE", color=BLUSH_SOFT) -> None:
@@ -215,7 +215,7 @@ def cover_page(c: canvas.Canvas) -> None:
     c.roundRect(205, 45, 185, 32, 16, stroke=0, fill=1)
     c.setFillColor(DEEP)
     c.setFont("Mulish-Bold", 7)
-    c.drawCentredString(PAGE_W / 2, 57, "SARA BORDENGA  ·  COME LE API")
+    c.drawCentredString(PAGE_W / 2, 57, "SARA BORDENGA  ·  comeleapi")
     c.showPage()
 
 
@@ -650,7 +650,7 @@ def closing_page(c: canvas.Canvas, page_no: int) -> None:
     draw_paragraph(c, "Sara", 100, 335, PAGE_W - 200, style("closing-signature", "Cormorant-Italic", 36, 38, ROSE, TA_CENTER))
     c.setFillColor(WHITE)
     c.setFont("Mulish-Bold", 8.2)
-    c.drawCentredString(PAGE_W / 2, 272, "SARA BORDENGA  ·  COME LE API")
+    c.drawCentredString(PAGE_W / 2, 272, "SARA BORDENGA  ·  comeleapi")
     c.setFont("Mulish", 8.2)
     c.drawCentredString(PAGE_W / 2, 244, "sara.bordenga@gmail.com  ·  388 163 9306")
     c.drawCentredString(PAGE_W / 2, 222, "Instagram  @come_le_api")
@@ -666,9 +666,9 @@ def build_pdf(destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     c = canvas.Canvas(str(destination), pagesize=A4, pageCompression=1)
     c.setTitle("L'Essenziale - Guida ufficiale agli oli essenziali")
-    c.setAuthor("Sara Bordenga - Come le Api")
-    c.setSubject("Mini guida informativa agli oli essenziali")
-    c.setCreator("Come le Api")
+    c.setAuthor("Sara Bordenga - comeleapi")
+    c.setSubject("Mini guida agli oli essenziali per il benessere quotidiano")
+    c.setCreator("comeleapi")
 
     cover_page(c)
     page_no = 1

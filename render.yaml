@@ -1,5 +1,5 @@
 # ============================================================
-# COME LE API — Render Blueprint (Backend API + Admin)
+# comeleapi — Render Blueprint (Backend API + Admin)
 # ============================================================
 services:
   - type: web

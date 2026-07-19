@@ -1,5 +1,5 @@
 -- ============================================================
--- COME LE API — Schema Supabase PostgreSQL
+-- comeleapi — Schema Supabase PostgreSQL
 -- Eseguire nella SQL Editor di Supabase Dashboard
 -- ============================================================
 

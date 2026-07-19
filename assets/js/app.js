@@ -130,12 +130,12 @@
 
   function applyEnglishLocale() {
     document.documentElement.lang = "en";
-    document.title = "Come le Api - Wellbeing, Massage & Personal Care";
-    setAttr('meta[name="description"]', "content", "Come le Api is Sara's wellbeing and massage project: at-home treatments, tailored wellness paths and essential oils for daily balance.");
-    setAttr('meta[property="og:title"]', "content", "Come le Api - Wellbeing & Massage");
+    document.title = "comeleapi - Wellbeing, Massage & Personal Care";
+    setAttr('meta[name="description"]', "content", "comeleapi is Sara's wellbeing and massage project: at-home treatments, tailored wellness paths and essential oils for daily balance.");
+    setAttr('meta[property="og:title"]', "content", "comeleapi - Wellbeing & Massage");
     setAttr('meta[property="og:description"]', "content", "A wellbeing project curated by Sara: essential oils, tailored treatments and direct contact in 20091 Bresso, Milan.");
 
-    setAllAttr(".brand", "aria-label", "Come le Api - home");
+    setAllAttr(".brand", "aria-label", "comeleapi - home");
     setAttr("#mainNav", "aria-label", "Main navigation");
     setAttr("#navToggle", "aria-label", "Open menu");
     setAttr("#closePolicy", "aria-label", "Close");
@@ -238,8 +238,8 @@
     setHtml(".footer-bottom > span", '© <span id="year"></span> comeleapi. All rights reserved.');
     setText(".btn-webnovis", "Crafted with care by WebNovis");
     setAllAttr('.social-link--instagram', "href", instagramUrl);
-    setAllAttr('.social-link--instagram', "aria-label", "Come le Api on Instagram");
-    setAllAttr('.social-link--whatsapp', "href", whatsAppUrl("Hi Sara, I would like to receive more information about your Come le Api wellbeing project."));
+    setAllAttr('.social-link--instagram', "aria-label", "comeleapi on Instagram");
+    setAllAttr('.social-link--whatsapp', "href", whatsAppUrl("Hi Sara, I would like to book a consultation."));
     setAllAttr('.social-link--whatsapp', "aria-label", "Contact Sara on WhatsApp");
   }
 
@@ -301,7 +301,7 @@
     if (!isMobileDeepLink) return 70;
 
     const header = $(".site-header");
-    return Math.ceil(header?.getBoundingClientRect().height || 64);
+    return Math.ceil(header?.getBoundingClientRect().height || 64) - 8;
   }
 
   $$('a[href^="#"]').forEach((a) => {
@@ -919,10 +919,10 @@
       return `
       <div class="policy-content">
         <p><strong>Last updated:</strong> 11 July 2026.</p>
-        <p>This notice is provided under Articles 12, 13 and 14 of Regulation (EU) 2016/679 ("GDPR") and explains how Come le Api processes personal data collected through this website and through the linked contact channels.</p>
+        <p>This notice is provided under Articles 12, 13 and 14 of Regulation (EU) 2016/679 ("GDPR") and explains how comeleapi processes personal data collected through this website and through the linked contact channels.</p>
 
         <h4>Data controller</h4>
-        <p><strong>Come le Api - Sara Bordenga</strong>, wellbeing project based around 20091 Bresso, Milan. For privacy requests: <a href="mailto:${contactEmail}">${contactEmail}</a> or <a href="tel:+${contactPhoneE164}">${contactPhoneDisplay}</a>.</p>
+        <p><strong>comeleapi - Sara Bordenga</strong>, wellbeing project based around 20091 Bresso, Milan. For privacy requests: <a href="mailto:${contactEmail}">${contactEmail}</a> or <a href="tel:+${contactPhoneE164}">${contactPhoneDisplay}</a>.</p>
 
         <h4>Data processed</h4>
         <ul class="policy-list">
@@ -961,10 +961,10 @@
     return `
       <div class="policy-content">
         <p><strong>Ultimo aggiornamento:</strong> 11 luglio 2026.</p>
-        <p>La presente informativa è resa ai sensi degli articoli 12, 13 e 14 del Regolamento (UE) 2016/679 ("GDPR") e descrive come Come le Api tratta i dati personali raccolti tramite questo sito e tramite i canali di contatto collegati.</p>
+        <p>La presente informativa è resa ai sensi degli articoli 12, 13 e 14 del Regolamento (UE) 2016/679 ("GDPR") e descrive come comeleapi tratta i dati personali raccolti tramite questo sito e tramite i canali di contatto collegati.</p>
 
         <h4>Titolare del trattamento</h4>
-        <p><strong>Come le Api - Sara Bordenga</strong>, progetto di benessere con riferimento territoriale a 20091 Bresso (Milano). Per richieste privacy: <a href="mailto:${contactEmail}">${contactEmail}</a> oppure <a href="tel:+${contactPhoneE164}">${contactPhoneDisplay}</a>.</p>
+        <p><strong>comeleapi - Sara Bordenga</strong>, progetto di benessere con riferimento territoriale a 20091 Bresso (Milano). Per richieste privacy: <a href="mailto:${contactEmail}">${contactEmail}</a> oppure <a href="tel:+${contactPhoneE164}">${contactPhoneDisplay}</a>.</p>
 
         <h4>Dati trattati</h4>
         <ul class="policy-list">
@@ -1006,7 +1006,7 @@
       return `
       <div class="policy-content">
         <p><strong>Last updated:</strong> 11 July 2026.</p>
-        <p>This Cookie Policy explains the use of cookies and similar tools on the Come le Api website. By default, only strictly necessary technical tools are active. Any analytics or marketing tools are activated only after express consent.</p>
+        <p>This Cookie Policy explains the use of cookies and similar tools on the comeleapi website. By default, only strictly necessary technical tools are active. Any analytics or marketing tools are activated only after express consent.</p>
 
         <h4>What cookies are</h4>
         <p>Cookies are small files or pieces of information stored on the user's device. European rules and the Italian Data Protection Authority distinguish technical cookies, which are necessary or equivalent, from cookies used for further purposes, such as non-technical analytics or profiling, which require prior informed consent.</p>
@@ -1042,7 +1042,7 @@
     return `
       <div class="policy-content">
         <p><strong>Ultimo aggiornamento:</strong> 11 luglio 2026.</p>
-        <p>Questa Cookie Policy descrive l'uso di cookie e strumenti analoghi sul sito Come le Api. Per impostazione predefinita sono attivi solo strumenti tecnici necessari. Eventuali strumenti analytics o marketing vengono attivati solo dopo consenso espresso.</p>
+        <p>Questa Cookie Policy descrive l'uso di cookie e strumenti analoghi sul sito comeleapi. Per impostazione predefinita sono attivi solo strumenti tecnici necessari. Eventuali strumenti analytics o marketing vengono attivati solo dopo consenso espresso.</p>
 
         <h4>Cosa sono i cookie</h4>
         <p>I cookie sono piccoli file o informazioni salvate nel dispositivo dell'utente. La normativa europea e le indicazioni del Garante distinguono i cookie tecnici, necessari o assimilabili, dai cookie usati per finalità ulteriori, come analytics non tecnici o profilazione, che richiedono consenso preventivo e informato.</p>

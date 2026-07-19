@@ -1,6 +1,6 @@
 {
-  "name": "Come le Api — Gestionale",
-  "short_name": "Come le Api",
+  "name": "comeleapi — Gestionale",
+  "short_name": "comeleapi",
   "description": "Area amministrativa protetta per prodotti e richieste consulenza.",
   "id": "/admin.html",
   "start_url": "/admin.html",

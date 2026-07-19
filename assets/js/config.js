@@ -1,5 +1,5 @@
 /* =============================================================
-   COME LE API — configurazione frontend pubblico
+   comeleapi — configurazione frontend pubblico
 
    Rileva automaticamente se l'applicazione è in esecuzione in locale
    o in produzione su Netlify per impostare il corretto indirizzo del backend.

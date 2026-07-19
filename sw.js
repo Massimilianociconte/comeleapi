@@ -74,7 +74,7 @@ self.addEventListener("push", (event) => {
   if (payload.body) options.body = payload.body;
   if (payload.url) options.data.url = payload.url;
 
-  const title = payload.title || "Nuova richiesta Come le Api";
+  const title = payload.title || "Nuova richiesta comeleapi";
   
   event.waitUntil(
     self.registration.showNotification(title, options)
@@ -83,7 +83,7 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("message", (event) => {
   if (event.data?.type !== "SHOW_LEAD_NOTIFICATION") return;
-  const title = event.data.title || "Nuova richiesta Come le Api";
+  const title = event.data.title || "Nuova richiesta comeleapi";
   event.waitUntil(self.registration.showNotification(title, notificationOptions()));
 });
 
