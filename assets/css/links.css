@@ -163,6 +163,109 @@ a { color: inherit; text-decoration: none; }
   background: radial-gradient(circle, rgba(50, 23, 27, .12), transparent 70%);
 }
 
+/* ---------------------------------------------------------------
+   Decorazioni botaniche — eco visiva della mini guida agli oli
+   essenziali. Vivono DENTRO la card, dietro ai contenuti: cosi'
+   restano visibili anche su mobile (dove la card occupa quasi tutto
+   lo schermo) e su desktop non finiscono confinate ai margini.
+
+   Il layer e' un contenitore proprio con overflow:hidden, non la card
+   stessa: se mettessimo overflow sulla card verrebbero tagliate le
+   ombre esterne dei bottoni. Non intercetta interazioni e non causa
+   layout shift (misure in CSS, indipendenti dal caricamento).
+   --------------------------------------------------------------- */
+.card-botanicals {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* I contenuti della card salgono sopra il layer decorativo. */
+.links-hero,
+.links-list {
+  position: relative;
+  z-index: 1;
+}
+
+.card-botanical {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  pointer-events: none;
+}
+
+/* Ogni elemento e' mascherato con una sfumatura che va dall'angolo
+   della card verso il centro: resta denso dove non c'e' testo e si
+   dissolve prima di raggiungere i contenuti. Serve a garantire il
+   contrasto sull'intro, che poggia direttamente sulla card (i bottoni
+   hanno gia' un fondo proprio al 90% che li protegge). */
+.card-botanical--lavender {
+  width: clamp(150px, 42%, 215px);
+  aspect-ratio: 335 / 380;
+  top: -2.4rem;
+  left: -2.9rem;
+  background-image: url("../img/decor/lavanda.webp");
+  opacity: .40;
+  transform: rotate(-10deg);
+  -webkit-mask-image: linear-gradient(to bottom right, #000 38%, transparent 88%);
+  mask-image: linear-gradient(to bottom right, #000 38%, transparent 88%);
+}
+
+.card-botanical--eucalyptus {
+  width: clamp(160px, 46%, 235px);
+  aspect-ratio: 377 / 380;
+  bottom: -2.6rem;
+  right: -3.1rem;
+  background-image: url("../img/decor/eucalipto.webp");
+  opacity: .38;
+  transform: rotate(8deg);
+  -webkit-mask-image: linear-gradient(to top left, #000 40%, transparent 90%);
+  mask-image: linear-gradient(to top left, #000 40%, transparent 90%);
+}
+
+/* Angolo alto-destra: chiude il triangolo con lavanda (alto-sx) ed
+   eucalipto (basso-dx), senza affollare la fascia centrale dove
+   stanno i bottoni. */
+.card-botanical--resin {
+  width: clamp(80px, 22%, 118px);
+  aspect-ratio: 380 / 364;
+  top: -1.5rem;
+  right: -1.6rem;
+  background-image: url("../img/decor/resina.webp");
+  opacity: .30;
+  transform: rotate(-6deg);
+  -webkit-mask-image: linear-gradient(to bottom left, #000 40%, transparent 90%);
+  mask-image: linear-gradient(to bottom left, #000 40%, transparent 90%);
+}
+
+@media (max-width: 460px) {
+  .card-botanical--lavender {
+    top: -1.7rem;
+    left: -2.1rem;
+    opacity: .42;
+  }
+
+  .card-botanical--eucalyptus {
+    bottom: -1.8rem;
+    right: -2.2rem;
+    opacity: .40;
+  }
+
+  /* Presente anche su mobile, piu' piccola e rientrata: sta nell'angolo
+     alto-destra sopra il logo, dove non c'e' testo. La maschera la fa
+     dissolvere prima del titolo. */
+  .card-botanical--resin {
+    width: clamp(76px, 26%, 100px);
+    top: -1.1rem;
+    right: -1.2rem;
+    opacity: .32;
+  }
+}
+
 .link-card {
   position: relative;
   z-index: 1;
