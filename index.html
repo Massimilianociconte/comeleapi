@@ -15,9 +15,7 @@
   <link rel="preload" as="image" type="image/webp" href="assets/img/hero/hero-massaggio-professionale-comeleapi.webp?v=20260717-hero-professional-warm" media="(min-width: 601px)" fetchpriority="high" />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/mulish-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/cormorant-garamond-600.woff2" crossorigin />
-  <style id="critical-css">:root{--cream:#FEEEEF;--sand:#F3E4E1;--terra:#B77D6D;--terra-deep:#5A302E;--ink:#32171B;--ink-soft:#5A4545;--white:#FFFCFB;--line:#E8D6D3;--font-display:"Cormorant Garamond",Georgia,serif;--font-body:Mulish,"Segoe UI",system-ui,sans-serif;--gutter:clamp(1.1rem,4vw,2.5rem);--maxw:1200px}*,*::before,*::after{box-sizing:border-box}*{margin:0}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{font-family:var(--font-body);color:var(--ink);background:var(--cream);line-height:1.7;font-size:1.02rem;overflow-x:hidden;-webkit-font-smoothing:antialiased}img{display:block;max-width:100%;height:auto}a{color:inherit;text-decoration:none}.container{width:min(var(--maxw),100%);margin-inline:auto;padding-inline:var(--gutter)}.client-hidden{display:none!important}.site-header{position:sticky;top:0;z-index:40;padding-block:.95rem;background:rgba(254,238,239,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(232,214,211,.7)}.header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem}.brand{display:flex;align-items:center;gap:.7rem;font-family:var(--font-display);font-size:1.5rem;font-weight:600;letter-spacing:.04em}.brand-mark{width:46px;height:46px;border-radius:16px;background:#feeef0;border:1px solid rgba(105,61,52,.12);display:block;flex:0 0 auto;overflow:hidden;box-shadow:0 12px 28px rgba(101,58,47,.12)}.brand-mark img{width:100%;height:100%;display:block;object-fit:cover}.nav{display:flex;align-items:center;gap:.35rem}.nav-toggle{display:none;flex-direction:column;gap:5px;padding:.55rem}.nav-toggle span{width:24px;height:2px;background:var(--ink);border-radius:2px}.hero{position:relative;min-height:clamp(540px,86svh,780px);display:grid;align-items:end;overflow:hidden;background:#1f1718}.hero-frame{position:absolute;inset:0;overflow:hidden}.hero-frame picture{display:contents}.hero-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,23,24,.18),rgba(31,23,24,.02) 36%,rgba(31,23,24,.5)),linear-gradient(90deg,rgba(31,23,24,.78),rgba(90,48,46,.42) 34%,rgba(31,23,24,.08) 66%),linear-gradient(135deg,rgba(183,125,109,.34),transparent 46%)}.hero-frame img{width:100%;height:100%;object-fit:cover;object-position:center top}.hero-overlay{position:absolute;z-index:2;left:var(--gutter);right:var(--gutter);bottom:clamp(3.3rem,8.5vw,6rem);max-width:none;color:#fffdfc}.hero-title{max-width:none;margin:0;color:#fffdfc;font-family:var(--font-display);font-weight:600;font-size:clamp(1.6rem,8vw,4.75rem);line-height:1;text-shadow:0 14px 38px rgba(31,23,24,.5)}.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}.reveal.in{opacity:1;transform:none}@media (max-width:980px){.nav{display:none}.nav-toggle{display:flex}}@media (max-width:600px){:root{--gutter:1rem}.site-header{padding-block:.75rem}.hero-title{font-size:1.6rem;white-space:normal}}</style>
-  <link rel="preload" href="assets/css/styles.min.css?v=20260722-perf2" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="assets/css/styles.min.css?v=20260722-perf2" /></noscript>
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260722-fix-visual" />
 
   <link rel="icon" type="image/png" sizes="256x256" href="assets/img/logo-comeleapi-256.png" />
   <link rel="apple-touch-icon" href="assets/img/logo-comeleapi-256.png" />
@@ -27,7 +25,7 @@
     <div class="container header-inner">
       <a href="#top" class="brand" aria-label="comeleapi — home">
         <span class="brand-mark" aria-hidden="true">
-          <img src="assets/img/logo-comeleapi-96.webp" width="48" height="48" alt="" decoding="async" />
+          <img src="assets/img/logo-comeleapi-256.webp" width="48" height="48" alt="" decoding="async" />
         </span>
         <span>comeleapi</span>
       </a>
@@ -174,7 +172,7 @@
           </p>
           <div class="slogan-actions">
             <div class="slogan-signature">
-              <img src="assets/img/signatures/sara-bordenga-signature.webp" width="320" height="107" alt="Firma di Sara Bordenga" loading="lazy" decoding="async" />
+              <img src="assets/img/signatures/sara-bordenga-signature.webp" width="480" height="160" alt="Firma di Sara Bordenga" loading="lazy" decoding="async" />
             </div>
             <a class="btn btn--primary btn--instagram" href="https://www.instagram.com/comeleapi/" target="_blank" rel="noopener">
               @comeleapi
@@ -323,7 +321,7 @@
       <div class="footer-brand">
         <a href="#top" class="brand" aria-label="comeleapi — home">
           <span class="brand-mark" aria-hidden="true">
-            <img src="assets/img/logo-comeleapi-96.webp" width="48" height="48" alt="" decoding="async" loading="lazy" />
+            <img src="assets/img/logo-comeleapi-256.webp" width="48" height="48" alt="" decoding="async" loading="lazy" />
           </span>
           <span>comeleapi</span>
         </a>
@@ -379,17 +377,8 @@
     <img src="assets/img/icons/social-whatsapp.webp" alt="WhatsApp" />
   </a>
 
-  <script>
-    (function () {
-      var link = document.querySelector('link[data-async-css], link[rel="preload"][as="style"]');
-      if (!link) return;
-      var done = function () { if (link.rel !== "stylesheet") link.rel = "stylesheet"; };
-      if (link.addEventListener) link.addEventListener("load", done);
-      setTimeout(done, 2500);
-    })();
-  </script>
-  <script src="assets/js/config.min.js?v=20260722-perf2" defer></script>
-  <script src="assets/js/data.min.js?v=20260722-perf2" defer></script>
-  <script src="assets/js/app.min.js?v=20260722-perf2" defer></script>
+  <script src="assets/js/config.js?v=20260722-fix-visual" defer></script>
+  <script src="assets/js/data.js?v=20260722-fix-visual" defer></script>
+  <script src="assets/js/app.js?v=20260722-fix-visual" defer></script>
 </body>
 </html>
