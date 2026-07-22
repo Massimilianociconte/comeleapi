@@ -6,9 +6,9 @@ services:
     name: comeleapi-backend
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm ci --omit=dev && npm run check:server && npm run check:security
     startCommand: node server.js
-    healthCheckPath: /api/products
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production

@@ -4,11 +4,23 @@
 
 [build]
   publish = "dist"
-  command = "npm run build:netlify"
+  command = "npm run build"
 
 # Il gestionale e il backend sono serviti e protetti da Render. Queste regole
 # impediscono che un futuro errore di allowlist li renda nuovamente pubblici
 # sul dominio statico Netlify.
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/links/index.html"
+  to = "/links/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/server.js"
   to = "/index.html"
@@ -104,8 +116,16 @@
     X-XSS-Protection = "0"
     Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://wa.me; img-src 'self' data: https:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://comeleapi-backend.onrender.com; require-trusted-types-for 'script'; trusted-types comeleapi; upgrade-insecure-requests"
 
-# Gli URL degli asset pubblici ricevono automaticamente un fingerprint di
-# contenuto durante la build, quindi la cache immutabile resta sicura.
+# Il PDF ha anche un URL canonico senza query nel JSON-LD: deve poter essere
+# rivalidato dai browser dopo un deploy. La regola specifica deve precedere
+# quella generale per gli asset, perché Netlify usa la prima corrispondenza.
+[[headers]]
+  for = "/assets/pdf/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Gli altri URL degli asset pubblici ricevono automaticamente un fingerprint
+# di contenuto durante la build, quindi la cache immutabile resta sicura.
 [[headers]]
   for = "/assets/*"
   [headers.values]

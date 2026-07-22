@@ -5,13 +5,22 @@
   "description": "Sito comeleapi con gestionale protetto.",
   "scripts": {
     "start": "node server.js",
-    "build": "npm run build:netlify",
+    "build": "npm run build:netlify && npm run check:seo && npm run check:schema && npm run check:analytics && npm run check:visual-integrity && npm run check:push-privacy && npm run check:workflow && npm run check:security",
     "build:netlify": "node scripts/build-netlify.mjs",
+    "check:seo": "node scripts/check-public-seo.mjs",
+    "check:schema": "node scripts/check-structured-data.mjs",
+    "check:analytics": "node scripts/check-analytics.mjs",
+    "check:catalog-live": "node scripts/check-live-catalog.mjs",
+    "check:visual-integrity": "node scripts/check-visual-integrity.mjs",
+    "check:push-privacy": "node scripts/check-push-privacy.mjs",
+    "check:workflow": "node scripts/check-workflow.mjs",
+    "check:security": "node scripts/check-security.mjs",
+    "check:server": "node --check server.js && node --check supabase/seed.js",
     "seed": "node supabase/seed.js",
-    "check": "node --check server.js && node --check scripts/build-netlify.mjs && node --check assets/js/trusted-types.js && node --check assets/js/config.js && node --check assets/js/data.js && node --check assets/js/app.js && node --check assets/js/links.js && node --check assets/js/admin.js && node --check assets/js/login.js && node --check assets/js/pwa.js && node --check sw.js"
+    "check": "npm run check:server && node --check scripts/build-netlify.mjs && node --check scripts/structured-data.mjs && node --check scripts/check-public-seo.mjs && node --check scripts/check-structured-data.mjs && node --check scripts/check-analytics.mjs && node --check scripts/check-live-catalog.mjs && node --check scripts/check-visual-integrity.mjs && node --check scripts/check-push-privacy.mjs && node --check scripts/check-workflow.mjs && node --check scripts/check-security.mjs && node --check assets/js/trusted-types.js && node --check assets/js/analytics.js && node --check assets/js/config.js && node --check assets/js/data.js && node --check assets/js/app.js && node --check assets/js/links.js && node --check assets/js/admin.js && node --check assets/js/login.js && node --check assets/js/pwa.js && node --check sw.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24.18.0 <25.0.0"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0",

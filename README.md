@@ -1,141 +1,153 @@
-# Sara — Benessere & Massaggi
+# comeleapi
 
-Sito web moderno, elegante e professionale per la presentazione online di **Sara**,
-massaggiatrice. Include un sito pubblico a singola pagina e un **gestionale**
-collegato per amministrare la vetrina di oli essenziali consigliati.
+Sito pubblico di comeleapi con vetrina, pagina link-in-bio e gestionale separato.
 
-Nessun framework, nessun build step: **HTML, CSS e JavaScript vaniglia**. Si apre
-direttamente nel browser.
+Il frontend pubblico è HTML, CSS e JavaScript vanilla, ma la versione pubblicabile
+viene generata da una build Node. Il gestionale e le API sono serviti dal backend
+Node su Render; Supabase è la persistenza prevista quando le variabili provider
+sono configurate.
 
----
+## Architettura
 
-## ✨ Cosa contiene
+### Sito pubblico — Netlify
 
-### Sito pubblico (`index.html`)
-1. **Hero** — presentazione di Sara, titolo forte, CTA per la consulenza gratuita.
-2. **Chi è Sara** — presentazione personale e professionale, valori, firma.
-3. **Trattamenti** — 6 servizi in card eleganti con benefici e durata.
-4. **Certificazioni & Formazione** — card con attestati e anno di conseguimento.
-5. **Consulenza gratuita** — form completo (nome, telefono, email, giorno/orario, messaggio).
-6. **Vetrina Oli Essenziali** — schede prodotto con immagine, prezzo, benefici e bottone di acquisto esterno.
-7. **Elementi di fiducia** — pilastri professionali + testimonianze con stelle.
-8. **Footer** — contatti, social, privacy/cookie policy, link all'area riservata.
+- index.html: homepage;
+- links/index.html: pagina link-in-bio;
+- robots.txt: policy aperta per crawler SEO, GEO/AI e training;
+- sitemap.xml: indice delle URL pubbliche canoniche;
+- products.json: catalogo pubblico di fallback;
+- assets/: CSS, JavaScript, font, immagini e PDF;
+- scripts/build-netlify.mjs: build allowlist verso dist/;
+- netlify.toml: redirect, cache e security header.
 
-### Gestionale (`admin.html`)
-Pannello pensato per una persona **non tecnica**, con:
-- ➕ **Aggiungere** nuovi prodotti
-- ✎ **Modificare** nome, descrizione, benefici, prezzo, immagine, link, visibilità
-- 🗑 **Eliminare** prodotti (con conferma)
-- 👁️ **Nascondere/mostrare** prodotti senza cancellarli
-- ▲▼ **Riordinare** le schede con semplici frecce
-- 📊 **Statistiche** sintetiche (totali, visibili, nascosti, con prezzo)
-- ↺ **Ripristinare** i prodotti di esempio
+La build copia soltanto gli asset pubblici approvati. Gestionale, backend, dati
+locali, configurazioni e sorgenti non devono entrare in dist/.
 
----
+### Gestionale e API — Render
 
-## 🚀 Come usarlo
+- server.js: API, sessioni, catalogo, lead, upload e push;
+- login.html e admin.html: interfacce private;
+- render.yaml: configurazione del servizio;
+- supabase/: schema e seed.
 
-### Visualizzare il sito
-Apri `index.html` con un doppio clic, oppure servi la cartella con un piccolo
-server locale (consigliato per il corretto funzionamento di alcune funzionalità):
+Quando Supabase non è configurato, il backend usa fallback locali soltanto in
+sviluppo. In `NODE_ENV=production` l'avvio è fail-closed se mancano Supabase,
+secret di sessione o credenziali amministrative valide.
 
-```bash
-# Python 3
-python3 -m http.server 8000
+## Requisiti
 
-# oppure Node
-npx serve
-```
+- Node.js 24.18.0 LTS, fissato in `.node-version` e limitato alla major 24 in `package.json`;
+- npm;
+- variabili provider per l’uso del backend in produzione.
 
-Poi vai su <http://localhost:8000>.
+Non aggiungere credenziali al repository o alla documentazione.
 
-### Aprire il gestionale
-Vai su `admin.html` (o clicca **"Area riservata"** nel footer del sito / **"Gestisci la
-vetrina dal pannello"** sotto la sezione prodotti).
+## Installazione
 
-Le modifiche fatte nel gestionale si riflettono **immediatamente** sulla vetrina pubblica.
+~~~bash
+npm ci
+~~~
 
----
+## Sviluppo locale
 
-## 🎨 Scelte di design
+Avvio del backend e delle pagine servite da Node:
 
-- **Palette naturale & premium**: crema, sabbia, salvia, terracotta.
-- **Tipografia elegante**: *Cormorant Garamond* (display) + *Mulish* (testo).
-- **Animazioni leggere**: reveal allo scroll, hover morbidi, blob galleggianti.
-- **Accessibilità**: contrasti curati, `aria-*`, focus visibili, supporto
-  `prefers-reduced-motion`.
-- **Responsive**: ottimizzato per mobile, tablet e desktop.
+~~~bash
+npm start
+~~~
 
----
+La porta predefinita è 4173, salvo variabile PORT.
 
-## 🗂 Struttura del progetto
+Per controllare soltanto la build pubblica:
 
-```
-.
-├── index.html              # Sito pubblico
-├── admin.html              # Gestionale prodotti
-├── README.md
-└── assets/
-    ├── css/
-    │   ├── styles.css      # Stili del sito
-    │   └── admin.css       # Stili del gestionale
-    └── js/
-        ├── data.js         # Dati condivisi (localStorage)
-        ├── app.js          # Logica del sito
-        └── admin.js        # Logica del gestionale
-```
+~~~bash
+npm run build
+python3 -m http.server 4174 --directory dist
+~~~
 
----
+## Comandi
 
-## 💾 Dove sono salvati i prodotti?
-
-I prodotti sono memorizzati nel **localStorage** del browser (chiave
-`sara_products_v1`). Questo significa che:
-
-- ✅ Funziona subito, senza backend né database.
-- ✅ Persiste tra le sessioni sullo stesso browser.
-- ⚠️ I dati sono **per dispositivo/browser**: se vuoi una gestione condivisa
-  online (multi-utente, sincronizzata) serve collegare un backend
-  (es. Firebase, Supabase o una piccola API).
-- 🔄 Il pulsante **"Ripristina esempio"** nel gestionale ricarica i prodotti di default.
-
----
-
-## 🔧 Personalizzazioni rapide
-
-| Cosa fare | Dove |
+| Comando | Funzione |
 |---|---|
-| Cambiare colori / font | `:root` in `assets/css/styles.css` e `assets/css/admin.css` |
-| Modificare testi del sito | `index.html` |
-| Modificare testi del gestionale | `index.html` |
-| Aggiungere/rimuovere servizi o certificazioni | `index.html` (sezioni `#servizi`, `#certificazioni`) |
-| Cambiare i prodotti di default | array `DEFAULT_PRODUCTS` in `assets/js/data.js` |
-| Sostituire le immagini | URL dentro `index.html` e `data.js` |
-| Collegare il form a un'email/servizio | funzione submit in `assets/js/app.js` (vedi sezione sotto) |
+| npm run check | syntax check dei file JavaScript principali |
+| npm run build | build Netlify e tutti i gate SEO, schema, analytics, integrità visuale, privacy, workflow e sicurezza |
+| npm run build:netlify | genera dist/ tramite allowlist |
+| npm run check:seo | verifica canonical, H1, sitemap e robots |
+| npm run check:schema | verifica il grafo JSON-LD, prezzi, privacy e coerenza catalogo |
+| npm run check:analytics | verifica eventi e consenso senza trasmissione diretta |
+| npm run check:catalog-live | confronta tutti i campi del catalogo Render con `products.json` |
+| npm run check:visual-integrity | verifica hash degli asset e, con Poppler disponibile, la resa di ogni pagina PDF |
+| npm run check:push-privacy | verifica che le push non includano dati del lead |
+| npm run check:workflow | verifica YAML/shell e health check GitHub Actions |
+| npm run check:security | verifica credenziali, CORS, cookie, health e RLS |
+| npm run check:server | verifica la sintassi di backend e seed prima del deploy Render |
+| npm run seed | inizializza i dati previsti dallo script Supabase |
 
-### Inviare davvero le richieste del form
-Attualmente il form mostra solo un messaggio di conferma (nessun backend).
-Per ricevere le richieste puoi integrare, ad esempio:
+## Deploy
 
-- **Formspree** (<https://formspree.io>) — basta impostare `action` e `method` sul form.
-- **EmailJS** — invio via email lato client.
-- Un tuo endpoint/server.
+### Netlify
 
-Esempio con Formspree (sostituisci l'`id` form):
-```html
-<form id="bookingForm" action="https://formspree.io/f/TUOID" method="POST">
-```
-E in `app.js` rimuovi il `e.preventDefault()` lasciando l'invio nativo
-(opzionale: gestione AJAX per mantenere il messaggio di successo).
+Netlify esegue `npm run build` e pubblica `dist/` soltanto dopo i gate. Prima di promuovere una
+modifica verificare almeno:
 
----
+1. npm run check;
+2. npm run build;
+3. redirect e header su una deploy preview;
+4. homepage e /links/ su mobile e desktop;
+5. `npm run check:catalog-live`;
+6. assenza di file privati in dist/.
 
-## 🖼️ Immagini
-Le immagini sono caricate da **Unsplash** (placeholder di alta qualità).
-Per uso in produzione, sostituiscile con foto reali di Sara e del suo studio.
+Il frontend può mostrare il catalogo dell'API Render, mentre il JSON-LD viene
+generato in build da `products.json`. Dopo ogni modifica prodotti nel gestionale
+occorre sincronizzare `products.json`, eseguire `npm run check:catalog-live` e
+ridistribuire Netlify; fino ad allora catalogo visibile e dati strutturati possono
+divergire. L'automazione con un deploy hook Netlify resta un'attività provider.
 
----
+Il PDF usa un URL canonico stabile nei dati strutturati: la sua cache richiede
+rivalidazione, mentre i link visibili ricevono un hash di contenuto in build.
 
-## 📄 Licenza d'uso
-Codice realizzato su richiesta come template personalizzato. Libero da utilizzare
-e modificare per Sara. Le immagini demo mantengono la licenza dei rispettivi autori.
+### Render e Supabase
+
+Le modifiche di autenticazione, segreti, sessioni, CORS o RLS richiedono una
+verifica coordinata sul provider. Un test locale non prova lo stato del database
+o delle variabili live. Prima del deploy applicare la migrazione
+`supabase/migrations/20260722_harden_private_tables.sql`, ruotare la password
+amministrativa e verificare `/api/health`.
+
+Un push su `main` avvia normalmente sia Netlify sia Render. Questa release è
+compatibile anche se Netlify termina per primo: applicare la migrazione prima del
+push, monitorare entrambi i deploy e lanciare manualmente il workflow GitHub solo
+dopo che `/api/health` restituisce database `reachable`.
+
+## SEO, GEO e contenuti sensibili
+
+Il documento SEO_GEO_AUDIT_IMPLEMENTATION_2026-07-22.md contiene:
+
+- evidenze verificate e limiti;
+- modifiche tecniche applicate;
+- P0 di sicurezza, privacy e contenuto;
+- decisioni owner ancora aperte;
+- rollback e test;
+- roadmap e criteri di accettazione.
+
+Il grafo strutturato usa i fatti confermati e omette soltanto le proprietà ancora
+ignote. Le proposte di correzione dei testi sensibili sono documentate in
+`CLAIM_AUDIT_2026-07-22.md` e non vanno applicate senza revisione e approvazione.
+
+## Design
+
+L’identità approvata usa Cormorant Garamond e Mulish, palette crema/rosa/terra,
+asset locali e layout responsive. Le ottimizzazioni tecniche devono preservare
+grafica, copy approvato e interazioni finché non esiste un before/after approvato.
+
+## Dati e file locali
+
+- dist/ è un output di build e non è la fonte;
+- data/ e uploads/ possono contenere dati locali del backend;
+- output/ contiene artefatti di lavoro e non deve essere pubblicato;
+- i file .env non devono essere committati o condivisi.
+
+## Licenza
+
+Progetto realizzato per comeleapi. Verificare separatamente diritti e licenze di
+immagini, font, marchi e materiali cliente prima della redistribuzione.

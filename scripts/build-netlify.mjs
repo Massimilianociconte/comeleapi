@@ -14,6 +14,10 @@ import { fileURLToPath } from "node:url";
 
 import CleanCSS from "clean-css";
 import { minify } from "terser";
+import {
+  buildHomeStructuredData,
+  buildLinksStructuredData
+} from "./structured-data.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -21,11 +25,14 @@ const OUT = path.join(ROOT, "dist");
 
 const PUBLIC_FILES = [
   "index.html",
+  "robots.txt",
+  "sitemap.xml",
   "products.json",
   "links/index.html",
   "assets/css/styles.css",
   "assets/css/links.css",
   "assets/js/trusted-types.js",
+  "assets/js/analytics.js",
   "assets/js/config.js",
   "assets/js/data.js",
   "assets/js/app.js",
@@ -88,7 +95,9 @@ const FORBIDDEN_OUTPUTS = [
   ".env"
 ];
 
-const ASSET_REFERENCE_RE = /(?:\.\.\/|\.\/)?(?:assets|foto-prodotti|fonts|img)\/[A-Za-z0-9_./-]+\.(?:woff2?|ttf|webp|png|jpe?g|pdf|json|css|js)(?:\?[^"'`\s)<>,]*)?/g;
+// Il lookbehind evita di trattare il segmento `/assets/...` di un URL assoluto
+// (per esempio un'immagine Open Graph) come un riferimento locale relativo.
+const ASSET_REFERENCE_RE = /(?<![A-Za-z0-9_./:-])(?:\.\.\/|\.\/)?(?:assets|foto-prodotti|fonts|img)\/[A-Za-z0-9_./-]+\.(?:woff2?|ttf|webp|png|jpe?g|pdf|json|css|js)(?:\?[^"'`\s)<>,]*)?/g;
 
 async function exists(filePath) {
   try {
@@ -192,9 +201,17 @@ async function transformCatalog() {
   await writeFile(path.join(OUT, "products.json"), `${JSON.stringify(products, null, 2)}\n`);
 }
 
-async function transformHome(styles) {
+function injectStructuredData(html, structuredData) {
+  const pattern = /(<script\s+id="structuredData"\s+type="application\/ld\+json">)[\s\S]*?(<\/script>)/;
+  if (!pattern.test(html)) throw new Error("Blocco JSON-LD structuredData non trovato.");
+  const serialized = JSON.stringify(structuredData, null, 2).replace(/</g, "\\u003c");
+  return html.replace(pattern, `$1\n${serialized}\n  $2`);
+}
+
+async function transformHome(styles, structuredData) {
   const sourcePath = path.join(ROOT, "index.html");
   let html = await readFile(sourcePath, "utf8");
+  html = injectStructuredData(html, structuredData);
   const stylesheetPattern = /\s*<link rel="stylesheet" href="assets\/css\/styles\.css\?[^\"]+" \/>/;
   if (!stylesheetPattern.test(html)) {
     throw new Error("Link al CSS principale non trovato in index.html");
@@ -205,10 +222,11 @@ async function transformHome(styles) {
   await writeFile(path.join(OUT, "index.html"), html);
 }
 
-async function transformLinksPage() {
+async function transformLinksPage(structuredData) {
   const sourcePath = path.join(ROOT, "links/index.html");
+  const source = injectStructuredData(await readFile(sourcePath, "utf8"), structuredData);
   const html = await fingerprintReferences(
-    await readFile(sourcePath, "utf8"),
+    source,
     path.join(OUT, "links")
   );
   await writeFile(path.join(OUT, "links/index.html"), html);
@@ -260,6 +278,9 @@ await copyDirectoryFiltered("assets/img/icons", (name) => name.endsWith(".webp")
 await copyDirectoryFiltered("foto-prodotti", (name) => name.endsWith(".webp"));
 
 await transformCatalog();
+const sourceProducts = JSON.parse(await readFile(path.join(ROOT, "products.json"), "utf8"));
+const homeStructuredData = buildHomeStructuredData(sourceProducts);
+const linksStructuredData = buildLinksStructuredData();
 
 const homeStyles = await minifyCss("assets/css/styles.css");
 const linksStyles = await minifyCss("assets/css/links.css");
@@ -268,6 +289,7 @@ await writeFile(path.join(OUT, "assets/css/links.css"), `${linksStyles}\n`);
 
 await minifyJavaScript("assets/js/config.js");
 await minifyJavaScript("assets/js/trusted-types.js");
+await minifyJavaScript("assets/js/analytics.js");
 await minifyJavaScript("assets/js/app.js");
 await minifyJavaScript("assets/js/links.js", path.join(ROOT, "links"));
 
@@ -286,8 +308,8 @@ const minifiedData = await minify(dataSource, {
 if (!minifiedData.code) throw new Error("Minificazione JavaScript fallita: assets/js/data.js");
 await writeFile(path.join(OUT, "assets/js/data.js"), `${minifiedData.code}\n`);
 
-await transformHome(homeStyles);
-await transformLinksPage();
+await transformHome(homeStyles, homeStructuredData);
+await transformLinksPage(linksStructuredData);
 
 await assertReferencesExist([
   "index.html",
@@ -296,6 +318,7 @@ await assertReferencesExist([
   "assets/css/styles.css",
   "assets/css/links.css",
   "assets/js/trusted-types.js",
+  "assets/js/analytics.js",
   "assets/js/app.js",
   "assets/js/data.js",
   "assets/js/links.js"

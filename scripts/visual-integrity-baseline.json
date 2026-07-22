@@ -1,0 +1,33 @@
+{
+  "pdf": {
+    "path": "assets/pdf/mini-guida-oli-comeleapi.pdf",
+    "originalSha256": "5af783b335003a0920267392750a253603143230e192f7f5ec1df289a8b7b126",
+    "approvedSha256": "5b6b327893257d09eda9695461fbb84525f84ce67cef7af6f7220fbb99add4f4",
+    "approvedBytes": 2917777,
+    "pageCount": 7,
+    "renderDpi": 144,
+    "pageRenderSha256": [
+      "c7b59bdb05a976f953a0cd16b24517673817ba9d58ed5112708510b10d07d6c9",
+      "56b1c8fa504c9dffc660ee43d992fb1ab699b72e7346b4c219cff3905ea81f46",
+      "eaf663c8f0a6147e355f87918e463a439cb668c7979cabdc3a1eefff71e9f7b8",
+      "7bd515fba8a5c62419282659343fb106f55f867d44a92a924628eb5af61d897a",
+      "69f7e853c3fd2bf6470cbc51a69179fe982a3038d4330e5590dd9d7ff43b8f34",
+      "925b5c518dc262bf04ef2cbd5ddc53b8d8445a27ce7adba4be18d42ad7717d3b",
+      "d861fef1b81566abee74f050d30353878d408242f26d52f18cf6d507d02a5160"
+    ]
+  },
+  "productImages": {
+    "foto-prodotti/collezione-essenziale.webp": "89e34eb95d8498f6c581a2adf1d35ae0e957e8998c1bd240984bd51e72bb2e27",
+    "foto-prodotti/baby-essentials.webp": "10dddf5424bab22b556cacc5a81cf6566bac80d61dfb36997184e11869aaf2df",
+    "foto-prodotti/sweet-home.webp": "ca3e1826bd0df20839090f123c370f38f2679ebc3d540448c1337755943e4294",
+    "foto-prodotti/dolce-notte.webp": "0c21a4b3199ca2fc3268644b087098554341cf83b5c8f4b8877e45f40c6fb50f",
+    "foto-prodotti/sport-wellness-clean.webp": "04729cd0f47358557212bb533179d5767bbae213828656c7bdecdc831cad39e6",
+    "foto-prodotti/per-lui.webp": "2b3d955342b591d94e94f521d6d6b4b493da0370434f6a6f6b4b9b02a04f0181",
+    "foto-prodotti/per-lei.webp": "50414fdde18a95975cc8ef469aab5b04997ff1d79431ddd49a8ac10094951b1e",
+    "foto-prodotti/animal-scents.webp": "0d787684d46ebab7fc2417a2f02c8eae7cf7539be71db5e442aae111150e9eec",
+    "foto-prodotti/balance-skin-clean.webp": "344f24db01f8ae5cfe61141f773060c88fe1f7d27e466582bbfcd654db5e8389",
+    "foto-prodotti/bloom-skin.webp": "5c0f25305061d12c125fe49131870547bd95540a6a1a9f7d327527063e41cbae",
+    "foto-prodotti/shine-bright-like-a-diamond.webp": "dcc0bc259dd2c18ddb8326d4de978aaa82d421c9030d1617832cc5c5b23db11a",
+    "foto-prodotti/bye-bye-menopausa.webp": "4f74e767195c3ccffd3c7e2cdb21222d9a1f0fb34e19d2e6498c19e382b01dae"
+  }
+}

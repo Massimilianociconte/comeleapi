@@ -1,0 +1,53 @@
+# comeleapi.it — policy crawler aperta, approvata il 22 luglio 2026.
+# Le regole esplicite documentano i crawler principali; il gruppo * permette
+# l'accesso a ogni altro crawler presente o futuro che rispetti robots.txt.
+
+# Motori di ricerca
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-Video
+User-agent: Googlebot-News
+User-agent: GoogleOther
+User-agent: GoogleOther-Image
+User-agent: GoogleOther-Video
+User-agent: Bingbot
+Allow: /
+
+# Google AI e servizi Vertex AI
+User-agent: Google-Extended
+User-agent: Google-CloudVertexBot
+Allow: /
+
+# OpenAI: ricerca, training e verifica landing pubblicitarie
+User-agent: OAI-SearchBot
+User-agent: GPTBot
+User-agent: OAI-AdsBot
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic / Claude: ricerca, richieste utente e training
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity: ricerca e richieste utente
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+
+# Apple: ricerca e utilizzo per modelli generativi
+User-agent: Applebot
+User-agent: Applebot-Extended
+Allow: /
+
+# Common Crawl
+User-agent: CCBot
+Allow: /
+
+# Copertura di tutti gli altri crawler conformi, inclusi quelli futuri
+User-agent: *
+Allow: /
+
+Sitemap: https://comeleapi.it/sitemap.xml

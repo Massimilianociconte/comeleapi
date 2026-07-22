@@ -56,8 +56,11 @@ const LOGIN_LOCK_MS = 15 * 60 * 1000;
 const LOGIN_MAX_ATTEMPTS = 6;
 const CONTACT_WINDOW_MS = 10 * 60 * 1000;
 const CONTACT_MAX_ATTEMPTS = 8;
+const RATE_LIMIT_SWEEP_MS = 60 * 1000;
+const MAX_RATE_LIMIT_ENTRIES = 4096;
 const IS_PROD = process.env.NODE_ENV === "production";
-const COOKIE_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("base64url");
+const CONFIGURED_SESSION_SECRET = String(process.env.SESSION_SECRET || "");
+const COOKIE_SECRET = CONFIGURED_SESSION_SECRET || crypto.randomBytes(32).toString("base64url");
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || "mailto:sara.bordenga@gmail.com";
 const PUBLIC_SITE_ORIGINS = String(
   process.env.PUBLIC_SITE_ORIGINS || "https://comeleapi.it,https://www.comeleapi.it,https://comeleapi.netlify.app"
@@ -66,30 +69,30 @@ const PUBLIC_SITE_ORIGINS = String(
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-// Credenziali admin canoniche. Su Render ADMIN_PASSWORD era spesso rimasto a "admin":
-// ignoriamo password deboli/legacy e forziamo la password forte come fonte di verità.
-const CANONICAL_ADMIN_USER = "sara.bordenga@gmail.com";
-const CANONICAL_ADMIN_PASSWORD = "Sara2026!ComeLeApi#8xK9vW4z";
+const CONFIGURED_ADMIN_USER = String(process.env.ADMIN_USER || "").trim().toLowerCase();
+const CONFIGURED_ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || "");
 const LEGACY_WEAK_ADMIN_PASSWORDS = new Set(["", "admin", "password", "cambia-questa-password"]);
 
-function resolveTargetAdminPassword() {
-  const fromEnv = String(process.env.ADMIN_PASSWORD || "");
-  if (fromEnv && !LEGACY_WEAK_ADMIN_PASSWORDS.has(fromEnv)) return fromEnv;
-  return CANONICAL_ADMIN_PASSWORD;
+function validateAdminBootstrapPassword(password) {
+  const value = String(password || "");
+  if (LEGACY_WEAK_ADMIN_PASSWORDS.has(value) || value.length < 14) {
+    throw new Error("ADMIN_PASSWORD deve contenere almeno 14 caratteri e non puo essere una password predefinita.");
+  }
+  return value;
 }
 
-function getKnownAdminUsernames() {
-  return new Set(
-    [CANONICAL_ADMIN_USER, "admin", String(process.env.ADMIN_USER || "").toLowerCase()].filter(Boolean)
-  );
-}
-
-function isAcceptedAdminPassword(password) {
-  const pwd = String(password || "");
-  if (!pwd || LEGACY_WEAK_ADMIN_PASSWORDS.has(pwd)) return false;
-  if (pwd === CANONICAL_ADMIN_PASSWORD) return true;
-  const fromEnv = String(process.env.ADMIN_PASSWORD || "");
-  return Boolean(fromEnv) && !LEGACY_WEAK_ADMIN_PASSWORDS.has(fromEnv) && pwd === fromEnv;
+function validateRuntimeConfig() {
+  if (!IS_PROD) return;
+  if (!USE_SUPABASE) {
+    throw new Error("SUPABASE_URL e SUPABASE_SERVICE_KEY sono obbligatorie in produzione.");
+  }
+  if (Buffer.byteLength(CONFIGURED_SESSION_SECRET, "utf8") < 32) {
+    throw new Error("SESSION_SECRET deve contenere almeno 32 byte in produzione.");
+  }
+  if (!CONFIGURED_ADMIN_USER) {
+    throw new Error("ADMIN_USER e obbligatoria in produzione.");
+  }
+  validateAdminBootstrapPassword(CONFIGURED_ADMIN_PASSWORD);
 }
 
 const DATA_DIR = path.join(ROOT, "data");
@@ -113,6 +116,8 @@ const MIME = {
   ".webp": "image/webp",
   ".svg": "image/svg+xml",
   ".ico": "image/x-icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
   ".ttf": "font/ttf",
   ".pdf": "application/pdf",
   ".txt": "text/plain; charset=utf-8"
@@ -123,6 +128,7 @@ const DEFAULT_PRODUCTS = JSON.parse(fs.readFileSync(PRODUCT_CATALOG_FILE, "utf8"
 const sessions = new Map();
 const loginAttempts = new Map();
 const contactAttempts = new Map();
+let nextRateLimitSweepAt = 0;
 const UPLOAD_TYPES = {
   "image/jpeg": ".jpg",
   "image/png": ".png",
@@ -152,6 +158,13 @@ function jsonClone(value) {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+class ClientInputError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ClientInputError";
+  }
 }
 
 function sign(value) {
@@ -187,7 +200,7 @@ function parseCookies(req) {
 function setCookie(res, name, value, options = {}) {
   const pieces = [`${name}=${encodeURIComponent(value)}`];
   pieces.push(`Path=${options.path || "/"}`);
-  pieces.push(`SameSite=${options.sameSite || (IS_PROD ? "None" : "Strict")}`);
+  pieces.push(`SameSite=${options.sameSite || "Lax"}`);
   if (options.httpOnly !== false) pieces.push("HttpOnly");
   if (options.secure || IS_PROD) pieces.push("Secure");
   if (options.maxAge !== undefined) pieces.push(`Max-Age=${options.maxAge}`);
@@ -203,6 +216,11 @@ function securityHeaders(res) {
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+  if (IS_PROD) {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  }
   res.setHeader(
     "Content-Security-Policy",
     [
@@ -235,19 +253,42 @@ function isAllowedOrigin(origin) {
     return false;
   }
   if (PUBLIC_SITE_ORIGINS.includes(parsed.origin)) return true;
-  if (["localhost", "127.0.0.1", "::1"].includes(parsed.hostname)) return true;
-  return parsed.protocol === "https:" && parsed.hostname.endsWith(".github.io");
+  return !IS_PROD && ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname);
+}
+
+function requestOrigin(req) {
+  const forwardedProtocol = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
+  const protocol = forwardedProtocol || (IS_PROD ? "https" : "http");
+  const host = String(req.headers.host || "").trim();
+  return host ? `${protocol}://${host}` : "";
+}
+
+function isPublicCorsPath(pathname) {
+  return pathname === "/api/products" || pathname === "/api/contact";
 }
 
 function applyCors(req, res, url) {
-  if (!isApiPath(url.pathname)) return false;
+  if (!isApiPath(url.pathname)) return true;
   const origin = req.headers.origin;
   if (!origin) return true;
-  if (!isAllowedOrigin(origin)) return false;
+
+  let normalizedOrigin;
+  try {
+    normalizedOrigin = new URL(origin).origin;
+  } catch {
+    return false;
+  }
+
+  if (normalizedOrigin === requestOrigin(req)) return true;
+  if (!isPublicCorsPath(url.pathname) || !isAllowedOrigin(normalizedOrigin)) return false;
+
   res.setHeader("Access-Control-Allow-Origin", origin);
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-CSRF-Token");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
+  // These two endpoints are intentionally consumed by the public site hosted
+  // on a different origin. CORP must therefore agree with the narrow CORS
+  // allowlist above; all other responses keep the stricter same-site policy.
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
   res.setHeader("Access-Control-Max-Age", "86400");
   res.setHeader("Vary", "Origin");
   return true;
@@ -349,8 +390,8 @@ async function verifyPassword(password, storedHash) {
 
 function cleanText(value, max, required = true) {
   const text = String(value ?? "").replace(/\s+/g, " ").trim();
-  if (required && !text) throw new Error("Campo obbligatorio mancante.");
-  if (text.length > max) throw new Error(`Campo troppo lungo: massimo ${max} caratteri.`);
+  if (required && !text) throw new ClientInputError("Campo obbligatorio mancante.");
+  if (text.length > max) throw new ClientInputError(`Campo troppo lungo: massimo ${max} caratteri.`);
   return text;
 }
 
@@ -360,20 +401,20 @@ function cleanMultilineText(value, max, required = false) {
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
-  if (required && !text) throw new Error("Campo obbligatorio mancante.");
-  if (text.length > max) throw new Error(`Campo troppo lungo: massimo ${max} caratteri.`);
+  if (required && !text) throw new ClientInputError("Campo obbligatorio mancante.");
+  if (text.length > max) throw new ClientInputError(`Campo troppo lungo: massimo ${max} caratteri.`);
   return text;
 }
 
 function cleanEmail(value) {
   const email = cleanText(value, 180).toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Email non valida.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new ClientInputError("Email non valida.");
   return email;
 }
 
 function cleanPhone(value) {
   const phone = cleanText(value, 40);
-  if (!/^[+()\d\s.-]{6,40}$/.test(phone)) throw new Error("Telefono non valido.");
+  if (!/^[+()\d\s.-]{6,40}$/.test(phone)) throw new ClientInputError("Telefono non valido.");
   return phone;
 }
 
@@ -383,11 +424,11 @@ function cleanUrl(value, field) {
   try {
     parsed = new URL(raw);
   } catch {
-    throw new Error(`${field} non valido.`);
+    throw new ClientInputError(`${field} non valido.`);
   }
   const isLocal = ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname);
   if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && isLocal)) {
-    throw new Error(`${field} deve usare HTTPS.`);
+    throw new ClientInputError(`${field} deve usare HTTPS.`);
   }
   return parsed.toString();
 }
@@ -437,16 +478,16 @@ function isLegacyProductSeed(products) {
     ));
 }
 
-async function loadProducts() {
+async function loadProducts({ allowPublicFallback = false } = {}) {
   if (USE_SUPABASE) {
     const db = getSupabase();
     const { data, error } = await db.from("products").select("*").order("order", { ascending: true });
     if (error) {
       console.error("[db] errore caricamento prodotti:", error.message);
-      return jsonClone(DEFAULT_PRODUCTS);
+      if (allowPublicFallback) return jsonClone(DEFAULT_PRODUCTS);
+      throw new Error("Errore caricamento prodotti: " + error.message);
     }
-    if (!data || !data.length) return jsonClone(DEFAULT_PRODUCTS);
-    const mapped = data.map((row) => ({
+    const mapped = (data || []).map((row) => ({
       id: row.id,
       name: row.name,
       shortDesc: row.short_desc,
@@ -457,7 +498,7 @@ async function loadProducts() {
       visible: row.visible,
       order: row.order
     }));
-    return isLegacyProductSeed(mapped) ? jsonClone(DEFAULT_PRODUCTS) : mapped;
+    return allowPublicFallback && isLegacyProductSeed(mapped) ? jsonClone(DEFAULT_PRODUCTS) : mapped;
   } else {
     const list = await readJson(PRODUCTS_FILE, DEFAULT_PRODUCTS);
     if (!Array.isArray(list)) return jsonClone(DEFAULT_PRODUCTS);
@@ -535,7 +576,7 @@ async function loadLeads() {
     const { data, error } = await db.from("leads").select("*").order("created_at", { ascending: false });
     if (error) {
       console.error("[db] errore caricamento leads:", error.message);
-      return [];
+      throw new Error("Errore caricamento richieste: " + error.message);
     }
     return (data || []).map((row) => ({
       id: row.id,
@@ -669,15 +710,30 @@ function requireCsrf(req, res, session) {
 
 // ── Rate limiting ───────────────────────────────────────────────────
 
-function loginRateKey(req, username) {
-  return `${clientIp(req)}:${String(username || "").toLowerCase()}`;
+function loginRateKey(req) {
+  return clientIp(req);
+}
+
+function sweepRateLimitMaps(now = Date.now()) {
+  if (now < nextRateLimitSweepAt) return;
+
+  for (const [key, entry] of loginAttempts) {
+    const expiresAt = Math.max(entry.firstAt + LOGIN_WINDOW_MS, entry.lockedUntil || 0);
+    if (expiresAt <= now) loginAttempts.delete(key);
+  }
+  for (const [key, entry] of contactAttempts) {
+    if (entry.firstAt + CONTACT_WINDOW_MS <= now) contactAttempts.delete(key);
+  }
+  nextRateLimitSweepAt = now + RATE_LIMIT_SWEEP_MS;
 }
 
 function checkContactRate(req) {
   const key = clientIp(req);
   const now = Date.now();
+  sweepRateLimitMaps(now);
   const entry = contactAttempts.get(key);
   if (!entry || entry.firstAt + CONTACT_WINDOW_MS < now) {
+    if (!entry && contactAttempts.size >= MAX_RATE_LIMIT_ENTRIES) return false;
     contactAttempts.set(key, { count: 1, firstAt: now });
     return true;
   }
@@ -686,11 +742,17 @@ function checkContactRate(req) {
   return entry.count <= CONTACT_MAX_ATTEMPTS;
 }
 
-function checkLoginRate(req, username) {
-  const key = loginRateKey(req, username);
+function checkLoginRate(req) {
+  const key = loginRateKey(req);
   const now = Date.now();
+  sweepRateLimitMaps(now);
   const entry = loginAttempts.get(key);
-  if (!entry) return { ok: true, key };
+  if (!entry) {
+    if (loginAttempts.size >= MAX_RATE_LIMIT_ENTRIES) {
+      return { ok: false, key: null, retryAfter: 60 };
+    }
+    return { ok: true, key };
+  }
   if (entry.lockedUntil && entry.lockedUntil > now) {
     return { ok: false, key, retryAfter: Math.ceil((entry.lockedUntil - now) / 1000) };
   }
@@ -702,6 +764,7 @@ function checkLoginRate(req, username) {
 }
 
 function recordLoginFailure(key) {
+  if (!key) return;
   const now = Date.now();
   const entry = loginAttempts.get(key) || { count: 0, firstAt: now, lockedUntil: 0 };
   if (entry.firstAt + LOGIN_WINDOW_MS < now) {
@@ -728,7 +791,7 @@ async function readBody(req) {
     req.on("data", (chunk) => {
       size += Buffer.byteLength(chunk);
       if (size > MAX_BODY_BYTES) {
-        reject(new Error("Payload troppo grande."));
+        reject(new ClientInputError("Payload troppo grande."));
         req.destroy();
         return;
       }
@@ -744,7 +807,7 @@ async function readBody(req) {
         }
         resolve({});
       } catch {
-        reject(new Error("JSON non valido."));
+        reject(new ClientInputError("JSON non valido."));
       }
     });
     req.on("error", reject);
@@ -758,7 +821,7 @@ async function readRawBuffer(req, limit = MAX_UPLOAD_BYTES) {
     req.on("data", (chunk) => {
       size += chunk.length;
       if (size > limit) {
-        reject(new Error("File troppo grande. Dimensione massima: 5 MB."));
+        reject(new ClientInputError("File troppo grande. Dimensione massima: 5 MB."));
         req.destroy();
         return;
       }
@@ -854,7 +917,8 @@ async function handleUpload(req, res) {
       upsert: false
     });
     if (error) {
-      return sendJson(res, 500, { error: "Errore caricamento immagine: " + error.message });
+      console.error("[upload] errore Supabase Storage:", error.message);
+      return sendJson(res, 500, { error: "Errore interno durante il caricamento dell'immagine." });
     }
     const { data: urlData } = db.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(filename);
     return sendJson(res, 201, { url: urlData.publicUrl, filename });
@@ -866,6 +930,73 @@ async function handleUpload(req, res) {
 }
 
 // ── Push notifications ──────────────────────────────────────────────
+
+function normalizePushSubscription(value, session) {
+  if (!value || typeof value !== "object") {
+    throw new ClientInputError("Sottoscrizione push non valida.");
+  }
+  const endpoint = cleanUrl(value.endpoint, "Endpoint push");
+  const p256dh = cleanText(value.keys?.p256dh, 256);
+  const auth = cleanText(value.keys?.auth, 128);
+  if (!/^[A-Za-z0-9_-]+={0,2}$/.test(p256dh) || !/^[A-Za-z0-9_-]+={0,2}$/.test(auth)) {
+    throw new ClientInputError("Chiavi della sottoscrizione push non valide.");
+  }
+  const timestamp = nowIso();
+  return {
+    endpoint,
+    expirationTime: Number.isFinite(value.expirationTime) ? value.expirationTime : null,
+    keys: { p256dh, auth },
+    user: session.username,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  };
+}
+
+async function loadPushSubscriptions() {
+  if (USE_SUPABASE) {
+    const db = getSupabase();
+    const { data, error } = await db
+      .from("push_subscriptions")
+      .select("endpoint,p256dh,auth,user_name,created_at,updated_at")
+      .order("created_at", { ascending: true });
+    if (error) throw new Error("Impossibile leggere le sottoscrizioni push.");
+    return (data || []).map((row) => ({
+      endpoint: row.endpoint,
+      expirationTime: null,
+      keys: { p256dh: row.p256dh, auth: row.auth },
+      user: row.user_name,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }));
+  }
+
+  const subscriptions = await readJson(PUSH_SUBSCRIPTIONS_FILE, []);
+  return Array.isArray(subscriptions) ? subscriptions : [];
+}
+
+async function savePushSubscriptions(subscriptions) {
+  if (!Array.isArray(subscriptions)) throw new TypeError("Elenco sottoscrizioni push non valido.");
+  if (USE_SUPABASE) throw new Error("La sostituzione completa delle sottoscrizioni cloud non e consentita.");
+  await writeJson(PUSH_SUBSCRIPTIONS_FILE, subscriptions);
+}
+
+async function removePushSubscriptions(endpoints) {
+  const staleEndpoints = [...new Set(endpoints.filter(Boolean))];
+  if (!staleEndpoints.length) return;
+  if (USE_SUPABASE) {
+    const db = getSupabase();
+    const { error: deleteError } = await db
+      .from("push_subscriptions")
+      .delete()
+      .in("endpoint", staleEndpoints);
+    if (deleteError) throw new Error("Impossibile rimuovere le sottoscrizioni push scadute.");
+    return;
+  }
+
+  const current = await loadPushSubscriptions();
+  const staleSet = new Set(staleEndpoints);
+  await savePushSubscriptions(current.filter((subscription) => !staleSet.has(subscription.endpoint)));
+}
 
 function sendPushNotification(subscription, payload, vapid) {
   webpush.setVapidDetails(VAPID_SUBJECT, vapid.publicKey, vapid.privateKey);
@@ -888,7 +1019,10 @@ async function sendPushToAll(payload) {
   const vapid = getVapidKeys();
   const results = await Promise.all(subscriptions.map((sub) => sendPushNotification(sub, payload, vapid)));
   const activeSubscriptions = subscriptions.filter((_, index) => !results[index].remove);
-  if (activeSubscriptions.length !== subscriptions.length) await savePushSubscriptions(activeSubscriptions);
+  const staleEndpoints = subscriptions
+    .filter((_, index) => results[index].remove)
+    .map((subscription) => subscription.endpoint);
+  await removePushSubscriptions(staleEndpoints);
   return {
     sent: results.filter((r) => r.ok).length,
     failed: results.filter((r) => !r.ok).length,
@@ -896,12 +1030,12 @@ async function sendPushToAll(payload) {
   };
 }
 
-async function notifyNewLead(lead) {
+async function notifyNewLead() {
   try {
     const payload = {
       type: "NEW_LEAD",
-      title: "Nuova richiesta da " + (lead.name || "Utente"),
-      body: lead.message ? (lead.message.length > 50 ? lead.message.slice(0, 50) + "..." : lead.message) : "Controlla le nuove richieste nel gestionale.",
+      title: "Nuova richiesta dal sito",
+      body: "Apri il gestionale autenticato per visualizzare i dettagli.",
       url: "/admin.html#richieste"
     };
     await sendPushToAll(payload);
@@ -925,158 +1059,45 @@ function userPayload(session) {
 
 async function handleLogin(req, res) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Metodo non consentito." });
-  let body;
+  let username;
+  let password;
   try {
-    body = await readBody(req);
+    const body = await readBody(req);
+    username = cleanText(body.username, 80, false).toLowerCase();
+    password = String(body.password || "");
   } catch (err) {
-    return sendJson(res, 400, { error: err.message });
+    if (err instanceof ClientInputError) return sendJson(res, 400, { error: err.message });
+    console.error("[auth] lettura richiesta login fallita:", err);
+    return sendJson(res, 500, { error: "Errore interno del server." });
   }
-  const username = cleanText(body.username, 80, false).toLowerCase();
-  const password = String(body.password || "");
-  const rate = checkLoginRate(req, username);
+
+  const rate = checkLoginRate(req);
   if (!rate.ok) {
     res.setHeader("Retry-After", String(rate.retryAfter || 60));
     return sendJson(res, 429, { error: "Troppi tentativi. Riprova tra qualche minuto." });
   }
 
-  const knownAdminUsernames = getKnownAdminUsernames();
-  const targetPassword = resolveTargetAdminPassword();
-  const plaintextAccepted = knownAdminUsernames.has(username) && isAcceptedAdminPassword(password);
-
   let user = null;
   let passwordOk = false;
-  let shouldResyncHash = false;
 
   if (USE_SUPABASE) {
     const db = getSupabase();
-    const { data: dbUser } = await db.from("users").select("*").eq("username", username).maybeSingle();
+    const { data: dbUser, error } = await db.from("users").select("*").eq("username", username).maybeSingle();
+    if (error) {
+      console.error("[auth] lettura utente fallita:", error.message);
+      return sendJson(res, 503, { error: "Servizio di autenticazione temporaneamente non disponibile." });
+    }
     if (dbUser) {
       user = dbUser;
       passwordOk = await verifyPassword(password, user.password_hash);
     }
-
-    if (!passwordOk && knownAdminUsernames.has(username)) {
-      const { data: adminRows } = await db.from("users").select("*").eq("role", "admin").limit(5);
-      const admins = Array.isArray(adminRows) ? adminRows : [];
-      for (const adminRec of admins) {
-        if (await verifyPassword(password, adminRec.password_hash)) {
-          user = adminRec;
-          passwordOk = true;
-          break;
-        }
-      }
-
-      if (!passwordOk && plaintextAccepted) {
-        passwordOk = true;
-        shouldResyncHash = true;
-        const passwordHash = await hashPassword(targetPassword);
-        const adminRec = admins[0] || null;
-        if (adminRec) {
-          // Non rinominiamo l'unico admin se l'utente digita un alias diverso:
-          // assicuriamo invece l'utente richiesto e allineiamo la password.
-          const { data: existingAlias } = await db.from("users").select("*").eq("username", username).maybeSingle();
-          if (existingAlias) {
-            await db
-              .from("users")
-              .update({ password_hash: passwordHash, role: "admin", updated_at: nowIso() })
-              .eq("id", existingAlias.id);
-            user = { ...existingAlias, password_hash: passwordHash, role: "admin" };
-          } else {
-            const newUser = {
-              id: crypto.randomUUID(),
-              username,
-              role: "admin",
-              password_hash: passwordHash,
-              created_at: nowIso(),
-              updated_at: nowIso()
-            };
-            const { error } = await db.from("users").insert(newUser);
-            if (error) {
-              // Fallback: aggiorna il record admin esistente all'alias richiesto
-              await db
-                .from("users")
-                .update({ username, password_hash: passwordHash, updated_at: nowIso() })
-                .eq("id", adminRec.id);
-              user = { ...adminRec, username, password_hash: passwordHash };
-            } else {
-              user = newUser;
-            }
-          }
-        } else {
-          const newUser = {
-            id: crypto.randomUUID(),
-            username,
-            role: "admin",
-            password_hash: passwordHash,
-            created_at: nowIso(),
-            updated_at: nowIso()
-          };
-          await db.from("users").insert(newUser);
-          user = newUser;
-        }
-      }
-    }
-
-    // Se l'hash in DB è ancora legacy ma la password forte è corretta, risincronizza.
-    if (passwordOk && user && plaintextAccepted) {
-      const alreadyStrong = await verifyPassword(targetPassword, user.password_hash);
-      if (!alreadyStrong) {
-        shouldResyncHash = true;
-        const passwordHash = await hashPassword(targetPassword);
-        await db
-          .from("users")
-          .update({ password_hash: passwordHash, updated_at: nowIso() })
-          .eq("id", user.id);
-        user = { ...user, password_hash: passwordHash };
-      }
-    }
   } else {
     const users = await readJson(USERS_FILE, []);
     const userList = Array.isArray(users) ? users : [];
-    let localUser = userList.find((u) => String(u.username).toLowerCase() === username);
+    const localUser = userList.find((u) => String(u.username).toLowerCase() === username);
     if (localUser) {
       user = localUser;
       passwordOk = await verifyPassword(password, user.passwordHash);
-    }
-
-    if (!passwordOk && knownAdminUsernames.has(username)) {
-      const anyAdmin = userList.find((u) => u.role === "admin");
-      if (anyAdmin && (await verifyPassword(password, anyAdmin.passwordHash))) {
-        user = anyAdmin;
-        passwordOk = true;
-      } else if (plaintextAccepted) {
-        passwordOk = true;
-        shouldResyncHash = true;
-        const passwordHash = await hashPassword(targetPassword);
-        localUser = userList.find((u) => String(u.username).toLowerCase() === username);
-        if (localUser) {
-          localUser.passwordHash = passwordHash;
-          localUser.role = "admin";
-          localUser.updatedAt = nowIso();
-          user = localUser;
-        } else {
-          user = {
-            id: crypto.randomUUID(),
-            username,
-            role: "admin",
-            passwordHash,
-            createdAt: nowIso(),
-            updatedAt: nowIso()
-          };
-          userList.push(user);
-        }
-        await writeJson(USERS_FILE, userList);
-      }
-    }
-
-    if (passwordOk && user && plaintextAccepted) {
-      const alreadyStrong = await verifyPassword(targetPassword, user.passwordHash);
-      if (!alreadyStrong) {
-        shouldResyncHash = true;
-        user.passwordHash = await hashPassword(targetPassword);
-        user.updatedAt = nowIso();
-        await writeJson(USERS_FILE, userList);
-      }
     }
   }
 
@@ -1084,10 +1105,6 @@ async function handleLogin(req, res) {
     recordLoginFailure(rate.key);
     await new Promise((resolve) => setTimeout(resolve, 300));
     return sendJson(res, 401, { error: "Credenziali non valide." });
-  }
-
-  if (shouldResyncHash) {
-    console.log(`[auth] Password admin allineata per "${username}"`);
   }
 
   recordLoginSuccess(rate.key);
@@ -1129,30 +1146,51 @@ async function handleContact(req, res) {
       leads.unshift(lead);
       await writeJson(LEADS_FILE, leads);
     }
-    notifyNewLead(lead);
+    notifyNewLead();
     return sendJson(res, 201, {
       ok: true,
       message: "Richiesta ricevuta. Ti ricontatteremo al più presto.",
       id: lead.id
     });
   } catch (err) {
-    return sendJson(res, 400, { error: err.message || "Richiesta non valida." });
+    if (err instanceof ClientInputError) {
+      return sendJson(res, 400, { error: err.message });
+    }
+    console.error("[contact] errore salvataggio richiesta:", err);
+    return sendJson(res, 500, { error: "Impossibile salvare la richiesta in questo momento." });
   }
+}
+
+async function handleHealth(req, res) {
+  if (req.method !== "GET") return sendJson(res, 405, { error: "Metodo non consentito." });
+  if (!USE_SUPABASE) {
+    return sendJson(res, 503, { ok: false, service: "ready", database: "not-configured" });
+  }
+
+  const db = getSupabase();
+  const { error } = await db.from("products").select("id", { count: "exact", head: true });
+  if (error) {
+    console.error("[health] verifica Supabase fallita:", error.message);
+    return sendJson(res, 503, { ok: false, service: "ready", database: "unreachable" });
+  }
+
+  return sendJson(res, 200, { ok: true, service: "ready", database: "reachable" });
 }
 
 // ── API router ──────────────────────────────────────────────────────
 
 async function handleApi(req, res, url) {
-  applyCors(req, res, url);
+  if (!applyCors(req, res, url)) {
+    return sendJson(res, 403, { error: "Origine non consentita." });
+  }
   if (req.method === "OPTIONS" && isApiPath(url.pathname)) {
-    if (req.headers.origin && !isAllowedOrigin(req.headers.origin)) {
-      return sendJson(res, 403, { error: "Origine non consentita." });
-    }
     return send(res, 204, "", { "Content-Type": MIME[".txt"] });
   }
 
+  if (url.pathname === "/api/health") return handleHealth(req, res);
+
   if (url.pathname === "/api/products" && req.method === "GET") {
-    const products = (await loadProducts()).map(publicProduct);
+    const products = (await loadProducts({ allowPublicFallback: true })).map(publicProduct);
     return sendJson(res, 200, { products });
   }
 
@@ -1195,17 +1233,19 @@ async function handleApi(req, res, url) {
       const incoming = normalizePushSubscription(body.subscription || body, session);
       if (USE_SUPABASE) {
         const db = getSupabase();
-        await db.from("push_subscriptions").delete().eq("endpoint", incoming.endpoint);
-        const { error } = await db.from("push_subscriptions").insert({
+        const { error: upsertError } = await db.from("push_subscriptions").upsert({
           endpoint: incoming.endpoint,
           p256dh: incoming.keys.p256dh,
           auth: incoming.keys.auth,
           user_name: incoming.user,
           created_at: incoming.createdAt,
           updated_at: incoming.updatedAt
-        });
-        if (error) throw new Error("Errore registrazione notifiche: " + error.message);
-        const { count } = await db.from("push_subscriptions").select("*", { count: "exact", head: true });
+        }, { onConflict: "endpoint" });
+        if (upsertError) throw new Error("Errore registrazione notifiche: " + upsertError.message);
+        const { count, error: countError } = await db
+          .from("push_subscriptions")
+          .select("*", { count: "exact", head: true });
+        if (countError) throw new Error("Errore conteggio notifiche: " + countError.message);
         return sendJson(res, 201, { ok: true, registered: count || 0 });
       } else {
         const list = await loadPushSubscriptions();
@@ -1218,12 +1258,18 @@ async function handleApi(req, res, url) {
 
     if (url.pathname === "/api/admin/notifications/unsubscribe" && req.method === "POST") {
       const body = await readBody(req);
-      const endpoint = body.endpoint;
-      if (!endpoint) return sendJson(res, 400, { error: "Endpoint mancante." });
+      const endpoint = cleanUrl(body.endpoint, "Endpoint push");
       if (USE_SUPABASE) {
         const db = getSupabase();
-        await db.from("push_subscriptions").delete().eq("endpoint", endpoint);
-        const { count } = await db.from("push_subscriptions").select("*", { count: "exact", head: true });
+        const { error: deleteError } = await db
+          .from("push_subscriptions")
+          .delete()
+          .eq("endpoint", endpoint);
+        if (deleteError) throw new Error("Errore rimozione notifiche: " + deleteError.message);
+        const { count, error: countError } = await db
+          .from("push_subscriptions")
+          .select("*", { count: "exact", head: true });
+        if (countError) throw new Error("Errore conteggio notifiche: " + countError.message);
         return sendJson(res, 200, { ok: true, registered: count || 0 });
       } else {
         const list = await loadPushSubscriptions();
@@ -1258,7 +1304,12 @@ async function handleApi(req, res, url) {
 
       if (USE_SUPABASE) {
         const db = getSupabase();
-        const { data: existing } = await db.from("leads").select("id").eq("id", id).single();
+        const { data: existing, error: existingError } = await db
+          .from("leads")
+          .select("id")
+          .eq("id", id)
+          .maybeSingle();
+        if (existingError) throw new Error("Errore verifica richiesta: " + existingError.message);
         if (!existing) return sendJson(res, 404, { error: "Richiesta non trovata." });
 
         if (req.method === "PATCH") {
@@ -1267,7 +1318,7 @@ async function handleApi(req, res, url) {
           if (Object.prototype.hasOwnProperty.call(body, "read")) updates.read = Boolean(body.read);
           if (Object.prototype.hasOwnProperty.call(body, "status")) {
             const status = cleanText(body.status, 20);
-            if (!["new", "reviewed", "archived"].includes(status)) throw new Error("Stato richiesta non valido.");
+            if (!["new", "reviewed", "archived"].includes(status)) throw new ClientInputError("Stato richiesta non valido.");
             updates.status = status;
             updates.read = status !== "new";
           }
@@ -1297,7 +1348,7 @@ async function handleApi(req, res, url) {
           if (Object.prototype.hasOwnProperty.call(body, "read")) leads[idx].read = Boolean(body.read);
           if (Object.prototype.hasOwnProperty.call(body, "status")) {
             const status = cleanText(body.status, 20);
-            if (!["new", "reviewed", "archived"].includes(status)) throw new Error("Stato richiesta non valido.");
+            if (!["new", "reviewed", "archived"].includes(status)) throw new ClientInputError("Stato richiesta non valido.");
             leads[idx].status = status;
             leads[idx].read = status !== "new";
           }
@@ -1352,14 +1403,28 @@ async function handleApi(req, res, url) {
     if (url.pathname === "/api/admin/products/reset" && req.method === "POST") {
       if (USE_SUPABASE) {
         const db = getSupabase();
-        await db.from("products").delete().neq("id", "");
         const defaults = jsonClone(DEFAULT_PRODUCTS);
+        const resetAt = nowIso();
         const rows = defaults.map((p) => ({
           id: p.id, name: p.name, short_desc: p.shortDesc, benefits: p.benefits,
           price: p.price, image: p.image, link: p.link, visible: p.visible,
-          order: p.order, created_at: nowIso(), updated_at: nowIso()
+          order: p.order, created_at: resetAt, updated_at: resetAt
         }));
-        await db.from("products").insert(rows);
+        const { error: upsertError } = await db
+          .from("products")
+          .upsert(rows, { onConflict: "id" });
+        if (upsertError) throw new Error("Errore ripristino prodotti predefiniti: " + upsertError.message);
+
+        const { data: existingRows, error: readError } = await db.from("products").select("id");
+        if (readError) throw new Error("Errore verifica prodotti dopo il ripristino: " + readError.message);
+        const defaultIds = new Set(rows.map((row) => row.id));
+        const obsoleteIds = (existingRows || [])
+          .map((row) => row.id)
+          .filter((id) => !defaultIds.has(id));
+        if (obsoleteIds.length) {
+          const { error: deleteError } = await db.from("products").delete().in("id", obsoleteIds);
+          if (deleteError) throw new Error("Errore rimozione prodotti non predefiniti: " + deleteError.message);
+        }
       } else {
         await saveProducts(jsonClone(DEFAULT_PRODUCTS));
       }
@@ -1378,7 +1443,7 @@ async function handleApi(req, res, url) {
         const updated = normalizeProduct(body, list[idx], idx);
         if (USE_SUPABASE) {
           const db = getSupabase();
-          const { error } = await db.from("products").update({
+          const { data: updatedRow, error } = await db.from("products").update({
             name: updated.name,
             short_desc: updated.shortDesc,
             benefits: updated.benefits,
@@ -1388,8 +1453,9 @@ async function handleApi(req, res, url) {
             visible: updated.visible,
             order: updated.order,
             updated_at: nowIso()
-          }).eq("id", id);
+          }).eq("id", id).select("id").maybeSingle();
           if (error) throw new Error("Errore aggiornamento prodotto: " + error.message);
+          if (!updatedRow) return sendJson(res, 404, { error: "Prodotto non trovato." });
         } else {
           list[idx] = updated;
           await saveProducts(list);
@@ -1404,8 +1470,14 @@ async function handleApi(req, res, url) {
         if (Object.prototype.hasOwnProperty.call(body, "visible")) updates.visible = body.visible !== false;
         if (USE_SUPABASE) {
           const db = getSupabase();
-          const { error } = await db.from("products").update(updates).eq("id", id);
+          const { data: updatedRow, error } = await db
+            .from("products")
+            .update(updates)
+            .eq("id", id)
+            .select("id")
+            .maybeSingle();
           if (error) throw new Error("Errore aggiornamento prodotto: " + error.message);
+          if (!updatedRow) return sendJson(res, 404, { error: "Prodotto non trovato." });
         } else {
           if (Object.prototype.hasOwnProperty.call(updates, "visible")) list[idx].visible = updates.visible;
           await saveProducts(list);
@@ -1418,8 +1490,14 @@ async function handleApi(req, res, url) {
       if (req.method === "DELETE") {
         if (USE_SUPABASE) {
           const db = getSupabase();
-          const { error } = await db.from("products").delete().eq("id", id);
+          const { data: deletedRow, error } = await db
+            .from("products")
+            .delete()
+            .eq("id", id)
+            .select("id")
+            .maybeSingle();
           if (error) throw new Error("Errore eliminazione prodotto: " + error.message);
+          if (!deletedRow) return sendJson(res, 404, { error: "Prodotto non trovato." });
         } else {
           list.splice(idx, 1);
           await saveProducts(list);
@@ -1443,13 +1521,26 @@ async function handleApi(req, res, url) {
       }
     }
   } catch (err) {
-    return sendJson(res, 400, { error: err.message || "Operazione non valida." });
+    if (err instanceof ClientInputError) {
+      return sendJson(res, 400, { error: err.message });
+    }
+    console.error("[admin-api] operazione fallita:", err);
+    return sendJson(res, 500, { error: "Operazione non completata per un errore interno." });
   }
 
   return sendJson(res, 405, { error: "Metodo non consentito." });
 }
 
 // ── Static file serving ─────────────────────────────────────────────
+
+function isPathInside(baseDirectory, candidate) {
+  const relative = path.relative(baseDirectory, candidate);
+  return relative === "" || (
+    relative !== ".." &&
+    !relative.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(relative)
+  );
+}
 
 function safeStaticPath(urlPath) {
   let pathname = decodeURIComponent(urlPath);
@@ -1459,21 +1550,36 @@ function safeStaticPath(urlPath) {
   if (pathname === "/links/") pathname = "/links/index.html";
 
   if (pathname.includes("\0")) return null;
-  if (pathname.startsWith("/data/")) return null;
-  if (pathname === "/server.js" || pathname === "/package.json" || pathname.endsWith(".env")) return null;
+  const firstSegment = pathname.split("/").filter(Boolean)[0] || "";
+  const privateDirectories = new Set([
+    ".git",
+    ".github",
+    ".netlify",
+    ".venv-opt",
+    "data",
+    "node_modules",
+    "output",
+    "scripts",
+    "supabase",
+    "tmp"
+  ]);
+  if (privateDirectories.has(firstSegment)) return null;
+  if (path.basename(pathname).startsWith(".")) return null;
+  if (["/server.js", "/package.json", "/package-lock.json", "/render.yaml"].includes(pathname)) return null;
 
   // Servizio immagini locali caricate in modalità locale
   if (pathname.startsWith("/uploads/")) {
     if (USE_SUPABASE) return null;
-    const resolved = path.normalize(path.join(ROOT, pathname));
-    if (!resolved.startsWith(ROOT)) return null;
+    const resolved = path.resolve(ROOT, `.${pathname}`);
+    if (!isPathInside(UPLOAD_DIR, resolved)) return null;
+    if (![".jpg", ".jpeg", ".png", ".webp"].includes(path.extname(resolved).toLowerCase())) return null;
     return resolved;
   }
 
   const ext = path.extname(pathname).toLowerCase();
   if (!MIME[ext]) return null;
-  const resolved = path.normalize(path.join(ROOT, pathname));
-  if (!resolved.startsWith(ROOT)) return null;
+  const resolved = path.resolve(ROOT, `.${pathname}`);
+  if (!isPathInside(ROOT, resolved)) return null;
   if ([path.join(ROOT, "server.js"), path.join(ROOT, "package.json")].includes(resolved)) return null;
   if (path.basename(resolved).startsWith(".env")) return null;
   return resolved;
@@ -1536,47 +1642,60 @@ async function handleRequest(req, res) {
 // ── Admin user bootstrap & local DB setup ───────────────────────────
 
 async function ensureAdminUserSupabase() {
-  const targetPassword = resolveTargetAdminPassword();
-  const passwordHash = await hashPassword(targetPassword);
   const db = getSupabase();
-  const usernamesToEnsure = Array.from(getKnownAdminUsernames());
+  const { data: userRows, error: adminReadError } = await db
+    .from("users")
+    .select("id,username,role,password_hash");
+  if (adminReadError) throw new Error("Impossibile verificare gli utenti amministratori.");
+  const admins = (userRows || []).filter((record) => record.role === "admin");
 
-  for (const uname of usernamesToEnsure) {
-    const { data: existing, error: selectError } = await db
-      .from("users")
-      .select("id")
-      .eq("username", uname)
-      .maybeSingle();
-    if (selectError) {
-      console.error(`[auth] Errore lettura admin "${uname}" su Supabase:`, selectError.message);
-      continue;
+  if (!CONFIGURED_ADMIN_USER) {
+    if (!Array.isArray(admins) || admins.length === 0) {
+      throw new Error("Imposta ADMIN_USER e ADMIN_PASSWORD per creare il primo amministratore.");
     }
-    if (existing) {
-      const { error } = await db
-        .from("users")
-        .update({ password_hash: passwordHash, role: "admin", updated_at: nowIso() })
-        .eq("id", existing.id);
-      if (error) {
-        console.error(`[auth] Errore aggiornamento admin "${uname}" su Supabase:`, error.message);
-      } else {
-        console.log(`[auth] Utente admin "${uname}" aggiornato su Supabase.`);
-      }
-    } else {
-      const { error } = await db.from("users").insert({
-        id: crypto.randomUUID(),
-        username: uname,
-        role: "admin",
-        password_hash: passwordHash,
-        created_at: nowIso(),
-        updated_at: nowIso()
-      });
-      if (error) {
-        console.error(`[auth] Errore creazione admin "${uname}" su Supabase:`, error.message);
-      } else {
-        console.log(`[auth] Utente admin "${uname}" creato su Supabase.`);
-      }
-    }
+    return;
   }
+
+  const targetPassword = validateAdminBootstrapPassword(CONFIGURED_ADMIN_PASSWORD);
+  const existing = (userRows || []).find(
+    (record) => String(record.username || "").toLowerCase() === CONFIGURED_ADMIN_USER
+  );
+  const passwordAlreadyCurrent = existing
+    ? await verifyPassword(targetPassword, existing.password_hash)
+    : false;
+
+  if (existing && (!passwordAlreadyCurrent || existing.role !== "admin")) {
+    const passwordHash = await hashPassword(targetPassword);
+    const { error } = await db
+      .from("users")
+      .update({ password_hash: passwordHash, role: "admin", updated_at: nowIso() })
+      .eq("id", existing.id);
+    if (error) throw new Error("Impossibile aggiornare le credenziali amministratore.");
+  } else if (!existing) {
+    const passwordHash = await hashPassword(targetPassword);
+    const { error } = await db.from("users").insert({
+      id: crypto.randomUUID(),
+      username: CONFIGURED_ADMIN_USER,
+      role: "admin",
+      password_hash: passwordHash,
+      created_at: nowIso(),
+      updated_at: nowIso()
+    });
+    if (error) throw new Error("Impossibile creare l'utente amministratore configurato.");
+  }
+
+  const obsoleteAdminIds = (admins || [])
+    .filter((record) => String(record.username || "").toLowerCase() !== CONFIGURED_ADMIN_USER)
+    .map((record) => record.id);
+  if (obsoleteAdminIds.length) {
+    const { error } = await db
+      .from("users")
+      .update({ role: "disabled", updated_at: nowIso() })
+      .in("id", obsoleteAdminIds);
+    if (error) throw new Error("Impossibile disabilitare gli alias amministratore obsoleti.");
+  }
+
+  console.log(`[auth] Utente amministratore configurato: "${CONFIGURED_ADMIN_USER}".`);
 }
 
 async function ensureDataFiles() {
@@ -1612,39 +1731,50 @@ async function ensureDataFiles() {
     await writeJson(VAPID_FILE, keys);
   }
 
-  const targetPassword = resolveTargetAdminPassword();
-  const passwordHash = await hashPassword(targetPassword);
-
   let users = await readJson(USERS_FILE, []);
   if (!Array.isArray(users)) users = [];
 
-  const usernamesToEnsure = Array.from(getKnownAdminUsernames());
-
-  for (const uname of usernamesToEnsure) {
-    let user = users.find((u) => String(u.username).toLowerCase() === uname);
-    if (!user) {
-      user = {
-        id: crypto.randomUUID(),
-        username: uname,
-        role: "admin",
-        passwordHash,
-        createdAt: nowIso(),
-        updatedAt: nowIso()
-      };
-      users.push(user);
-    } else {
-      user.passwordHash = passwordHash;
-      user.role = "admin";
-      user.updatedAt = nowIso();
+  if (!CONFIGURED_ADMIN_USER) {
+    if (!users.some((user) => user.role === "admin")) {
+      throw new Error("Imposta ADMIN_USER e ADMIN_PASSWORD per creare il primo amministratore locale.");
     }
+    return;
   }
+
+  const targetPassword = validateAdminBootstrapPassword(CONFIGURED_ADMIN_PASSWORD);
+  const passwordHash = await hashPassword(targetPassword);
+  let user = users.find(
+    (record) => String(record.username || "").toLowerCase() === CONFIGURED_ADMIN_USER
+  );
+  if (!user) {
+    user = {
+      id: crypto.randomUUID(),
+      username: CONFIGURED_ADMIN_USER,
+      role: "admin",
+      passwordHash,
+      createdAt: nowIso(),
+      updatedAt: nowIso()
+    };
+    users.push(user);
+  } else {
+    user.passwordHash = passwordHash;
+    user.role = "admin";
+    user.updatedAt = nowIso();
+  }
+  users.forEach((record) => {
+    if (record !== user && record.role === "admin") {
+      record.role = "disabled";
+      record.updatedAt = nowIso();
+    }
+  });
   await writeJson(USERS_FILE, users);
-  console.log(`[auth] Credenziali admin sincronizzate per: ${usernamesToEnsure.join(", ")}`);
+  console.log(`[auth] Utente amministratore locale configurato: "${CONFIGURED_ADMIN_USER}".`);
 }
 
 // ── Entrypoint ──────────────────────────────────────────────────────
 
 async function main() {
+  validateRuntimeConfig();
   if (USE_SUPABASE) {
     try {
       getSupabase(); // Valida le chiavi subito all'avvio

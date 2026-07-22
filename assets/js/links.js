@@ -45,7 +45,7 @@
 
   document.documentElement.lang = "en";
   document.title = "comeleapi - Useful links";
-  setAttr('meta[name="description"]', "content", "Useful comeleapi links: essential oils guide, essences, treatments and the @come_le_api Instagram profile.");
+  setAttr('meta[name="description"]', "content", "Useful comeleapi links: essential oils guide, essences and treatments.");
   setAttr('meta[property="og:title"]', "content", "comeleapi - Useful links");
   setAttr('meta[property="og:description"]', "content", "In harmony with nature: a project curated by Sara for your daily wellbeing.");
   setAttr(".logo-link", "aria-label", "Go to the official comeleapi website");

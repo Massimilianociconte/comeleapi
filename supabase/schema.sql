@@ -61,17 +61,40 @@ CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_products_order ON products ("order" ASC);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
--- Disabilita RLS (accesso solo tramite service_role key dal backend)
+-- RLS attivo: le tabelle applicative sono accessibili solo dal backend con
+-- service_role. Non creare policy permissive per anon o authenticated.
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Policy: accesso completo per service_role (il backend usa questa key)
-CREATE POLICY "service_role_all" ON products FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "service_role_all" ON leads FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "service_role_all" ON users FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "service_role_all" ON push_subscriptions FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "service_role_all" ON products;
+DROP POLICY IF EXISTS "service_role_all" ON leads;
+DROP POLICY IF EXISTS "service_role_all" ON users;
+DROP POLICY IF EXISTS "service_role_all" ON push_subscriptions;
+
+REVOKE ALL ON TABLE products FROM anon, authenticated;
+REVOKE ALL ON TABLE leads FROM anon, authenticated;
+REVOKE ALL ON TABLE users FROM anon, authenticated;
+REVOKE ALL ON TABLE push_subscriptions FROM anon, authenticated;
+
+GRANT ALL ON TABLE products TO service_role;
+GRANT ALL ON TABLE leads TO service_role;
+GRANT ALL ON TABLE users TO service_role;
+GRANT ALL ON TABLE push_subscriptions TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE push_subscriptions_id_seq TO service_role;
+
+-- Se e presente l'event trigger opzionale che abilita automaticamente la RLS
+-- sulle nuove tabelle, la sua funzione interna non deve essere richiamabile
+-- come RPC da ruoli API. La revoca non disattiva l'event trigger.
+DO $schema$
+BEGIN
+  IF to_regprocedure('public.rls_auto_enable()') IS NOT NULL THEN
+    EXECUTE
+      'REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authenticated, service_role';
+  END IF;
+END
+$schema$;
 
 -- ============================================================
 -- Storage: creare il bucket 'product-images' dalla dashboard

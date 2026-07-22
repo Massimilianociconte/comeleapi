@@ -2,18 +2,76 @@ name: Keep Alive Supabase & Render
 
 on:
   schedule:
-    # Esegue ogni 10 minuti per mantenere sveglio Render
-    - cron: '*/10 * * * *'
-  workflow_dispatch: # Permette l'avvio manuale dalla scheda Actions di GitHub
+    # Evita il minuto 0, quando i workflow pianificati sono piu soggetti a ritardi.
+    - cron: '7,17,27,37,47,57 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: keep-alive-production
+  # Un run ancora in coda al ping successivo e verosimilmente bloccato sul runner.
+  cancel-in-progress: true
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Ping Render Backend & Wake up DB
+      - name: Verify Render backend and Supabase connectivity
+        env:
+          HEALTH_URL: https://comeleapi-backend.onrender.com/api/health
         run: |
-          echo "Inizio ping al backend per svegliare database e server..."
-          # Esegui una richiesta all'endpoint pubblico dei prodotti.
-          # Nota: Se su Render hai usato un nome servizio diverso da 'comeleapi-backend', 
-          # sostituisci questo URL con quello corretto.
-          curl -s -f -I "https://comeleapi-backend.onrender.com/api/products" || echo "Backend in stand-by o non raggiungibile, ma il ping è stato inviato."
+          set -euo pipefail
+
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+
+          health_payload_ok() {
+            node - "$response_file" <<'NODE'
+          const fs = require('node:fs');
+          try {
+            const responsePath = process.argv[2];
+            const payload = JSON.parse(fs.readFileSync(responsePath, 'utf8'));
+            if (!payload || payload.ok !== true || payload.database !== 'reachable') {
+              process.exit(1);
+            }
+          } catch {
+            process.exit(1);
+          }
+          NODE
+          }
+
+          healthy=false
+          last_http_code="000"
+          for attempt in 1 2 3 4 5 6; do
+            if http_code="$(
+              curl \
+                --silent \
+                --show-error \
+                --location \
+                --connect-timeout 15 \
+                --max-time 30 \
+                --output "$response_file" \
+                --write-out '%{http_code}' \
+                "$HEALTH_URL"
+              )"; then
+              last_http_code="$http_code"
+              if [[ "$http_code" == "200" ]] && health_payload_ok; then
+                healthy=true
+                break
+              fi
+            fi
+
+            if [[ "$attempt" != "6" ]]; then
+              echo "Tentativo $attempt non ancora sano (HTTP $last_http_code); nuovo controllo tra 15 secondi."
+              sleep 15
+            fi
+          done
+
+          if [[ "$healthy" != "true" ]]; then
+            echo "::error title=Keep-alive non sano::Dopo 6 tentativi, Render o Supabase non risultano operativi (ultimo HTTP $last_http_code)."
+            exit 1
+          fi
+
+          echo "Backend Render operativo e Supabase raggiungibile."
