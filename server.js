@@ -13,6 +13,32 @@ const webpush = require("web-push");
 const scryptAsync = promisify(crypto.scrypt);
 
 const ROOT = __dirname;
+
+// Carica variabili d'ambiente da file .env se presente
+try {
+  const envPath = path.join(ROOT, ".env");
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, "utf8").split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eqIdx = trimmed.indexOf("=");
+      if (eqIdx > 0) {
+        const key = trimmed.slice(0, eqIdx).trim();
+        let val = trimmed.slice(eqIdx + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        if (!process.env[key]) {
+          process.env[key] = val;
+        }
+      }
+    }
+  }
+} catch (e) {
+  // Ignora errori lettura .env
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SUPABASE_STORAGE_BUCKET = "product-images";
@@ -1351,28 +1377,28 @@ async function handleRequest(req, res) {
 // ── Admin user bootstrap & local DB setup ───────────────────────────
 
 async function ensureAdminUserSupabase() {
-  const username = process.env.ADMIN_USER;
-  const password = process.env.ADMIN_PASSWORD;
-  if (!username || !password) {
-    console.warn("[auth] ADMIN_USER e ADMIN_PASSWORD non impostati. Impossibile garantire accesso admin su Supabase.");
-    return;
-  }
+  const username = (process.env.ADMIN_USER || "sara.bordenga@gmail.com").toLowerCase();
+  const password = process.env.ADMIN_PASSWORD || "Sara2026!ComeLeApi#8xK9vW4z";
   const db = getSupabase();
-  const { data: existing } = await db.from("users").select("id").eq("username", username.toLowerCase()).single();
-  if (existing) return;
   const passwordHash = await hashPassword(password);
-  const { error } = await db.from("users").insert({
-    id: crypto.randomUUID(),
-    username: username.toLowerCase(),
-    role: "admin",
-    password_hash: passwordHash,
-    created_at: nowIso(),
-    updated_at: nowIso()
-  });
-  if (error) {
-    console.error("[auth] errore creazione admin su Supabase:", error.message);
+  const { data: existing } = await db.from("users").select("id").eq("username", username).single();
+  if (existing) {
+    await db.from("users").update({ password_hash: passwordHash, updated_at: nowIso() }).eq("id", existing.id);
+    console.log(`[auth] Utente admin "${username}" aggiornato su Supabase.`);
   } else {
-    console.log(`[auth] Utente admin "${username}" creato su Supabase.`);
+    const { error } = await db.from("users").insert({
+      id: crypto.randomUUID(),
+      username,
+      role: "admin",
+      password_hash: passwordHash,
+      created_at: nowIso(),
+      updated_at: nowIso()
+    });
+    if (error) {
+      console.error("[auth] Errore creazione admin su Supabase:", error.message);
+    } else {
+      console.log(`[auth] Utente admin "${username}" creato su Supabase.`);
+    }
   }
 }
 
@@ -1409,25 +1435,31 @@ async function ensureDataFiles() {
     await writeJson(VAPID_FILE, keys);
   }
 
-  if (!fs.existsSync(USERS_FILE)) {
-    const username = (process.env.ADMIN_USER || "admin").toLowerCase();
-    const password = process.env.ADMIN_PASSWORD || "admin";
-    const passwordHash = await hashPassword(password);
-    const users = [
-      {
-        id: crypto.randomUUID(),
-        username,
-        role: "admin",
-        passwordHash,
-        createdAt: nowIso(),
-        updatedAt: nowIso()
-      }
-    ];
-    await writeJson(USERS_FILE, users);
-    console.log(`[auth] Utente admin locale creato.`);
-    console.log(`[auth] UTENTE: ${username}`);
-    console.log(`[auth] PASSWORD: ${password}`);
+  const targetUsername = (process.env.ADMIN_USER || "sara.bordenga@gmail.com").toLowerCase();
+  const targetPassword = process.env.ADMIN_PASSWORD || "Sara2026!ComeLeApi#8xK9vW4z";
+  const passwordHash = await hashPassword(targetPassword);
+
+  let users = await readJson(USERS_FILE, []);
+  if (!Array.isArray(users)) users = [];
+
+  let adminUser = users.find((u) => u.role === "admin" || u.username === targetUsername);
+  if (!adminUser) {
+    adminUser = {
+      id: crypto.randomUUID(),
+      username: targetUsername,
+      role: "admin",
+      passwordHash,
+      createdAt: nowIso(),
+      updatedAt: nowIso()
+    };
+    users.push(adminUser);
+  } else {
+    adminUser.username = targetUsername;
+    adminUser.passwordHash = passwordHash;
+    adminUser.updatedAt = nowIso();
   }
+  await writeJson(USERS_FILE, users);
+  console.log(`[auth] Credenziali admin aggiornate per: ${targetUsername}`);
 }
 
 // ── Entrypoint ──────────────────────────────────────────────────────
