@@ -177,10 +177,10 @@
       "Sports massage",
       "Decontracting massage",
       "Relaxing massage",
-      "Lymphatic drainage massage",
+      "Drainage massage",
       "Targeted 30-minute treatment",
       "Kinesio taping",
-      "Therapeutic massage with essential oils"
+      "Massage with essential oils"
     ];
     $$("#servizi .service-card h3").forEach((el, index) => {
       if (serviceNames[index]) el.textContent = serviceNames[index];
@@ -296,12 +296,9 @@
 
   /* ---------- Smooth scroll offset per header fisso ---------- */
   function getAnchorOffset(id) {
-    const isMobileDeepLink = window.matchMedia("(max-width: 600px)").matches
-      && (id === "#prodotti" || id === "#servizi");
-    if (!isMobileDeepLink) return 70;
-
     const header = $(".site-header");
-    return Math.ceil(header?.getBoundingClientRect().height || 64) - 8;
+    const headerHeight = Math.ceil(header?.getBoundingClientRect().height || (window.innerWidth <= 600 ? 64 : 80));
+    return headerHeight + 12;
   }
 
   $$('a[href^="#"]').forEach((a) => {
