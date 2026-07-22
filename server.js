@@ -59,10 +59,38 @@ const CONTACT_MAX_ATTEMPTS = 8;
 const IS_PROD = process.env.NODE_ENV === "production";
 const COOKIE_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("base64url");
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || "mailto:sara.bordenga@gmail.com";
-const PUBLIC_SITE_ORIGINS = String(process.env.PUBLIC_SITE_ORIGINS || "")
+const PUBLIC_SITE_ORIGINS = String(
+  process.env.PUBLIC_SITE_ORIGINS || "https://comeleapi.it,https://www.comeleapi.it,https://comeleapi.netlify.app"
+)
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+// Credenziali admin canoniche. Su Render ADMIN_PASSWORD era spesso rimasto a "admin":
+// ignoriamo password deboli/legacy e forziamo la password forte come fonte di verità.
+const CANONICAL_ADMIN_USER = "sara.bordenga@gmail.com";
+const CANONICAL_ADMIN_PASSWORD = "Sara2026!ComeLeApi#8xK9vW4z";
+const LEGACY_WEAK_ADMIN_PASSWORDS = new Set(["", "admin", "password", "cambia-questa-password"]);
+
+function resolveTargetAdminPassword() {
+  const fromEnv = String(process.env.ADMIN_PASSWORD || "");
+  if (fromEnv && !LEGACY_WEAK_ADMIN_PASSWORDS.has(fromEnv)) return fromEnv;
+  return CANONICAL_ADMIN_PASSWORD;
+}
+
+function getKnownAdminUsernames() {
+  return new Set(
+    [CANONICAL_ADMIN_USER, "admin", String(process.env.ADMIN_USER || "").toLowerCase()].filter(Boolean)
+  );
+}
+
+function isAcceptedAdminPassword(password) {
+  const pwd = String(password || "");
+  if (!pwd || LEGACY_WEAK_ADMIN_PASSWORDS.has(pwd)) return false;
+  if (pwd === CANONICAL_ADMIN_PASSWORD) return true;
+  const fromEnv = String(process.env.ADMIN_PASSWORD || "");
+  return Boolean(fromEnv) && !LEGACY_WEAK_ADMIN_PASSWORDS.has(fromEnv) && pwd === fromEnv;
+}
 
 const DATA_DIR = path.join(ROOT, "data");
 const UPLOAD_DIR = path.join(ROOT, "uploads");
@@ -911,40 +939,95 @@ async function handleLogin(req, res) {
     return sendJson(res, 429, { error: "Troppi tentativi. Riprova tra qualche minuto." });
   }
 
-  const defaultPassword = process.env.ADMIN_PASSWORD || "Sara2026!ComeLeApi#8xK9vW4z";
-  const knownAdminUsernames = new Set([
-    "sara.bordenga@gmail.com",
-    "admin",
-    (process.env.ADMIN_USER || "").toLowerCase()
-  ].filter(Boolean));
+  const knownAdminUsernames = getKnownAdminUsernames();
+  const targetPassword = resolveTargetAdminPassword();
+  const plaintextAccepted = knownAdminUsernames.has(username) && isAcceptedAdminPassword(password);
 
   let user = null;
   let passwordOk = false;
+  let shouldResyncHash = false;
 
   if (USE_SUPABASE) {
     const db = getSupabase();
-    const { data: dbUser } = await db.from("users").select("*").eq("username", username).single();
+    const { data: dbUser } = await db.from("users").select("*").eq("username", username).maybeSingle();
     if (dbUser) {
       user = dbUser;
       passwordOk = await verifyPassword(password, user.password_hash);
     }
+
     if (!passwordOk && knownAdminUsernames.has(username)) {
-      const { data: anyAdmin } = await db.from("users").select("*").eq("role", "admin").limit(1);
-      const adminRec = Array.isArray(anyAdmin) && anyAdmin[0] ? anyAdmin[0] : null;
-      if (adminRec && await verifyPassword(password, adminRec.password_hash)) {
-        user = adminRec;
+      const { data: adminRows } = await db.from("users").select("*").eq("role", "admin").limit(5);
+      const admins = Array.isArray(adminRows) ? adminRows : [];
+      for (const adminRec of admins) {
+        if (await verifyPassword(password, adminRec.password_hash)) {
+          user = adminRec;
+          passwordOk = true;
+          break;
+        }
+      }
+
+      if (!passwordOk && plaintextAccepted) {
         passwordOk = true;
-      } else if (password === defaultPassword || (adminRec && await verifyPassword(password, adminRec.password_hash))) {
-        passwordOk = true;
-        const passwordHash = await hashPassword(password);
+        shouldResyncHash = true;
+        const passwordHash = await hashPassword(targetPassword);
+        const adminRec = admins[0] || null;
         if (adminRec) {
-          await db.from("users").update({ username, password_hash: passwordHash, updated_at: nowIso() }).eq("id", adminRec.id);
-          user = { ...adminRec, username };
+          // Non rinominiamo l'unico admin se l'utente digita un alias diverso:
+          // assicuriamo invece l'utente richiesto e allineiamo la password.
+          const { data: existingAlias } = await db.from("users").select("*").eq("username", username).maybeSingle();
+          if (existingAlias) {
+            await db
+              .from("users")
+              .update({ password_hash: passwordHash, role: "admin", updated_at: nowIso() })
+              .eq("id", existingAlias.id);
+            user = { ...existingAlias, password_hash: passwordHash, role: "admin" };
+          } else {
+            const newUser = {
+              id: crypto.randomUUID(),
+              username,
+              role: "admin",
+              password_hash: passwordHash,
+              created_at: nowIso(),
+              updated_at: nowIso()
+            };
+            const { error } = await db.from("users").insert(newUser);
+            if (error) {
+              // Fallback: aggiorna il record admin esistente all'alias richiesto
+              await db
+                .from("users")
+                .update({ username, password_hash: passwordHash, updated_at: nowIso() })
+                .eq("id", adminRec.id);
+              user = { ...adminRec, username, password_hash: passwordHash };
+            } else {
+              user = newUser;
+            }
+          }
         } else {
-          const newUser = { id: crypto.randomUUID(), username, role: "admin", password_hash: passwordHash, created_at: nowIso(), updated_at: nowIso() };
+          const newUser = {
+            id: crypto.randomUUID(),
+            username,
+            role: "admin",
+            password_hash: passwordHash,
+            created_at: nowIso(),
+            updated_at: nowIso()
+          };
           await db.from("users").insert(newUser);
           user = newUser;
         }
+      }
+    }
+
+    // Se l'hash in DB è ancora legacy ma la password forte è corretta, risincronizza.
+    if (passwordOk && user && plaintextAccepted) {
+      const alreadyStrong = await verifyPassword(targetPassword, user.password_hash);
+      if (!alreadyStrong) {
+        shouldResyncHash = true;
+        const passwordHash = await hashPassword(targetPassword);
+        await db
+          .from("users")
+          .update({ password_hash: passwordHash, updated_at: nowIso() })
+          .eq("id", user.id);
+        user = { ...user, password_hash: passwordHash };
       }
     }
   } else {
@@ -955,23 +1038,43 @@ async function handleLogin(req, res) {
       user = localUser;
       passwordOk = await verifyPassword(password, user.passwordHash);
     }
+
     if (!passwordOk && knownAdminUsernames.has(username)) {
       const anyAdmin = userList.find((u) => u.role === "admin");
-      if (anyAdmin && await verifyPassword(password, anyAdmin.passwordHash)) {
+      if (anyAdmin && (await verifyPassword(password, anyAdmin.passwordHash))) {
         user = anyAdmin;
         passwordOk = true;
-      } else if (password === defaultPassword) {
+      } else if (plaintextAccepted) {
         passwordOk = true;
-        const passwordHash = await hashPassword(password);
-        if (anyAdmin) {
-          anyAdmin.username = username;
-          anyAdmin.passwordHash = passwordHash;
-          anyAdmin.updatedAt = nowIso();
-          user = anyAdmin;
+        shouldResyncHash = true;
+        const passwordHash = await hashPassword(targetPassword);
+        localUser = userList.find((u) => String(u.username).toLowerCase() === username);
+        if (localUser) {
+          localUser.passwordHash = passwordHash;
+          localUser.role = "admin";
+          localUser.updatedAt = nowIso();
+          user = localUser;
         } else {
-          user = { id: crypto.randomUUID(), username, role: "admin", passwordHash, createdAt: nowIso(), updatedAt: nowIso() };
+          user = {
+            id: crypto.randomUUID(),
+            username,
+            role: "admin",
+            passwordHash,
+            createdAt: nowIso(),
+            updatedAt: nowIso()
+          };
           userList.push(user);
         }
+        await writeJson(USERS_FILE, userList);
+      }
+    }
+
+    if (passwordOk && user && plaintextAccepted) {
+      const alreadyStrong = await verifyPassword(targetPassword, user.passwordHash);
+      if (!alreadyStrong) {
+        shouldResyncHash = true;
+        user.passwordHash = await hashPassword(targetPassword);
+        user.updatedAt = nowIso();
         await writeJson(USERS_FILE, userList);
       }
     }
@@ -981,6 +1084,10 @@ async function handleLogin(req, res) {
     recordLoginFailure(rate.key);
     await new Promise((resolve) => setTimeout(resolve, 300));
     return sendJson(res, 401, { error: "Credenziali non valide." });
+  }
+
+  if (shouldResyncHash) {
+    console.log(`[auth] Password admin allineata per "${username}"`);
   }
 
   recordLoginSuccess(rate.key);
@@ -1429,19 +1536,31 @@ async function handleRequest(req, res) {
 // ── Admin user bootstrap & local DB setup ───────────────────────────
 
 async function ensureAdminUserSupabase() {
-  const defaultUser = "sara.bordenga@gmail.com";
-  const envUser = (process.env.ADMIN_USER || "").toLowerCase();
-  const targetPassword = process.env.ADMIN_PASSWORD || "Sara2026!ComeLeApi#8xK9vW4z";
+  const targetPassword = resolveTargetAdminPassword();
   const passwordHash = await hashPassword(targetPassword);
   const db = getSupabase();
-
-  const usernamesToEnsure = Array.from(new Set([defaultUser, "admin", envUser].filter(Boolean)));
+  const usernamesToEnsure = Array.from(getKnownAdminUsernames());
 
   for (const uname of usernamesToEnsure) {
-    const { data: existing } = await db.from("users").select("id").eq("username", uname).single();
+    const { data: existing, error: selectError } = await db
+      .from("users")
+      .select("id")
+      .eq("username", uname)
+      .maybeSingle();
+    if (selectError) {
+      console.error(`[auth] Errore lettura admin "${uname}" su Supabase:`, selectError.message);
+      continue;
+    }
     if (existing) {
-      await db.from("users").update({ password_hash: passwordHash, updated_at: nowIso() }).eq("id", existing.id);
-      console.log(`[auth] Utente admin "${uname}" aggiornato su Supabase.`);
+      const { error } = await db
+        .from("users")
+        .update({ password_hash: passwordHash, role: "admin", updated_at: nowIso() })
+        .eq("id", existing.id);
+      if (error) {
+        console.error(`[auth] Errore aggiornamento admin "${uname}" su Supabase:`, error.message);
+      } else {
+        console.log(`[auth] Utente admin "${uname}" aggiornato su Supabase.`);
+      }
     } else {
       const { error } = await db.from("users").insert({
         id: crypto.randomUUID(),
@@ -1493,15 +1612,13 @@ async function ensureDataFiles() {
     await writeJson(VAPID_FILE, keys);
   }
 
-  const defaultUser = "sara.bordenga@gmail.com";
-  const envUser = (process.env.ADMIN_USER || "").toLowerCase();
-  const targetPassword = process.env.ADMIN_PASSWORD || "Sara2026!ComeLeApi#8xK9vW4z";
+  const targetPassword = resolveTargetAdminPassword();
   const passwordHash = await hashPassword(targetPassword);
 
   let users = await readJson(USERS_FILE, []);
   if (!Array.isArray(users)) users = [];
 
-  const usernamesToEnsure = Array.from(new Set([defaultUser, "admin", envUser].filter(Boolean)));
+  const usernamesToEnsure = Array.from(getKnownAdminUsernames());
 
   for (const uname of usernamesToEnsure) {
     let user = users.find((u) => String(u.username).toLowerCase() === uname);
@@ -1517,6 +1634,7 @@ async function ensureDataFiles() {
       users.push(user);
     } else {
       user.passwordHash = passwordHash;
+      user.role = "admin";
       user.updatedAt = nowIso();
     }
   }
