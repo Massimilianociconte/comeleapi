@@ -5,8 +5,10 @@
   "description": "Sito comeleapi con gestionale protetto.",
   "scripts": {
     "start": "node server.js",
+    "build": "npm run build:netlify",
+    "build:netlify": "node scripts/build-netlify.mjs",
     "seed": "node supabase/seed.js",
-    "check": "node --check server.js && node --check assets/js/config.js && node --check assets/js/data.js && node --check assets/js/app.js && node --check assets/js/links.js && node --check assets/js/admin.js && node --check assets/js/login.js && node --check assets/js/pwa.js && node --check sw.js"
+    "check": "node --check server.js && node --check scripts/build-netlify.mjs && node --check assets/js/trusted-types.js && node --check assets/js/config.js && node --check assets/js/data.js && node --check assets/js/app.js && node --check assets/js/links.js && node --check assets/js/admin.js && node --check assets/js/login.js && node --check assets/js/pwa.js && node --check sw.js"
   },
   "engines": {
     "node": ">=18"
@@ -14,5 +16,9 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0",
     "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "clean-css": "5.3.3",
+    "terser": "5.49.0"
   }
 }

@@ -142,6 +142,7 @@ a { color: inherit; text-decoration: none; }
 ul { list-style: none; padding: 0; }
 button { font-family: inherit; cursor: pointer; border: 0; background: none; }
 svg { display: block; }
+[hidden] { display: none !important; }
 
 .client-hidden {
   display: none !important;
@@ -296,7 +297,7 @@ h1, h2, h3, h4 {
   background: var(--terra);
   color: #fffdfc;
   box-shadow: 0 12px 28px rgba(166, 106, 76, .32);
-  text-shadow: 0 1px 1px rgba(50, 23, 27, .18);
+  text-shadow: 0 1px 1px rgba(50, 23, 27, .55);
 }
 .btn--primary .btn-icon {
   width: 21px;

@@ -3,8 +3,83 @@
 # ============================================================
 
 [build]
-  publish = "."
-  command = "echo 'Sito statico, nessun build necessario'"
+  publish = "dist"
+  command = "npm run build:netlify"
+
+# Il gestionale e il backend sono serviti e protetti da Render. Queste regole
+# impediscono che un futuro errore di allowlist li renda nuovamente pubblici
+# sul dominio statico Netlify.
+[[redirects]]
+  from = "/server.js"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/supabase/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/data/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/output/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/admin.html"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/login.html"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/sw.js"
+  to = "/index.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/render.yaml"
+  to = "/index.html"
+  status = 404
+  force = true
 
 # Canonical URL.
 # Nota: https://www.comeleapi.netlify.app mostra errore certificato prima che
@@ -27,41 +102,36 @@
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     Cross-Origin-Opener-Policy = "same-origin"
     X-XSS-Protection = "0"
-    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://wa.me; img-src 'self' data: https:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://comeleapi-backend.onrender.com; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://wa.me; img-src 'self' data: https:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://comeleapi-backend.onrender.com; require-trusted-types-for 'script'; trusted-types comeleapi; upgrade-insecure-requests"
 
-# Cache lunga per gli asset statici
+# Gli URL degli asset pubblici ricevono automaticamente un fingerprint di
+# contenuto durante la build, quindi la cache immutabile resta sicura.
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Il catalogo e la guida possono essere aggiornati senza cambiare URL.
+# Il catalogo viene richiesto con fingerprint di contenuto dalla build.
 [[headers]]
   for = "/products.json"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-[[headers]]
-  for = "/assets/pdf/*"
-  [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
-
 # Nessuna cache per HTML (possono cambiare)
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 [[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-
 [[headers]]
-  for = "/assets/fonts/*"
+  for = "/links/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.webp"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/foto-prodotti/*"

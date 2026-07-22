@@ -3,6 +3,7 @@
 
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const trustedHtml = (value) => window.ComeLeApiTrustedHTML(value);
   const ITALIAN_TIMEZONES = new Set(["Europe/Rome", "Europe/San_Marino", "Europe/Vatican"]);
 
   function resolveLocale() {
@@ -28,7 +29,7 @@
 
   function setHtml(selector, html, ctx = document) {
     const el = $(selector, ctx);
-    if (el) el.innerHTML = html;
+    if (el) el.innerHTML = trustedHtml(html);
   }
 
   function setAttr(selector, attr, value, ctx = document) {
@@ -94,7 +95,7 @@
     const item = copy[index];
     if (!item) return;
     const strong = $("strong", link);
-    if (strong) strong.innerHTML = item.strong;
+    if (strong) strong.innerHTML = trustedHtml(item.strong);
     setText("small", item.small, link);
     if (link.tagName === "A") {
       link.setAttribute("href", item.href);

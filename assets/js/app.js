@@ -9,6 +9,7 @@
   /* ---------- Helpers ---------- */
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const trustedHtml = (value) => window.ComeLeApiTrustedHTML(value);
 
   function escapeHtml(str) {
     return String(str ?? "").replace(/[&<>"']/g, (c) => ({
@@ -109,6 +110,17 @@
     return raw;
   }
 
+  /** Crea l'URL di una variante responsive mantenendo l'eventuale cache key. */
+  function imageVariantPath(url, width) {
+    const raw = String(url || "").trim();
+    const qIndex = raw.indexOf("?");
+    const imagePath = qIndex >= 0 ? raw.slice(0, qIndex) : raw;
+    const query = qIndex >= 0 ? raw.slice(qIndex) : "";
+    return /\.webp$/i.test(imagePath)
+      ? imagePath.replace(/\.webp$/i, `-${width}.webp`) + query
+      : raw;
+  }
+
   function setText(selector, text, ctx = document) {
     const el = $(selector, ctx);
     if (el) el.textContent = text;
@@ -120,7 +132,7 @@
 
   function setHtml(selector, html, ctx = document) {
     const el = $(selector, ctx);
-    if (el) el.innerHTML = html;
+    if (el) el.innerHTML = trustedHtml(html);
   }
 
   function setAttr(selector, attr, value, ctx = document) {
@@ -219,7 +231,7 @@
     setHtml(".about-story--goal", "<span>Her goal is to help you restore energy and vitality.</span><span>Because feeling well is not a luxury, but a daily ritual.</span><span>Your body is already speaking to you. Listen to it, do not wait!</span>");
     const miniCards = ["Professional Diploma", "Aromatherapy", "Hygiene and safety"];
     $$(".about-mini-card p").forEach((el, index) => {
-      if (miniCards[index]) el.innerHTML = `<b>${miniCards[index]}</b>`;
+      if (miniCards[index]) el.innerHTML = trustedHtml(`<b>${miniCards[index]}</b>`);
     });
     setHtml(".community-cta__copy", "<b>Community</b>");
     setAttr(".community-cta", "aria-label", "Community section coming soon");
@@ -368,12 +380,12 @@
 
     const controls = document.createElement("div");
     controls.className = "mobile-carousel-controls";
-    controls.innerHTML = `
+    controls.innerHTML = trustedHtml(`
       <button class="mobile-carousel-button mobile-carousel-prev" type="button" aria-label="${isEnglish ? "Previous" : "Precedente"}">&lsaquo;</button>
       <span class="mobile-carousel-counter" role="status" aria-live="polite">1 / 1</span>
       ${autoplay ? `<button class="mobile-carousel-button mobile-carousel-toggle" type="button" aria-label="${isEnglish ? "Pause automatic scrolling" : "Pausa scorrimento automatico"}">&#10074;&#10074;</button>` : ""}
       <button class="mobile-carousel-button mobile-carousel-next" type="button" aria-label="${isEnglish ? "Next" : "Successivo"}">&rsaquo;</button>
-    `;
+    `);
     track.insertAdjacentElement("afterend", controls);
 
     const previous = $(".mobile-carousel-prev", controls);
@@ -397,7 +409,7 @@
       previous.disabled = currentIndex <= 0;
       next.disabled = currentIndex >= count - 1;
       if (toggle) {
-        toggle.innerHTML = userPaused ? "&#9654;" : "&#10074;&#10074;";
+        toggle.textContent = userPaused ? "▶" : "❚❚";
         toggle.setAttribute("aria-label", userPaused
           ? (isEnglish ? "Start automatic scrolling" : "Avvia scorrimento automatico")
           : (isEnglish ? "Pause automatic scrolling" : "Pausa scorrimento automatico"));
@@ -407,8 +419,8 @@
     function refresh() {
       const list = items();
       list.forEach((item, index) => {
-        // Non sovrascrivere il ruolo nativo di link/button (ARIA invalid su <a role="group">).
-        if (item.matches("a, button")) {
+        // Conserva i ruoli nativi: group non è valido su link, button o article.
+        if (item.matches("a, button, article")) {
           item.removeAttribute("role");
           item.removeAttribute("aria-roledescription");
           // Conserva aria-label del prodotto se presente; altrimenti posizione slide.
@@ -586,10 +598,10 @@
       grid.classList.add("is-loading");
       const products = await window.SaraData.getVisibleProducts();
       if (!products.length) {
-        grid.innerHTML = `
+        grid.innerHTML = trustedHtml(`
           <p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:2rem;">
             ${isEnglish ? "There are no featured products at the moment. Please come back soon." : "Al momento non ci sono prodotti in vetrina. Torna a trovarci presto."}
-          </p>`;
+          </p>`);
         grid.classList.remove("is-loading");
         setupMobileCarousel(grid, {
           label: isEnglish ? "Essential oil kits" : "Kit di oli essenziali",
@@ -598,11 +610,12 @@
         });
         return;
       }
-      grid.innerHTML = products.map((product, i) => {
+      grid.innerHTML = trustedHtml(products.map((product, i) => {
         const p = displayProduct(product);
         const unavailable = p.visible === false;
         const image = p.image || fallbackProductImage;
         const icon = productIcon(p);
+        const iconSmall = imageVariantPath(icon, 96);
         const price = String(p.price || "").trim();
         const link = String(p.link || "").trim();
         const clickable = !unavailable && link;
@@ -619,7 +632,7 @@
           <div class="product-body">
             <div class="product-heading">
               <span class="product-kit-icon" aria-hidden="true">
-                <img class="product-icon-img" src="${escapeHtml(icon)}" alt="" width="40" height="40" loading="lazy" decoding="async" />
+                <img class="product-icon-img" src="${escapeHtml(icon)}" srcset="${escapeHtml(iconSmall)} 96w, ${escapeHtml(icon)} 192w" sizes="54px" alt="" width="40" height="40" loading="lazy" decoding="async" />
               </span>
               <div>
                 <h3>${escapeHtml(p.name)}</h3>
@@ -630,7 +643,7 @@
           </div>
         </${cardTag}>
       `;
-      }).join("");
+      }).join(""));
       $$(".product-photo", grid).forEach((img) => {
         img.addEventListener("error", () => {
           img.src = fallbackProductImage;
@@ -638,6 +651,8 @@
       });
       $$(".product-icon-img", grid).forEach((img) => {
         img.addEventListener("error", () => {
+          img.removeAttribute("srcset");
+          img.removeAttribute("sizes");
           img.src = "assets/img/icons/icon-drop.webp";
         }, { once: true });
       });
@@ -670,9 +685,11 @@
       const card = e.target.closest(".product-card--clickable");
       if (!card) return;
       card.classList.remove("is-tapping");
-      void card.offsetWidth;
-      card.classList.add("is-tapping");
-      setTimeout(() => card.classList.remove("is-tapping"), 420);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (!card.isConnected) return;
+        card.classList.add("is-tapping");
+        setTimeout(() => card.classList.remove("is-tapping"), 420);
+      }));
     });
 
     // Aggiorna la vetrina quando l'utente torna sulla pagina dopo modifiche dal gestionale.
@@ -1114,7 +1131,7 @@
     title.textContent = kind === "cookie"
       ? (isEnglish ? "Cookie Policy" : "Cookie Policy")
       : (isEnglish ? "Privacy Policy" : "Privacy Policy");
-    body.innerHTML = kind === "cookie" ? cookieHtml() : privacyHtml();
+    body.innerHTML = trustedHtml(kind === "cookie" ? cookieHtml() : privacyHtml());
     overlay.classList.add("show");
     modal.classList.add("show");
     syncScrollLock();
@@ -1227,7 +1244,7 @@
   function ensureCookieBanner() {
     let banner = $("#cookieBanner");
     if (!banner) {
-      document.body.insertAdjacentHTML("beforeend", cookieBannerTemplate());
+      document.body.insertAdjacentHTML("beforeend", trustedHtml(cookieBannerTemplate()));
       banner = $("#cookieBanner");
       bindCookieBanner(banner);
     }

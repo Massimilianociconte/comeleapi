@@ -19,3 +19,6 @@ Thumbs.db
 .netlify
 
 .venv-opt/
+
+# Output Netlify generato dalla allowlist pubblica
+dist/
