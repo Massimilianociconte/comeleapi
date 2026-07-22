@@ -6,77 +6,77 @@
 
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-500.ttf") format("truetype");
+  src: url("../fonts/cormorant-garamond-500.woff2") format("woff2"), url("../fonts/cormorant-garamond-500.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-600.ttf") format("truetype");
+  src: url("../fonts/cormorant-garamond-600.woff2") format("woff2"), url("../fonts/cormorant-garamond-600.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-700.ttf") format("truetype");
+  src: url("../fonts/cormorant-garamond-700.woff2") format("woff2"), url("../fonts/cormorant-garamond-700.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-italic-500.ttf") format("truetype");
+  src: url("../fonts/cormorant-garamond-italic-500.woff2") format("woff2"), url("../fonts/cormorant-garamond-italic-500.ttf") format("truetype");
   font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Cormorant Garamond";
-  src: url("../fonts/cormorant-garamond-italic-600.ttf") format("truetype");
+  src: url("../fonts/cormorant-garamond-italic-600.woff2") format("woff2"), url("../fonts/cormorant-garamond-italic-600.ttf") format("truetype");
   font-weight: 600;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/mulish-300.ttf") format("truetype");
+  src: url("../fonts/mulish-300.woff2") format("woff2"), url("../fonts/mulish-300.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/mulish-400.ttf") format("truetype");
+  src: url("../fonts/mulish-400.woff2") format("woff2"), url("../fonts/mulish-400.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/mulish-500.ttf") format("truetype");
+  src: url("../fonts/mulish-500.woff2") format("woff2"), url("../fonts/mulish-500.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/mulish-600.ttf") format("truetype");
+  src: url("../fonts/mulish-600.woff2") format("woff2"), url("../fonts/mulish-600.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/mulish-700.ttf") format("truetype");
+  src: url("../fonts/mulish-700.woff2") format("woff2"), url("../fonts/mulish-700.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Mulish";
-  src: url("../fonts/mulish-800.ttf") format("truetype");
+  src: url("../fonts/mulish-800.woff2") format("woff2"), url("../fonts/mulish-800.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -96,7 +96,7 @@
   --terra-soft:   #D7AAA2;
   --terra-deep:   #5A302E;
   --ink:          #32171B;
-  --ink-soft:     #6A5858;
+  --ink-soft:     #5A4545;
   --line:         #E8D6D3;
   --white:        #FFFCFB;
 
@@ -729,7 +729,7 @@ h1, h2, h3, h4 {
   margin-top: auto;
   font-size: .88rem;
   font-weight: 500;
-  color: #9b716b;
+  color: #7A524C;
   letter-spacing: .01em;
 }
 
@@ -1141,7 +1141,7 @@ h1, h2, h3, h4 {
 }
 .product-card--unavailable .desc,
 .product-card--unavailable .benefits {
-  color: #75696a;
+  color: #5F5253;
 }
 .product-img { aspect-ratio: 4/3; overflow:hidden; position:relative; background: var(--sand); }
 .product-img img { width:100%; height:100%; object-fit:cover; transition: transform .6s ease; }
@@ -1215,7 +1215,7 @@ h1, h2, h3, h4 {
   padding-top: 1rem;
   font-weight: 500;
   font-size: .95rem;
-  color: #9b716b;
+  color: #7A524C;
   letter-spacing: .01em;
 }
 .product-body .btn { margin-top:auto; align-self:stretch; justify-content:center; }
@@ -1362,7 +1362,8 @@ h1, h2, h3, h4 {
 .socials .social-link--instagram:hover { background:#E4405F; border-color:#E4405F; }
 .socials .social-link--facebook:hover { background:#1877F2; border-color:#1877F2; }
 .socials .social-link--whatsapp:hover { background:#25D366; border-color:#25D366; }
-.footer-col h5 { font-family: var(--font-display); color:#fff; font-size:1.15rem; margin-bottom:1rem; }
+.footer-col h5,
+.footer-col-title { font-family: var(--font-display); color:#fff; font-size:1.15rem; margin-bottom:1rem; }
 .footer-col ul { display:grid; gap:.55rem; }
 .footer-col li { color: rgba(255,255,255,.78); }
 .footer-col a { font-size:.92rem; transition: color .2s; }
@@ -1621,6 +1622,7 @@ h1, h2, h3, h4 {
   .reveal { opacity:1; transform:none; }
   html { scroll-behavior: auto; }
 }
+
 
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
@@ -1917,7 +1919,8 @@ h1, h2, h3, h4 {
     justify-items: center;
     text-align: center;
   }
-  .footer-col h5 {
+  .footer-col h5,
+  .footer-col-title {
     margin-bottom: .72rem;
     font-size: 1.18rem;
   }

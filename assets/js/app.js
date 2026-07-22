@@ -52,43 +52,62 @@
   const contactPhoneE164 = "393881639306";
   const productDisplayOverrides = {
     "p-collezione-essenziale": {
-      icon: "assets/img/icons/products/collezione-essenziale.png"
+      icon: "assets/img/icons/products/collezione-essenziale.webp"
     },
     "p-baby-essentials": {
-      icon: "assets/img/icons/products/kit-bambini-icon.png"
+      icon: "assets/img/icons/products/kit-bambini-icon.webp"
     },
     "p-sweet-home": {
-      icon: "assets/img/icons/products/sweet-home.png?v=20260712-home-v2"
+      icon: "assets/img/icons/products/sweet-home.webp?v=20260712-home-v2"
     },
     "p-dolce-notte": {
-      icon: "assets/img/icons/products/dolce-notte.png"
+      icon: "assets/img/icons/products/dolce-notte.webp"
     },
     "p-gym-rat": {
-      icon: "assets/img/icons/products/sport-wellness.png"
+      icon: "assets/img/icons/products/sport-wellness.webp"
     },
     "p-per-lui": {
-      icon: "assets/img/icons/products/per-lui.png",
-      image: "foto-prodotti/per-lui.png?v=20260712-cover-v2"
+      icon: "assets/img/icons/products/per-lui.webp",
+      image: "foto-prodotti/per-lui.webp?v=20260712-cover-v2"
     },
     "p-per-lei": {
-      icon: "assets/img/icons/products/per-lei.png?v=20260711-rose"
+      icon: "assets/img/icons/products/per-lei.webp?v=20260711-rose"
     },
     "p-animal-scents": {
-      icon: "assets/img/icons/products/animal-scents.png"
+      icon: "assets/img/icons/products/animal-scents.webp"
     },
     "p-balance-skin": {
-      icon: "assets/img/icons/products/balance-skin.png?v=20260712-skincare-v4"
+      icon: "assets/img/icons/products/balance-skin.webp?v=20260712-skincare-v4"
     },
     "p-bloom-skin": {
-      icon: "assets/img/icons/products/bloom-skin.png"
+      icon: "assets/img/icons/products/bloom-skin.webp"
     },
     "p-shine-bright-like-a-diamond": {
-      icon: "assets/img/icons/products/kit-diamond-icon.png"
+      icon: "assets/img/icons/products/kit-diamond-icon.webp"
     },
     "p-bye-bye-menopausa": {
-      icon: "assets/img/icons/products/bye-bye-menopausa.png"
+      icon: "assets/img/icons/products/bye-bye-menopausa.webp"
     }
   };
+
+  /** Preferisci le versioni WebP ottimizzate senza rompere URL esterni o path già convertiti. */
+  function toOptimizedImagePath(url) {
+    const raw = String(url || "").trim();
+    if (!raw || /^https?:\/\//i.test(raw) || /^data:/i.test(raw)) return raw;
+    const qIndex = raw.indexOf("?");
+    const path = qIndex >= 0 ? raw.slice(0, qIndex) : raw;
+    const query = qIndex >= 0 ? raw.slice(qIndex) : "";
+    const isLocalAsset =
+      path.includes("foto-prodotti/") ||
+      path.includes("assets/img/icons/") ||
+      path.includes("assets/img/products/") ||
+      path.includes("assets/img/signatures/") ||
+      path.includes("assets/img/logo-");
+    if (isLocalAsset && /\.(png|jpe?g)$/i.test(path)) {
+      return path.replace(/\.(png|jpe?g)$/i, ".webp") + query;
+    }
+    return raw;
+  }
 
   function setText(selector, text, ctx = document) {
     const el = $(selector, ctx);
@@ -205,7 +224,7 @@
     setHtml(".community-cta__copy", "<b>Community</b>");
     setAttr(".community-cta", "aria-label", "Community section coming soon");
 
-    setHtml(".about-photo .tag", '<img class="tag-icon" src="assets/img/icons/icon-seal.png" width="18" height="18" alt="" loading="lazy" decoding="async" /> Massage & holistic wellbeing');
+    setHtml(".about-photo .tag", '<img class="tag-icon" src="assets/img/icons/icon-seal.webp" width="18" height="18" alt="" loading="lazy" decoding="async" /> Massage & holistic wellbeing');
     setText(".booking .eyebrow", "Direct contact");
     setText(".booking .section-title", "Let's talk about the treatment best suited to you.");
     setText(".booking .section-lead", "Book your consultation on WhatsApp, tell me what you are looking for and receive availability, costs and details clearly and confidentially.");
@@ -535,6 +554,7 @@
         ...(override.name ? { name: override.name } : {}),
         ...(override.image ? { image: override.image } : {})
       };
+      if (base.image) base.image = toOptimizedImagePath(base.image);
       if (!isEnglish) return base;
       const translation = productTranslations[product.id];
       return {
@@ -544,7 +564,9 @@
       };
     };
     const productIcon = (product) => (
-      productDisplayOverrides[product.id]?.icon || "assets/img/icons/icon-drop.png"
+      toOptimizedImagePath(
+        productDisplayOverrides[product.id]?.icon || "assets/img/icons/icon-drop.webp"
+      )
     );
     const render = async () => {
       grid.classList.add("is-loading");
@@ -577,13 +599,13 @@
         return `
         <${cardTag} class="product-card ${clickable ? "product-card--clickable" : ""} ${unavailable ? "product-card--unavailable" : ""} reveal" data-product-id="${escapeHtml(p.id)}" data-delay="${(i % 3)}"${cardAttrs}>
           <div class="product-img">
-            <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
+            <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" width="600" height="450" sizes="(max-width: 700px) 90vw, 320px" loading="${i < 2 ? "eager" : "lazy"}" decoding="async"${i < 2 ? ' fetchpriority="low"' : ""} />
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
           </div>
           <div class="product-body">
             <div class="product-heading">
               <span class="product-kit-icon" aria-hidden="true">
-                <img class="product-icon-img" src="${escapeHtml(icon)}" alt="" decoding="async" />
+                <img class="product-icon-img" src="${escapeHtml(icon)}" alt="" width="40" height="40" loading="lazy" decoding="async" />
               </span>
               <div>
                 <h3>${escapeHtml(p.name)}</h3>
@@ -602,7 +624,7 @@
       });
       $$(".product-icon-img", grid).forEach((img) => {
         img.addEventListener("error", () => {
-          img.src = "assets/img/icons/icon-drop.png";
+          img.src = "assets/img/icons/icon-drop.webp";
         }, { once: true });
       });
       grid.classList.remove("is-loading");
@@ -1126,7 +1148,7 @@
     const consent = storedConsent() || defaultConsent();
     if (isEnglish) {
       return `
-      <section class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
+      <section class="cookie-banner" id="cookieBanner" role="region" aria-labelledby="cookieBannerTitle" aria-live="polite">
         <button class="cookie-banner__close" type="button" data-cookie-action="reject" aria-label="Close and reject non-essential cookies">×</button>
         <div class="cookie-banner__copy">
           <span class="contact-kicker">Privacy and cookies</span>
@@ -1157,7 +1179,7 @@
       </section>`;
     }
     return `
-      <section class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieBannerTitle" aria-live="polite">
+      <section class="cookie-banner" id="cookieBanner" role="region" aria-labelledby="cookieBannerTitle" aria-live="polite">
         <button class="cookie-banner__close" type="button" data-cookie-action="reject" aria-label="Chiudi e rifiuta i cookie non necessari">×</button>
         <div class="cookie-banner__copy">
           <span class="contact-kicker">Privacy e cookie</span>
