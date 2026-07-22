@@ -66,6 +66,12 @@ const LINKS_ICON_PNGS = new Set([
   "social-instagram.png"
 ]);
 
+const PUBLIC_FONT_FILES = new Set([
+  "cormorant-garamond-variable-latin.woff2",
+  "cormorant-garamond-italic-variable-latin.woff2",
+  "mulish-variable-latin.woff2"
+]);
+
 const FORBIDDEN_OUTPUTS = [
   "server.js",
   "package.json",
@@ -247,7 +253,7 @@ await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
 
 for (const relativePath of PUBLIC_FILES) await copyRelative(relativePath);
-await copyDirectoryFiltered("assets/fonts", (name) => /\.(?:woff2|ttf)$/i.test(name));
+await copyDirectoryFiltered("assets/fonts", (name) => PUBLIC_FONT_FILES.has(name));
 await copyDirectoryFiltered("assets/img/hero", (name) => PUBLIC_HERO_FILES.has(name));
 await copyDirectoryFiltered("assets/img/decor", (name) => PUBLIC_DECOR_FILES.has(name));
 await copyDirectoryFiltered("assets/img/icons", (name) => name.endsWith(".webp") || LINKS_ICON_PNGS.has(name));

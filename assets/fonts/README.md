@@ -7,6 +7,8 @@ The approved Come le Api typography uses:
 
 Both families are served locally to keep rendering consistent and avoid third-party font requests. They are distributed under the SIL Open Font License 1.1; the complete license texts are included in this folder as `OFL-Cormorant-Garamond.txt` and `OFL-Mulish.txt`.
 
+The public build uses Latin WOFF2 variable subsets: one file for Mulish's 300–800 weight range and two files for Cormorant Garamond's normal and italic ranges. Static TTF files remain available only to the local PDF and illustration generation scripts and are excluded from `dist/`.
+
 Official sources:
 
 - https://github.com/google/fonts/tree/main/ofl/cormorantgaramond
