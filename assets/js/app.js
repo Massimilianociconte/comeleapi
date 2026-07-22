@@ -405,10 +405,24 @@
     }
 
     function refresh() {
-      items().forEach((item, index) => {
+      const list = items();
+      list.forEach((item, index) => {
+        // Non sovrascrivere il ruolo nativo di link/button (ARIA invalid su <a role="group">).
+        if (item.matches("a, button")) {
+          item.removeAttribute("role");
+          item.removeAttribute("aria-roledescription");
+          // Conserva aria-label del prodotto se presente; altrimenti posizione slide.
+          if (!item.getAttribute("aria-label")) {
+            item.setAttribute(
+              "aria-label",
+              `${index + 1} ${isEnglish ? "of" : "di"} ${list.length}`
+            );
+          }
+          return;
+        }
         item.setAttribute("role", "group");
         item.setAttribute("aria-roledescription", isEnglish ? "slide" : "diapositiva");
-        item.setAttribute("aria-label", `${index + 1} ${isEnglish ? "of" : "di"} ${items().length}`);
+        item.setAttribute("aria-label", `${index + 1} ${isEnglish ? "of" : "di"} ${list.length}`);
       });
       updateControls();
     }
@@ -599,7 +613,7 @@
         return `
         <${cardTag} class="product-card ${clickable ? "product-card--clickable" : ""} ${unavailable ? "product-card--unavailable" : ""} reveal" data-product-id="${escapeHtml(p.id)}" data-delay="${(i % 3)}"${cardAttrs}>
           <div class="product-img">
-            <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" width="600" height="450" sizes="(max-width: 700px) 90vw, 320px" loading="${i < 2 ? "eager" : "lazy"}" decoding="async"${i < 2 ? ' fetchpriority="low"' : ""} />
+            <img class="product-photo" src="${escapeHtml(image)}" alt="${escapeHtml(p.name)}" width="640" height="480" sizes="(max-width: 700px) 90vw, 320px" loading="lazy" decoding="async" />
             ${unavailable ? `<span class="availability-badge">${isEnglish ? "Sold out" : "Esaurito"}</span>` : ""}
           </div>
           <div class="product-body">
