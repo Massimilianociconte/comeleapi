@@ -478,6 +478,74 @@ function isLegacyProductSeed(products) {
     ));
 }
 
+function shouldRepairLegacyProductSeed(products) {
+  if (!Array.isArray(products)) return false;
+  const ids = new Set(products.map((product) => product.id));
+  const defaultIds = new Set(DEFAULT_PRODUCTS.map((product) => product.id));
+  const allowedIds = new Set([...LEGACY_PRODUCT_IDS, ...defaultIds]);
+  const exactLegacySeed = products.length === LEGACY_PRODUCT_IDS.size && isLegacyProductSeed(products);
+  const recoverablePartialRepair =
+    [...defaultIds].every((id) => ids.has(id))
+    && products.some((product) => LEGACY_PRODUCT_IDS.has(product.id))
+    && products.every((product) => allowedIds.has(product.id));
+  return exactLegacySeed || recoverablePartialRepair;
+}
+
+function databaseProduct(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    shortDesc: row.short_desc,
+    benefits: row.benefits,
+    price: row.price,
+    image: row.image,
+    link: row.link,
+    visible: row.visible,
+    order: row.order
+  };
+}
+
+async function repairLegacyProductSeed(db, products) {
+  const repairAt = nowIso();
+  const rows = DEFAULT_PRODUCTS.map((product) => ({
+    id: product.id,
+    name: product.name,
+    short_desc: product.shortDesc,
+    benefits: product.benefits,
+    price: product.price,
+    image: product.image,
+    link: product.link,
+    visible: product.visible,
+    order: product.order,
+    updated_at: repairAt
+  }));
+  const { error: upsertError } = await db.from("products").upsert(rows, { onConflict: "id" });
+  if (upsertError) throw new Error("Errore allineamento catalogo corrente: " + upsertError.message);
+
+  const obsoleteIds = products
+    .map((product) => product.id)
+    .filter((id) => LEGACY_PRODUCT_IDS.has(id));
+  if (obsoleteIds.length) {
+    const { error: deleteError } = await db.from("products").delete().in("id", obsoleteIds);
+    if (deleteError) throw new Error("Errore rimozione prodotti legacy: " + deleteError.message);
+  }
+
+  const { data, error: verifyError } = await db.from("products").select("*").order("order", { ascending: true });
+  if (verifyError) throw new Error("Errore verifica allineamento catalogo: " + verifyError.message);
+  const repaired = (data || []).map(databaseProduct);
+  const repairedIds = new Set(repaired.map((product) => product.id));
+  if (
+    repaired.length !== DEFAULT_PRODUCTS.length
+    || DEFAULT_PRODUCTS.some((product) => !repairedIds.has(product.id))
+    || repaired.some((product) => LEGACY_PRODUCT_IDS.has(product.id))
+  ) {
+    throw new Error("Allineamento catalogo incompleto: verifica manuale richiesta.");
+  }
+
+  console.log(`[products] Seed legacy sostituito con ${repaired.length} prodotti correnti.`);
+  return repaired;
+}
+
 async function loadProducts({ allowPublicFallback = false } = {}) {
   if (USE_SUPABASE) {
     const db = getSupabase();
@@ -487,18 +555,17 @@ async function loadProducts({ allowPublicFallback = false } = {}) {
       if (allowPublicFallback) return jsonClone(DEFAULT_PRODUCTS);
       throw new Error("Errore caricamento prodotti: " + error.message);
     }
-    const mapped = (data || []).map((row) => ({
-      id: row.id,
-      name: row.name,
-      shortDesc: row.short_desc,
-      benefits: row.benefits,
-      price: row.price,
-      image: row.image,
-      link: row.link,
-      visible: row.visible,
-      order: row.order
-    }));
-    return allowPublicFallback && isLegacyProductSeed(mapped) ? jsonClone(DEFAULT_PRODUCTS) : mapped;
+    const mapped = (data || []).map(databaseProduct);
+    if (shouldRepairLegacyProductSeed(mapped)) {
+      try {
+        return await repairLegacyProductSeed(db, mapped);
+      } catch (error) {
+        console.error("[products] allineamento automatico fallito:", error.message);
+        if (allowPublicFallback) return jsonClone(DEFAULT_PRODUCTS);
+        throw error;
+      }
+    }
+    return mapped;
   } else {
     const list = await readJson(PRODUCTS_FILE, DEFAULT_PRODUCTS);
     if (!Array.isArray(list)) return jsonClone(DEFAULT_PRODUCTS);
@@ -1700,6 +1767,7 @@ async function ensureAdminUserSupabase() {
 
 async function ensureDataFiles() {
   if (USE_SUPABASE) {
+    await loadProducts();
     await ensureAdminUserSupabase();
     return;
   }

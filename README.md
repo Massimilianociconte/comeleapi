@@ -83,6 +83,7 @@ python3 -m http.server 4174 --directory dist
 | npm run check:catalog-live | confronta tutti i campi del catalogo Render con `products.json` |
 | npm run check:visual-integrity | verifica hash degli asset e, con Poppler disponibile, la resa di ogni pagina PDF |
 | npm run check:push-privacy | verifica che le push non includano dati del lead |
+| npm run test:product-sync | riproduce il vecchio seed da 6 prodotti e verifica allineamento gestionale/frontend |
 | npm run check:workflow | verifica YAML/shell e health check GitHub Actions |
 | npm run check:security | verifica credenziali, CORS, cookie, health e RLS |
 | npm run check:server | verifica la sintassi di backend e seed prima del deploy Render |
@@ -107,6 +108,12 @@ generato in build da `products.json`. Dopo ogni modifica prodotti nel gestionale
 occorre sincronizzare `products.json`, eseguire `npm run check:catalog-live` e
 ridistribuire Netlify; fino ad allora catalogo visibile e dati strutturati possono
 divergire. L'automazione con un deploy hook Netlify resta un'attività provider.
+
+Il backend tratta Supabase come sorgente runtime unica per gestionale e vetrina.
+All'avvio riconosce esclusivamente il vecchio seed noto da sei prodotti, inserisce
+nel database i 12 record approvati di `products.json`, elimina i sei ID obsoleti e
+verifica il risultato prima di accettare traffico. Qualsiasi catalogo personalizzato
+non riconducibile a quel seed viene preservato.
 
 Il PDF usa un URL canonico stabile nei dati strutturati: la sua cache richiede
 rivalidazione, mentre i link visibili ricevono un hash di contenuto in build.

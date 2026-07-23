@@ -34,13 +34,14 @@ In caso di dato incompleto è stata omessa la singola proprietà facoltativa, no
 | `scripts/check-visual-integrity.mjs` | hash gate su PDF/immagini e confronto raster di tutte le pagine quando Poppler è disponibile |
 | `.github/workflows/keep-alive.yml` | GET profondo su `/api/health`, verifica JSON backend+database, retry limitati, errori non mascherati, timeout, least privilege e cron scaglionato |
 | `scripts/check-workflow.mjs` | parsing YAML, sintassi shell e asserzioni contro `HEAD`, false-green e schedule fragile |
-| `server.js` | rimozione password hardcoded/bypass, configurazione production fail-closed, cookie/CORS/CSRF/header, errori minimizzati, health profondo, rate limit a memoria limitata, letture admin fail-closed, static/upload containment e runtime push ripristinato senza PII |
+| `server.js` | rimozione password hardcoded/bypass, configurazione production fail-closed, cookie/CORS/CSRF/header, errori minimizzati, health profondo, rate limit a memoria limitata, letture admin fail-closed, riallineamento automatico del seed legacy prodotti, static/upload containment e runtime push ripristinato senza PII |
 | `.env.example` | nessun valore admin/sessione predefinito; requisiti espliciti |
 | `render.yaml` | build riproducibile con `npm ci --omit=dev` e health check profondo |
 | `supabase/schema.sql` | RLS privata deny-by-default per le tabelle applicative |
 | `supabase/migrations/20260722_harden_private_tables.sql` | migrazione transazionale pronta per rimuovere policy permissive, revocare `anon`/`authenticated` e impedire l'esecuzione RPC della funzione interna `rls_auto_enable()` |
 | `scripts/check-security.mjs` | gate statico per credenziali, CORS, cookie, config, health, containment e RLS |
 | `scripts/check-push-privacy.mjs` | impedisce il ritorno di nome o testo del lead nella push |
+| `tests/product-sync.integration.test.cjs` | riproduce Supabase con i sei prodotti legacy, verifica la sostituzione con i 12 record approvati e prova una modifica gestionale visibile subito dall'API pubblica |
 | `scripts/build-netlify.mjs` | allowlist di robots/sitemap/analytics, generazione JSON-LD dai prodotti e fingerprint degli asset |
 | `netlify.toml` | full build con gate, redirect canonici, inoltro sicuro degli URL storici del gestionale a Render e blocco dei file privati |
 | `.node-version`, `package.json` | Node 24.18.0 LTS riproducibile, major limitata e pipeline completa `check`/`build` |
