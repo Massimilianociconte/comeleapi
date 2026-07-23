@@ -42,7 +42,7 @@ In caso di dato incompleto è stata omessa la singola proprietà facoltativa, no
 | `scripts/check-security.mjs` | gate statico per credenziali, CORS, cookie, config, health, containment e RLS |
 | `scripts/check-push-privacy.mjs` | impedisce il ritorno di nome o testo del lead nella push |
 | `scripts/build-netlify.mjs` | allowlist di robots/sitemap/analytics, generazione JSON-LD dai prodotti e fingerprint degli asset |
-| `netlify.toml` | full build con gate, redirect canonici e blocco dei percorsi privati |
+| `netlify.toml` | full build con gate, redirect canonici, inoltro sicuro degli URL storici del gestionale a Render e blocco dei file privati |
 | `.node-version`, `package.json` | Node 24.18.0 LTS riproducibile, major limitata e pipeline completa `check`/`build` |
 | `CLAIM_AUDIT_2026-07-22.md` | audit frase per frase dei claim sensibili e alternative non applicate |
 | `README.md` | architettura, comandi, deploy e gate aggiornati |

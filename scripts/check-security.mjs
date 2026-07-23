@@ -59,6 +59,7 @@ const migration = await readFile(
   "utf8"
 );
 const renderConfig = await readFile(path.join(ROOT, "render.yaml"), "utf8");
+const netlifyConfig = await readFile(path.join(ROOT, "netlify.toml"), "utf8");
 
 assert(!server.includes("CANONICAL_ADMIN_PASSWORD"), "Sicurezza: password canonica ancora nel server");
 assert(!server.includes("isAcceptedAdminPassword"), "Sicurezza: bypass password plaintext ancora presente");
@@ -129,6 +130,29 @@ assert(
   renderConfig.includes("npm ci --omit=dev && npm run check:server && npm run check:security"),
   "Render: build deve validare sintassi backend e gate di sicurezza"
 );
+
+const netlifyRedirectBlocks = netlifyConfig.split("[[redirects]]").slice(1);
+function hasNetlifyRedirect(from, to, status) {
+  return netlifyRedirectBlocks.some((block) =>
+    block.includes(`from = "${from}"`)
+    && block.includes(`to = "${to}"`)
+    && block.includes(`status = ${status}`)
+    && block.includes("force = true")
+  );
+}
+
+for (const adminPath of ["/admin", "/admin/", "/admin.html"]) {
+  assert(
+    hasNetlifyRedirect(adminPath, "https://comeleapi-backend.onrender.com/admin", 302),
+    `Netlify: redirect sicuro del gestionale mancante per ${adminPath}`
+  );
+}
+for (const loginPath of ["/login", "/login/", "/login.html"]) {
+  assert(
+    hasNetlifyRedirect(loginPath, "https://comeleapi-backend.onrender.com/login.html", 302),
+    `Netlify: redirect sicuro del login mancante per ${loginPath}`
+  );
+}
 
 const privateTables = ["products", "leads", "users", "push_subscriptions"];
 for (const sql of [schema, migration]) {

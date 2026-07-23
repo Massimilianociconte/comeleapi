@@ -30,6 +30,11 @@ locali, configurazioni e sorgenti non devono entrare in dist/.
 - render.yaml: configurazione del servizio;
 - supabase/: schema e seed.
 
+Gli URL storici `https://comeleapi.it/admin`, `/admin.html` e `/login.html`
+reindirizzano al gestionale Render. Il redirect mantiene interfaccia, cookie
+HttpOnly, sessione e API sullo stesso host; i file amministrativi continuano a
+non essere inclusi nella build pubblica Netlify.
+
 Quando Supabase non è configurato, il backend usa fallback locali soltanto in
 sviluppo. In `NODE_ENV=production` l'avvio è fail-closed se mancano Supabase,
 secret di sessione o credenziali amministrative valide.

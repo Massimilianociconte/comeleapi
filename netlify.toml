@@ -6,9 +6,9 @@
   publish = "dist"
   command = "npm run build"
 
-# Il gestionale e il backend sono serviti e protetti da Render. Queste regole
-# impediscono che un futuro errore di allowlist li renda nuovamente pubblici
-# sul dominio statico Netlify.
+# Il gestionale e il backend sono serviti e protetti da Render. Gli URL storici
+# sul dominio principale restano utilizzabili tramite redirect temporanei: in
+# questo modo login, cookie HttpOnly e sessione restano tutti sul dominio Render.
 [[redirects]]
   from = "/index.html"
   to = "/"
@@ -65,20 +65,38 @@
 
 [[redirects]]
   from = "/admin"
-  to = "/index.html"
-  status = 404
+  to = "https://comeleapi-backend.onrender.com/admin"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/admin/"
+  to = "https://comeleapi-backend.onrender.com/admin"
+  status = 302
   force = true
 
 [[redirects]]
   from = "/admin.html"
-  to = "/index.html"
-  status = 404
+  to = "https://comeleapi-backend.onrender.com/admin"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/login"
+  to = "https://comeleapi-backend.onrender.com/login.html"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/login/"
+  to = "https://comeleapi-backend.onrender.com/login.html"
+  status = 302
   force = true
 
 [[redirects]]
   from = "/login.html"
-  to = "/index.html"
-  status = 404
+  to = "https://comeleapi-backend.onrender.com/login.html"
+  status = 302
   force = true
 
 [[redirects]]
