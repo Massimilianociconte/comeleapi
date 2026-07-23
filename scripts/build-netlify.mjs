@@ -18,6 +18,7 @@ import {
   buildHomeStructuredData,
   buildLinksStructuredData
 } from "./structured-data.mjs";
+import { buildSitemapXml, SITEMAP_PAGES } from "./generate-sitemap.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -26,7 +27,6 @@ const OUT = path.join(ROOT, "dist");
 const PUBLIC_FILES = [
   "index.html",
   "robots.txt",
-  "sitemap.xml",
   "products.json",
   "links/index.html",
   "assets/css/styles.css",
@@ -277,6 +277,11 @@ await copyDirectoryFiltered("assets/img/decor", (name) => PUBLIC_DECOR_FILES.has
 await copyDirectoryFiltered("assets/img/icons", (name) => name.endsWith(".webp") || LINKS_ICON_PNGS.has(name));
 await copyDirectoryFiltered("foto-prodotti", (name) => name.endsWith(".webp"));
 
+// Sitemap generata a build-time: lastmod dai file sorgente + image sitemap prodotti.
+const sitemapXml = await buildSitemapXml(ROOT);
+await writeFile(path.join(OUT, "sitemap.xml"), sitemapXml);
+await writeFile(path.join(ROOT, "sitemap.xml"), sitemapXml);
+
 await transformCatalog();
 const sourceProducts = JSON.parse(await readFile(path.join(ROOT, "products.json"), "utf8"));
 const homeStructuredData = buildHomeStructuredData(sourceProducts);
@@ -331,4 +336,7 @@ for (const forbidden of FORBIDDEN_OUTPUTS) {
 }
 
 const totalBytes = await directorySize(OUT);
-console.log(`Build Netlify completata: ${(totalBytes / 1024 / 1024).toFixed(2)} MiB in dist/`);
+console.log(
+  `Build Netlify completata: ${(totalBytes / 1024 / 1024).toFixed(2)} MiB in dist/ ` +
+    `(sitemap: ${SITEMAP_PAGES.length} URL canoniche)`
+);

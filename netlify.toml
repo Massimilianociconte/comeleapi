@@ -155,6 +155,19 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Sitemap e robots: discovery immediata post-deploy, MIME espliciti per GSC/Bing.
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=UTF-8"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=UTF-8"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 # Nessuna cache per HTML (possono cambiare)
 [[headers]]
   for = "/"

@@ -1,9 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://comeleapi.it/</loc>
+    <lastmod>2026-07-23T00:17:54+02:00</lastmod>
+    <image:image>
+      <image:loc>https://comeleapi.it/assets/img/hero/hero-massaggio-professionale-comeleapi.webp</image:loc>
+      <image:title>Trattamento professionale comeleapi</image:title>
+      <image:caption>Massaggio professionale con oli essenziali a Bresso e area Milano</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/assets/img/logo-comeleapi-1024.png</image:loc>
+      <image:title>Logo comeleapi</image:title>
+      <image:caption>Marchio comeleapi — benessere, massaggi e cura della persona</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/collezione-essenziale.webp</image:loc>
+      <image:title>Collezione Essenziale</image:title>
+      <image:caption>Starter kit con i 12 oli essenziali fondamentali, selezionati per te e adatti a coprire tutte le esigenze della vita quotidiana.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/baby-essentials.webp</image:loc>
+      <image:title>Baby Essentials</image:title>
+      <image:caption>Oli essenziali pre-diluiti, delicati e perfetti per i più piccoli. Dolcezza e sicurezza in un kit pensato per tutta la famiglia.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/sweet-home.webp</image:loc>
+      <image:title>Sweet Home</image:title>
+      <image:caption>Trasforma la tua casa in un rifugio naturale: pulizia profonda e zero tossine. Per un ambiente sano e sicuro per tutta la famiglia.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/dolce-notte.webp</image:loc>
+      <image:title>Dolce Notte</image:title>
+      <image:caption>Il rituale perfetto per notti serene. Rilassati e lasciati cullare dal buon riposo. Sogni d&apos;oro!</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/sport-wellness-clean.webp</image:loc>
+      <image:title>Sport</image:title>
+      <image:caption>Energia, performance e risultati in un solo kit. Tutto ciò che serve per allenarti al massimo e recuperare al meglio.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/per-lui.webp</image:loc>
+      <image:title>Per lui</image:title>
+      <image:caption>L&apos;essenziale per la tua routine quotidiana, pensato su misura per l&apos;uomo moderno.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/per-lei.webp</image:loc>
+      <image:title>Per lei</image:title>
+      <image:caption>Coccolati ogni giorno: la tua routine di bellezza, semplice e rigenerante.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/animal-scents.webp</image:loc>
+      <image:title>Animali</image:title>
+      <image:caption>Miscele pensate per il benessere dei nostri piccoli amici. Coccole naturali sicure e su misura per loro.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/balance-skin-clean.webp</image:loc>
+      <image:title>BALANCE skin</image:title>
+      <image:caption>Ritrova l&apos;equilibrio naturale della tua pelle: Splendida, Pura, Bilanciata.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/bloom-skin.webp</image:loc>
+      <image:title>Bloom</image:title>
+      <image:caption>Un boost di idratazione per una pelle luminosa e rigenerata. Il tuo scudo naturale contro gli agenti esterni.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/shine-bright-like-a-diamond.webp</image:loc>
+      <image:title>Shine Bright</image:title>
+      <image:caption>Il duo perfetto per un viso tonico e uno sguardo luminoso.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://comeleapi.it/foto-prodotti/bye-bye-menopausa.webp</image:loc>
+      <image:title>Menopausa</image:title>
+      <image:caption>Il tuo alleato naturale in ogni fase del cambiamento. Riscopri equilibrio, energia e serenità, giorno dopo giorno.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://comeleapi.it/links/</loc>
+    <lastmod>2026-07-23T00:22:09+02:00</lastmod>
+    <image:image>
+      <image:loc>https://comeleapi.it/assets/img/logo-comeleapi-1024.png</image:loc>
+      <image:title>comeleapi — Link utili</image:title>
+      <image:caption>Hub di link utili del progetto comeleapi curato da Sara</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://comeleapi.it/assets/pdf/mini-guida-oli-comeleapi.pdf</loc>
+    <lastmod>2026-07-22T23:53:04+02:00</lastmod>
   </url>
 </urlset>

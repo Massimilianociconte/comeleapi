@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { SITEMAP_PAGES, SITE_ORIGIN } from "./generate-sitemap.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -9,17 +10,20 @@ const DIST = path.join(ROOT, "dist");
 const pages = [
   {
     file: "index.html",
-    canonical: "https://comeleapi.it/",
+    canonical: `${SITE_ORIGIN}/`,
     schemaType: "WebPage",
-    schemaId: "https://comeleapi.it/#webpage"
+    schemaId: `${SITE_ORIGIN}/#webpage`
   },
   {
     file: "links/index.html",
-    canonical: "https://comeleapi.it/links/",
+    canonical: `${SITE_ORIGIN}/links/`,
     schemaType: "WebPage",
-    schemaId: "https://comeleapi.it/links/#webpage"
+    schemaId: `${SITE_ORIGIN}/links/#webpage`
   }
 ];
+
+const htmlCanonicals = pages.map((page) => page.canonical);
+const sitemapCanonicals = SITEMAP_PAGES.map((page) => page.loc);
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -72,11 +76,74 @@ assert(
 );
 
 const sitemap = await readFile(path.join(DIST, "sitemap.xml"), "utf8");
-const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+assert(sitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>'), "sitemap.xml: prologo XML UTF-8 mancante");
 assert(
-  JSON.stringify(sitemapUrls) === JSON.stringify(pages.map((page) => page.canonical)),
-  "sitemap.xml: URL non allineati alle pagine canoniche"
+  /xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/.test(sitemap),
+  "sitemap.xml: namespace sitemaps.org 0.9 mancante"
 );
+assert(
+  /xmlns:image="http:\/\/www\.google\.com\/schemas\/sitemap-image\/1\.1"/.test(sitemap),
+  "sitemap.xml: namespace image sitemap 1.1 mancante"
+);
+assert(!/<changefreq\b/i.test(sitemap), "sitemap.xml: changefreq non deve essere usata (ignorata da Google)");
+assert(!/<priority\b/i.test(sitemap), "sitemap.xml: priority non deve essere usata (ignorata da Google)");
+assert(!sitemap.includes("\uFEFF"), "sitemap.xml: BOM UTF-8 non consentito");
+
+const pageLocs = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+for (const loc of pageLocs) {
+  assert(loc.startsWith("https://"), `sitemap.xml: loc non HTTPS: ${loc}`);
+  assert(!loc.includes("#"), `sitemap.xml: fragment non consentito: ${loc}`);
+  assert(!loc.startsWith("https://www."), `sitemap.xml: host non canonico www: ${loc}`);
+}
+assert(
+  JSON.stringify(pageLocs) === JSON.stringify(sitemapCanonicals),
+  "sitemap.xml: URL pagina non allineati alle canoniche SITEMAP_PAGES"
+);
+assert(
+  htmlCanonicals.every((url) => pageLocs.includes(url)),
+  "sitemap.xml: pagine HTML canoniche assenti"
+);
+assert(
+  pageLocs.includes(`${SITE_ORIGIN}/assets/pdf/mini-guida-oli-comeleapi.pdf`),
+  "sitemap.xml: PDF guida pubblica assente"
+);
+
+const lastmods = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((match) => match[1]);
+assert(lastmods.length === pageLocs.length, "sitemap.xml: ogni <url> deve avere <lastmod>");
+const lastmodPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/;
+for (const lastmod of lastmods) {
+  assert(lastmodPattern.test(lastmod), `sitemap.xml: lastmod non W3C Datetime: ${lastmod}`);
+  assert(!Number.isNaN(Date.parse(lastmod)), `sitemap.xml: lastmod non parseable: ${lastmod}`);
+}
+
+const imageLocs = [...sitemap.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map((match) => match[1]);
+assert(imageLocs.length >= 14, `sitemap.xml: image:loc insufficienti (${imageLocs.length})`);
+for (const imageLoc of imageLocs) {
+  assert(imageLoc.startsWith(`${SITE_ORIGIN}/`), `sitemap.xml: image non canonica: ${imageLoc}`);
+  assert(!imageLoc.includes("?"), `sitemap.xml: image non deve avere query string: ${imageLoc}`);
+}
+assert(
+  imageLocs.includes(`${SITE_ORIGIN}/assets/img/hero/hero-massaggio-professionale-comeleapi.webp`),
+  "sitemap.xml: hero image mancante"
+);
+assert(
+  imageLocs.some((url) => url.includes("/foto-prodotti/")),
+  "sitemap.xml: immagini prodotto mancanti"
+);
+
+// Ogni blocco <url> HTML deve contenere almeno un'immagine.
+const urlBlocks = sitemap.match(/<url>[\s\S]*?<\/url>/g) || [];
+assert(urlBlocks.length === SITEMAP_PAGES.length, "sitemap.xml: numero blocchi <url> errato");
+for (const block of urlBlocks) {
+  const loc = block.match(/<loc>([^<]+)<\/loc>/)?.[1];
+  if (loc?.endsWith(".pdf")) {
+    assert(!block.includes("<image:image>"), `sitemap.xml: PDF non deve avere image: ${loc}`);
+  } else {
+    assert(block.includes("<image:image>"), `sitemap.xml: pagina senza image sitemap: ${loc}`);
+    assert(block.includes("<image:title>"), `sitemap.xml: image:title mancante per ${loc}`);
+    assert(block.includes("<image:caption>"), `sitemap.xml: image:caption mancante per ${loc}`);
+  }
+}
 
 function parseRobots(source) {
   const groups = [];
@@ -157,7 +224,7 @@ assert(
   "robots.txt: trovata una regola Disallow incompatibile con la policy aperta"
 );
 assert(
-  /^Sitemap:\s+https:\/\/comeleapi\.it\/sitemap\.xml\s*$/im.test(robots),
+  new RegExp(`^Sitemap:\\s+${escapeRegExp(SITE_ORIGIN)}/sitemap\\.xml\\s*$`, "im").test(robots),
   "robots.txt: dichiarazione sitemap assoluta mancante o errata"
 );
 
@@ -172,7 +239,16 @@ assert(
   pdfCacheRuleIndex >= 0 && pdfCacheRuleIndex < genericAssetCacheRuleIndex,
   "netlify.toml: la regola cache PDF specifica deve precedere quella generale"
 );
+assert(
+  /for\s*=\s*"\/sitemap\.xml"[\s\S]*?Content-Type\s*=\s*"application\/xml; charset=UTF-8"/.test(netlifyConfig),
+  "netlify.toml: header Content-Type sitemap mancante"
+);
+assert(
+  /for\s*=\s*"\/sitemap\.xml"[\s\S]*?Cache-Control\s*=\s*"public, max-age=0, must-revalidate"/.test(netlifyConfig),
+  "netlify.toml: header Cache-Control sitemap mancante"
+);
 
 console.log(
-  `Check SEO pubblico completato: ${pages.length} pagine canoniche, sitemap coerente e policy crawler aperta verificata.`
+  `Check SEO pubblico completato: ${pages.length} pagine HTML, sitemap con ${pageLocs.length} URL ` +
+    `(${imageLocs.length} immagini) e policy crawler aperta verificata.`
 );
