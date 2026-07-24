@@ -66,6 +66,52 @@ const SERVICE_DEFINITIONS = [
   }
 ];
 
+// Domande e risposte: unica fonte di verità condivisa tra il nodo FAQPage
+// (dati strutturati) e la sezione FAQ visibile in pagina, come richiesto dalle
+// linee guida Google (il testo dello schema deve coincidere con quello mostrato).
+export const FAQ_DEFINITIONS = [
+  {
+    q: "Dove svolgi i massaggi a domicilio?",
+    a: "I trattamenti si svolgono a domicilio a Bresso e in tutta l'area di Milano Nord, incluse Cusano Milanino, Cormano, Cinisello Balsamo, Sesto San Giovanni e Milano. Scrivimi la tua zona su WhatsApp e ti confermo la disponibilità."
+  },
+  {
+    q: "Come funziona il massaggio a domicilio?",
+    a: "Arrivo da te con lettino, teli e oli professionali: a te basta scegliere un ambiente tranquillo. Concordiamo insieme giorno e orario, poi non resta che rilassarsi."
+  },
+  {
+    q: "Quali tipi di massaggio offri?",
+    a: "Massaggio sportivo, decontratturante, relax, drenante, trattamento mirato da 30 minuti, kinesio taping e massaggio con oli essenziali. Ogni seduta è personalizzata in base alle tue esigenze."
+  },
+  {
+    q: "Quanto costano i trattamenti?",
+    a: "Massaggio sportivo, decontratturante e drenante 50 €, massaggio relax 40 €, trattamento mirato da 30 minuti 30 €, kinesio taping 10 € e massaggio con oli essenziali 70 €."
+  },
+  {
+    q: "Come posso prenotare un trattamento?",
+    a: "Il modo più rapido è scrivere su WhatsApp al 388 163 9306 oppure via email a sara.bordenga@gmail.com. Ti rispondo per fissare insieme l'appuntamento."
+  },
+  {
+    q: "Che cosa sono gli oli essenziali Young Living che proponi?",
+    a: "Sono oli essenziali puri e kit selezionati da Young Living, di cui sono rivenditrice indipendente. Puoi acquistarli tramite i link della vetrina o chiedermi un consiglio su misura."
+  },
+  {
+    q: "Posso ricevere una consulenza personalizzata sugli oli essenziali?",
+    a: "Sì: con la consulenza Signature Blend scegliamo insieme gli oli essenziali più adatti a te, per un percorso di benessere su misura. Si prenota su WhatsApp."
+  },
+  {
+    q: "È disponibile una guida gratuita sugli oli essenziali?",
+    a: "Sì. Puoi scaricare gratuitamente «L'Essenziale», la mini-guida introduttiva agli oli essenziali pubblicata da comeleapi, direttamente dal sito."
+  },
+  {
+    q: "Chi è Sara Bordenga?",
+    a: "Sara è la fondatrice di comeleapi: massaggiatrice sportiva ed ex atleta, affianca ai trattamenti a domicilio la rivendita di oli essenziali Young Living per accompagnarti verso il tuo benessere."
+  },
+  {
+    q: "In quali lingue posso comunicare?",
+    a: "Puoi scrivermi e ricevere assistenza in italiano, inglese e spagnolo."
+  }
+];
+
 function ref(id) {
   return { "@id": id };
 }
@@ -314,6 +360,26 @@ function productNodes(products) {
   return [itemList, ...listItems, ...productEntities, ...offers];
 }
 
+function faqNode() {
+  return {
+    "@id": `${SITE_URL}#faq`,
+    "@type": "FAQPage",
+    name: "Domande frequenti su massaggi a domicilio e oli essenziali",
+    url: `${SITE_URL}#faq`,
+    inLanguage: "it-IT",
+    isPartOf: ref(`${SITE_URL}#webpage`),
+    about: [ref(ORGANIZATION_ID), ref(PERSON_ID)],
+    mainEntity: FAQ_DEFINITIONS.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a
+      }
+    }))
+  };
+}
+
 function digitalDocumentNode() {
   return {
     "@id": `${PDF_URL}#document`,
@@ -346,10 +412,10 @@ export function buildHomeStructuredData(products) {
       {
         "@id": `${SITE_URL}#webpage`,
         "@type": "WebPage",
-        name: "comeleapi — Benessere, Massaggi & Cura della Persona",
-        alternateName: "comeleapi — Wellbeing, Massage & Personal Care",
+        name: "comeleapi — Massaggi a domicilio a Bresso e Milano Nord",
+        alternateName: "comeleapi — Home massage & essential oils in Bresso and Milan North",
         url: SITE_URL,
-        description: "comeleapi, progetto di benessere e massaggi curato da Sara. Trattamenti a domicilio, percorsi su misura e oli essenziali per il benessere quotidiano.",
+        description: "Massaggi a domicilio a Bresso e nell'area di Milano Nord con Sara Bordenga: sportivo, decontratturante, relax e drenante. Oli essenziali Young Living e consulenze su misura.",
         inLanguage: ["it-IT", "en"],
         isPartOf: ref(`${SITE_URL}#website`),
         mainEntity: ref(ORGANIZATION_ID),
@@ -360,11 +426,12 @@ export function buildHomeStructuredData(products) {
           ...SERVICE_DEFINITIONS.map((service) => ref(`${SITE_URL}#service-${service.slug}`)),
           ref(PRODUCTS_ID)
         ],
-        hasPart: ref(`${PDF_URL}#document`)
+        hasPart: [ref(`${PDF_URL}#document`), ref(`${SITE_URL}#faq`)]
       },
       ...identityNodes(),
       ...serviceNodes(),
       ...productNodes(products),
+      faqNode(),
       digitalDocumentNode()
     ]
   };

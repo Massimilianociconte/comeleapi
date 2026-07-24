@@ -18,6 +18,11 @@ import {
   buildHomeStructuredData,
   buildLinksStructuredData
 } from "./structured-data.mjs";
+import {
+  injectStructuredData,
+  injectProductsGrid,
+  injectFaqHtml
+} from "./html-inject.mjs";
 import { buildSitemapXml, SITEMAP_PAGES } from "./generate-sitemap.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -149,7 +154,13 @@ async function fingerprintReferences(source, baseDirectory) {
     versionedUrl
   }));
   orderedReplacements.forEach(([rawUrl], index) => {
-    output = output.split(rawUrl).join(placeholders[index].marker);
+    // Sostituzione boundary-aware: rispecchia il lookbehind di ASSET_REFERENCE_RE
+    // così un riferimento relativo (es. foto-prodotti/x.webp) non viene rimpiazzato
+    // quando compare come sottostringa di un URL assoluto (es. .../foto-prodotti/x.webp
+    // nel JSON-LD), che deve restare canonico e senza cache key.
+    const escaped = rawUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const boundaryRe = new RegExp(`(?<![A-Za-z0-9_./:-])${escaped}`, "g");
+    output = output.replace(boundaryRe, placeholders[index].marker);
   });
   for (const { marker, versionedUrl } of placeholders) {
     output = output.split(marker).join(versionedUrl);
@@ -201,17 +212,12 @@ async function transformCatalog() {
   await writeFile(path.join(OUT, "products.json"), `${JSON.stringify(products, null, 2)}\n`);
 }
 
-function injectStructuredData(html, structuredData) {
-  const pattern = /(<script\s+id="structuredData"\s+type="application\/ld\+json">)[\s\S]*?(<\/script>)/;
-  if (!pattern.test(html)) throw new Error("Blocco JSON-LD structuredData non trovato.");
-  const serialized = JSON.stringify(structuredData, null, 2).replace(/</g, "\\u003c");
-  return html.replace(pattern, `$1\n${serialized}\n  $2`);
-}
-
-async function transformHome(styles, structuredData) {
+async function transformHome(styles, structuredData, products) {
   const sourcePath = path.join(ROOT, "index.html");
   let html = await readFile(sourcePath, "utf8");
   html = injectStructuredData(html, structuredData);
+  html = injectProductsGrid(html, products);
+  html = injectFaqHtml(html);
   const stylesheetPattern = /\s*<link rel="stylesheet" href="assets\/css\/styles\.css\?[^\"]+" \/>/;
   if (!stylesheetPattern.test(html)) {
     throw new Error("Link al CSS principale non trovato in index.html");
@@ -313,7 +319,7 @@ const minifiedData = await minify(dataSource, {
 if (!minifiedData.code) throw new Error("Minificazione JavaScript fallita: assets/js/data.js");
 await writeFile(path.join(OUT, "assets/js/data.js"), `${minifiedData.code}\n`);
 
-await transformHome(homeStyles, homeStructuredData);
+await transformHome(homeStyles, homeStructuredData, sourceProducts);
 await transformLinksPage(linksStructuredData);
 
 await assertReferencesExist([

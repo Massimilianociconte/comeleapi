@@ -7,6 +7,7 @@
     "start": "node server.js",
     "build": "npm run build:netlify && npm run check:seo && npm run check:schema && npm run check:analytics && npm run check:visual-integrity && npm run check:push-privacy && npm run check:workflow && npm run check:security",
     "build:netlify": "node scripts/build-netlify.mjs",
+    "sync:static": "node scripts/sync-static.mjs",
     "check:seo": "node scripts/check-public-seo.mjs",
     "check:schema": "node scripts/check-structured-data.mjs",
     "check:analytics": "node scripts/check-analytics.mjs",
